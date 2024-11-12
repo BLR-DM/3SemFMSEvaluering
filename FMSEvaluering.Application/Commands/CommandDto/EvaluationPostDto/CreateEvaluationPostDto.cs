@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto
 {
-    public record CreateEvaluationPostDto(string desctription) {}
+    public record CreateEvaluationPostDto(string description) {}
 }
