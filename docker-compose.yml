@@ -1,0 +1,20 @@
+services:
+  fmsevaluering.api:
+    image: ${DOCKER_REGISTRY-}fmsevalueringapi
+    build:
+      context: .
+      dockerfile: FMSEvaluering.Api/Dockerfile
+
+  gateway.api:
+    image: ${DOCKER_REGISTRY-}gatewayapi
+    build:
+      context: .
+      dockerfile: GatewayAPI/Gateway.API/Dockerfile
+
+
+  fmsuserservice.api:
+    image: ${DOCKER_REGISTRY-}fmsuserserviceapi
+    build:
+      context: .
+      dockerfile: FMSUserService.Api/Dockerfile
+
