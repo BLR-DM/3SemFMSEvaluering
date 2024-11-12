@@ -11,10 +11,11 @@ services:
       context: .
       dockerfile: GatewayAPI/Gateway.API/Dockerfile
 
-
   fmsuserservice.api:
     image: ${DOCKER_REGISTRY-}fmsuserserviceapi
     build:
       context: .
       dockerfile: FMSUserService.Api/Dockerfile
 
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
