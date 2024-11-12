@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
+using FMSEvaluering.Application.Commands.Interfaces;
 
 namespace FMSEvaluering.Application.Commands
 {

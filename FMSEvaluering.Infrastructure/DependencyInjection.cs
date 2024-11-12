@@ -22,7 +22,7 @@ namespace FMSEvaluering.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
 
             // Add-Migration InitialMigration -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration
-            // Update-Database -Context contectnavnet -Project FMSEvaluering.DatabaseMigration
+            // Update-Database -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration
 
             services.AddDbContext<EvaluationContext>(options =>
                 options.UseSqlServer(

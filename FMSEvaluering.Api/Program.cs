@@ -1,6 +1,6 @@
 using FMSEvaluering.Application;
-using FMSEvaluering.Application.Commands;
 using FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto;
+using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
