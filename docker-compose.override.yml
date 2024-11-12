@@ -4,7 +4,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__EvaluationDbConnection=Server=mssql16.unoeuro.com;Database=lawhouseblr_dk_db_evalueringfms;User Id=lawhouseblr_dk;Password=km5xFBGRe2pErnDcg6h3;Encrypt=False;MultipleActiveResultSets=true;TrustServerCertificate=true
+      - ConnectionStrings__EvaluationDbConnection=Server=mssql1.unoeuro.com;Database=lawhouseblr_dk_db_evalueringfms;User Id=lawhouseblr_dk;Password=km5xFBGRe2pErnDcg6h3;Encrypt=False;MultipleActiveResultSets=true;TrustServerCertificate=true
     ports:
       - "28080:8080"
       - "28081:8081"
