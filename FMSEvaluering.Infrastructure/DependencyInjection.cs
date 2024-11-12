@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FMSEvaluering.Application.Helpers;
+using FMSEvaluering.Application.Repositories;
+using FMSEvaluering.Infrastructure.Helpers;
+using FMSEvaluering.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +18,10 @@ namespace FMSEvaluering.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration)
         {
-            // Add-Migration InitialMigration -Context contextnavnet -Project FMSEvaluering.DatabaseMigration
+            services.AddScoped<IEvaluationPostRepository, EvaluationPostRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
+
+            // Add-Migration InitialMigration -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration
             // Update-Database -Context contectnavnet -Project FMSEvaluering.DatabaseMigration
 
             services.AddDbContext<EvaluationContext>(options =>
