@@ -50,16 +50,7 @@ builder.Services.AddReverseProxy()
 //                .AllowAnyHeader();
 //        });
 //});
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowLocalhost",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:18081") // Use https here
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
-});
+
 
 var app = builder.Build();
 
