@@ -10,4 +10,6 @@ public class FMSIdentityContext : IdentityDbContext<AppUser>
     {
         Database.EnsureCreated();
     }
+
+    public DbSet<Class> Classes { get; set; }
 }
