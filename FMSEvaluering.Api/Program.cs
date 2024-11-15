@@ -30,20 +30,20 @@ app.MapGet("/post/{id}",
 
 app.MapDelete("/post", 
     async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
-    //.RequireAuthorization("isAdmin");
+//.RequireAuthorization("isAdmin");
 
 
 //VOTE
 //VOTE
 //VOTE
-//app.MapPost("/post/vote",
-//    (CreateVoteDto dto, IPostCommand command) =>
-//        command.CreateVote(dto));
-//app.MapPut("/post/vote",
-//    (UpdateVoteDto dto, IPostCommand command) =>
-//        command.UpdateVote(dto));
-//app.MapDelete("/post/vote",
-//    (DeleteVoteDto dto, IPostCommand command) =>
-//        command.DeleteVote(dto));
+app.MapPost("/post/vote",
+    async (CreateVoteDto dto, IPostCommand command) =>
+        command.CreateVote(dto));
+app.MapPut("/post/vote",
+    async (UpdateVoteDto dto, IPostCommand command) =>
+        command.UpdateVote(dto));
+app.MapDelete("/post/vote",
+    async ([FromBody]DeleteVoteDto dto, IPostCommand command) =>
+        command.DeleteVote(dto));
 
 app.Run();
