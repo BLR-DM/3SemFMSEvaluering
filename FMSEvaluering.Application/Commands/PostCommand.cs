@@ -3,6 +3,9 @@ using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
+using FMSEvaluering.Application.Commands.Interfaces;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
+using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -58,6 +61,69 @@ public class PostCommand : IPostCommand
         {
             _unitOfWork.Rollback();
             throw;
+        }
+
+        async Task IPostCommand.CreateVote(CreateVoteDto dto)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+
+                // Load 
+                var post = await _postRepository.GetPost(dto.PostId);
+
+                // Do
+                post.CreateVote(dto.VoteType);
+
+                // Save
+                _postRepository.AddVote();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
+        async Task IPostCommand.UpdateVote(UpdateVoteDto dto)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+
+                // Load
+                var post = await _postRepository.GetPost(dto.PostId);
+
+                // Do
+                post.UpdateVote(dto.Id, dto.VoteType);
+
+                // Save
+                await _postRepository.UpdateVote();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
+        async Task IPostCommand.DeleteVote(DeleteVoteDto dto)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                // Load 
+                var post = await _postRepository.GetPost(dto.PostId);
+                // Do
+                post.DeleteVote(dto.Id);
+                // Save
+                _postRepository.DeleteVote();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
         }
     }
 }

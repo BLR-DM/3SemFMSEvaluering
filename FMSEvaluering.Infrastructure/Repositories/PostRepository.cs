@@ -29,4 +29,20 @@ public class PostRepository : IPostRepository
         _db.Posts.Remove(post);
         await _db.SaveChangesAsync();
     }
+
+    async Task IPostRepository.AddVote()
+    {
+       await _db.SaveChangesAsync();
+    }
+
+    async Task IPostRepository.DeleteVote()
+    {
+        await _db.SaveChangesAsync();
+    }
+
+    async Task IPostRepository.UpdateVote()
+    {
+        await _db.SaveChangesAsync();
+    }
+
 }

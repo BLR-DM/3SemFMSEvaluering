@@ -7,4 +7,7 @@ public interface IPostRepository
     Task AddPost(Post post);
     Task<Post> GetPost(int id);
     Task DeletePost(Post post);
+    Task AddVote();
+    Task DeleteVote();
+    Task UpdateVote();
 }

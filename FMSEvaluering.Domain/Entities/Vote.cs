@@ -4,20 +4,21 @@ public class Vote : DomainEntity
 {
     public bool VoteType { get; protected set; }
 
-
-    // Nav
-    public Post Post { get; protected set; }
-
     protected Vote() { }
 
-    private Vote(bool voteType, Post post)
+    private Vote(bool voteType)
     {
         VoteType = voteType;
-        Post = post;
     }
 
-    public static Vote Create(bool voteType, Post post)
+    public static Vote Create(bool voteType)
     {
-        return new Vote(voteType, post);
+        return new Vote(voteType);
     }
+
+    public void Update(bool voteType)
+    {
+        VoteType = voteType;
+    }
+
 }
