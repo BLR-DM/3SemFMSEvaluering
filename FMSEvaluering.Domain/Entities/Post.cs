@@ -2,22 +2,22 @@
 
 public class Post : DomainEntity
 {
+    public string Description { get; protected set; }
+    public string Solution { get; protected set; }
     private readonly List<Vote> _votes = new List<Vote>();
-
+    public IReadOnlyCollection<Vote> Votes { get; protected set; } 
+    
     protected Post() {}
 
-    private Post(string description)
+    private Post(string description, string solution)
     {
         Description = description;
+        Solution = solution;
     }
 
-    public string Description { get; protected set; }
-
-    public IReadOnlyCollection<Vote> Votes { get; protected set; }
-
-    public static Post Create(string description)
+    public static Post Create(string description, string solution)
     {
-        return new Post(description);
+        return new Post(description, solution);
     }
 
     public void CreateVote(bool voteType)

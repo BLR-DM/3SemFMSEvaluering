@@ -1,5 +1,21 @@
-﻿namespace FMSEvaluering.Infrastructure.Queries;
+﻿using FMSEvaluering.Application.Queries.Interfaces;
+using FMSEvaluering.Application.Queries.QueryDto;
+using Microsoft.EntityFrameworkCore;
 
-public class PostQuery
+namespace FMSEvaluering.Infrastructure.Queries;
+
+public class PostQuery : IPostQuery
 {
+    private readonly EvaluationContext _db;
+
+    public PostQuery(EvaluationContext db)
+    {
+        _db = db;
+    }
+    async Task<PostDto> IPostQuery.GetPost(int postId)
+    {
+        var post = await _db.Posts.AsNoTracking().SingleAsync(p => p.Id == postId);
+
+        return new PostDto(post.Id, post.Description, post.Solution);
+    }
 }
