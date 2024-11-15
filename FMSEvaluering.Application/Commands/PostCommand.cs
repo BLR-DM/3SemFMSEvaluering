@@ -22,17 +22,17 @@ namespace FMSEvaluering.Application.Commands
             _postRepository = postRepository;
         }
 
-        async Task IPostCommand.CreateEvaluationPost(CreatePostDto dto)
+        async Task IPostCommand.CreatePost(CreatePostDto dto)
         {
             try
             {
                 _unitOfWork.BeginTransaction();
 
                 // Do
-                var evaluationPost = Post.Create(dto.description);
+                var post = Post.Create(dto.description);
 
                 // Save
-                await _postRepository.AddEvaluationPost(evaluationPost);
+                await _postRepository.AddPost(post);
 
                 // Commit
                 _unitOfWork.Commit();

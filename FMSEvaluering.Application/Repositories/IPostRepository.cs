@@ -9,7 +9,7 @@ namespace FMSEvaluering.Application.Repositories
 {
     public interface IPostRepository
     {
-        void AddPost(Post post);
+        Task AddPost(Post post);
         Post GetPost(int id);
     }
 }

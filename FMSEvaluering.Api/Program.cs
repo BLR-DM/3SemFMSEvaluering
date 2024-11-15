@@ -21,6 +21,6 @@ if (app.Environment.IsDevelopment())
 
 app.MapPost("/evaluationpost",
     (CreatePostDto evaluationPost, IPostCommand command) =>
-        command.CreateEvaluationPost(evaluationPost));
+        command.CreatePost(evaluationPost));
 
 app.Run();

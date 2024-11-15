@@ -17,10 +17,10 @@ namespace FMSEvaluering.Infrastructure.Repositories
             _db = db;
         }
 
-        void IPostRepository.AddPost(Post post)
+        async Task IPostRepository.AddPost(Post post)
         {
-            _db.Posts.AddAsync(post);
-            _db.SaveChangesAsync();
+            await _db.Posts.AddAsync(post);
+            await _db.SaveChangesAsync();
         }
 
         Post IPostRepository.GetPost(int id)
