@@ -1,5 +1,6 @@
 ﻿using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure.Repositories;
 
@@ -18,8 +19,14 @@ public class PostRepository : IPostRepository
         await _db.SaveChangesAsync();
     }
 
-    Task<Post> IPostRepository.GetPost(int id)
+    async Task<Post> IPostRepository.GetPost(int id)
     {
-        throw new NotImplementedException();
+        return await _db.Posts.SingleAsync(p => p.Id == id); // Include
+    }
+
+    async Task IPostRepository.DeletePost(Post post)
+    {
+        _db.Posts.Remove(post);
+        await _db.SaveChangesAsync();
     }
 }
