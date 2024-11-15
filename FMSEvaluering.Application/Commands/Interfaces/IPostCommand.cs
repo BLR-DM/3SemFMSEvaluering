@@ -8,7 +8,7 @@ public interface IPostCommand
 {
     Task CreatePost(CreatePostDto postDto);
     Task DeletePost(DeletePostDto postDto);
-    Task CreateVote(CreateVoteDto dto);
-    Task DeleteVote(DeleteVoteDto dto);
-    Task UpdateVote(UpdateVoteDto dto);
+    Task CreateVote(CreateVoteDto voteDto);
+    Task DeleteVote(DeleteVoteDto voteDto);
+    Task UpdateVote(UpdateVoteDto voteDto);
 }
