@@ -1,11 +1,9 @@
 ﻿using FMSEvaluering.Application.Commands.CommandDto.PostDto;
+using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
-using FMSEvaluering.Application.Commands.Interfaces;
-using FMSEvaluering.Application.Commands.CommandDto.PostDto;
-using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -118,7 +116,7 @@ public class PostCommand : IPostCommand
             // Do
             post.DeleteVote(voteDto.Id);
             // Save
-            _postRepository.DeleteVote();
+            await _postRepository.DeleteVote();
         }
         catch (Exception)
         {
@@ -126,5 +124,4 @@ public class PostCommand : IPostCommand
             throw;
         }
     }
-
 }

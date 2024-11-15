@@ -2,11 +2,12 @@
 
 public class Post : DomainEntity
 {
+    private readonly List<Vote> _votes = [];
+
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
-    private readonly List<Vote> _votes = new List<Vote>();
-    public IReadOnlyCollection<Vote> Votes { get; protected set; } 
-    
+    public IReadOnlyCollection<Vote> Votes => _votes;
+
     protected Post() {}
 
     private Post(string description, string solution)
@@ -19,6 +20,8 @@ public class Post : DomainEntity
     {
         return new Post(description, solution);
     }
+
+    // Vote
 
     public void CreateVote(bool voteType)
     {
@@ -36,6 +39,7 @@ public class Post : DomainEntity
 
     public void DeleteVote(int voteId)
     {
-        _votes.Remove(_votes.FirstOrDefault(v => v.Id == voteId));
+        var vote = _votes.FirstOrDefault(v => v.Id == voteId);
+        _votes.Remove(vote);
     }
 }
