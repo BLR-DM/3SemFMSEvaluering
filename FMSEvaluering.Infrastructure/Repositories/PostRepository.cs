@@ -21,7 +21,10 @@ public class PostRepository : IPostRepository
 
     async Task<Post> IPostRepository.GetPost(int id)
     {
-        return await _db.Posts.SingleAsync(p => p.Id == id); // Include
+        return await _db.Posts
+            .Include(p => p.Votes)
+            .Include(p => p.Comments)
+            .SingleAsync(p => p.Id == id);
     }
 
     async Task IPostRepository.DeletePost(Post post)
