@@ -2,9 +2,7 @@
 
 public class Post : DomainEntity
 {
-    protected Post()
-    {
-    }
+    protected Post() {}
 
     private Post(string description)
     {

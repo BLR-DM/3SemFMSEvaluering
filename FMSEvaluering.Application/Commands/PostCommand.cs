@@ -1,5 +1,4 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +7,7 @@ using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
 using FMSEvaluering.Application.Commands.Interfaces;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 
 namespace FMSEvaluering.Application.Commands
 {
@@ -29,10 +29,10 @@ namespace FMSEvaluering.Application.Commands
                 _unitOfWork.BeginTransaction();
 
                 // Do
-                var evaluationPost = Post.Create(dto.description);
+                var evaluationPost = Post.Create(dto.Description);
 
                 // Save
-                await _postRepository.AddEvaluationPost(evaluationPost);
+                await _postRepository.AddPost(evaluationPost);
 
                 // Commit
                 _unitOfWork.Commit();
