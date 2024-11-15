@@ -10,5 +10,6 @@ public class EvaluationContext : DbContext
     }
 
     public DbSet<Post> Posts { get; set; }
-    public DbSet<Vote> Votes { get; set; }
+    public DbSet<Vote> Votes { get; set; } // Test
+    public DbSet<Comment> Comments { get; set; } // Test
 }
