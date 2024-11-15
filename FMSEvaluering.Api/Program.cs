@@ -1,5 +1,6 @@
 using FMSEvaluering.Application;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
+using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Infrastructure;
 
@@ -19,8 +20,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/evaluationpost",
-    (CreatePostDto evaluationPost, IPostCommand command) =>
-        command.CreatePost(evaluationPost));
+app.MapPost("/post",
+    (CreatePostDto dto, IPostCommand command) =>
+        command.CreatePost(dto));
+
+//VOTE
+//VOTE
+//VOTE
+app.MapPost("/post/vote",
+    (CreateVoteDto dto, IPostCommand command) =>
+        command.CreateVote(dto));
+app.MapPut("/post/vote",
+    (UpdateVoteDto dto, IPostCommand command) =>
+        command.UpdateVote(dto));
+app.MapDelete("/post/vote",
+    (DeleteVoteDto dto, IPostCommand command) =>
+        command.DeleteVote(dto));
 
 app.Run();
