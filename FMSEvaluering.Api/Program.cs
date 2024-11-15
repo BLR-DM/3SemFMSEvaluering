@@ -1,4 +1,5 @@
 using FMSEvaluering.Application;
+using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
@@ -45,5 +46,16 @@ app.MapPut("/post/vote",
 app.MapDelete("/post/vote",
     async ([FromBody]DeleteVoteDto dto, IPostCommand command) =>
         command.DeleteVote(dto));
+
+//Comment
+//Comment
+//Comment
+
+app.MapPost("/post/comment",
+    async (CreateCommentDto dto, IPostCommand command) =>
+        command.CreateCommentAsync(dto));
+app.MapPut("/post/comment",
+    async (UpdateCommentDto dto, IPostCommand command) =>
+        command.UpdateCommentAsync(dto));
 
 app.Run();
