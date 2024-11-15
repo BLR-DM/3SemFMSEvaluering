@@ -1,4 +1,5 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.PostDto;
+﻿using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Domain.Entities;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 
@@ -11,4 +12,6 @@ public interface IPostCommand
     Task CreateVote(CreateVoteDto voteDto);
     Task DeleteVote(DeleteVoteDto voteDto);
     Task UpdateVote(UpdateVoteDto voteDto);
+    Task CreateCommentAsync(CreateCommentDto commentDto);
+    Task UpdateCommentAsync(UpdateCommentDto commentDto);
 }

@@ -45,4 +45,14 @@ public class PostRepository : IPostRepository
         await _db.SaveChangesAsync();
     }
 
+    async Task IPostRepository.AddCommentAsync()
+    {
+        await _db.SaveChangesAsync();
+    }
+
+    async Task IPostRepository.UpdateCommentAsync(Comment comment, byte[] rowVersion)
+    {
+        _db.Entry(comment).Property(nameof(comment.RowVersion)).OriginalValue = rowVersion;
+        await _db.SaveChangesAsync();
+    }
 }

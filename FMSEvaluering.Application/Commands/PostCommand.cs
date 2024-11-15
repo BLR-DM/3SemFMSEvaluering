@@ -1,4 +1,5 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.PostDto;
+﻿using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
@@ -117,6 +118,53 @@ public class PostCommand : IPostCommand
             post.DeleteVote(voteDto.Id);
             // Save
             await _postRepository.DeleteVote();
+        }
+        catch (Exception)
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+    }
+
+    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto)
+    {
+        try
+        {
+            _unitOfWork.BeginTransaction();
+
+            // Load
+            var post = await _postRepository.GetPost(commentDto.postID);
+
+            // Do
+            post.CreateComment(commentDto.text);
+
+            // Save 
+            _postRepository.AddCommentAsync();
+            _unitOfWork.Commit();
+        }
+        catch (Exception)
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+    }
+
+    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto)
+    {
+        try
+        {
+            _unitOfWork.BeginTransaction();
+
+            // Load
+            var post = await _postRepository.GetPost(commentDto.postID);
+
+            // Do
+            var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
+
+            // Save
+            _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+            _unitOfWork.Commit();
+
         }
         catch (Exception)
         {
