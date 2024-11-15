@@ -8,6 +8,7 @@ using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
+using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 
 namespace FMSEvaluering.Application.Commands
 {
@@ -20,6 +21,52 @@ namespace FMSEvaluering.Application.Commands
         {
             _unitOfWork = unitOfWork;
             _postRepository = postRepository;
+        }
+
+        async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+
+                //Load
+                var post = await _postRepository.GetPost(commentDto.postID);
+                
+                // Do
+                post.CreateComment(commentDto.text);
+
+                // Save
+                _postRepository.AddCommentAsync();
+                _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
+        async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto)
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+
+                // Load
+                var post = await _postRepository.GetPost(commentDto.postID);
+
+                // Do
+                var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
+
+                // Save
+                _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+                _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                _unitOfWork.Rollback();
+                throw;
+            }
         }
 
         async Task IPostCommand.CreatePost(CreatePostDto dto)
@@ -43,5 +90,6 @@ namespace FMSEvaluering.Application.Commands
                 throw;
             }
         }
+
     }
 }
