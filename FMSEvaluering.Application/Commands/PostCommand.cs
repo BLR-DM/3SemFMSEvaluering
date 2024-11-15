@@ -63,7 +63,6 @@ namespace FMSEvaluering.Application.Commands
                 _unitOfWork.Commit();
             }
             catch (Exception)
-
             {
                 _unitOfWork.Rollback();
                 throw;
