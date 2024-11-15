@@ -7,9 +7,8 @@ using FMSEvaluering.Domain.Entities;
 
 namespace FMSEvaluering.Application.Repositories
 {
-    public interface IPostRepository
+    public interface IVoteRepository
     {
-        void AddPost(Post post);
-        Post GetPost(int id);
+        void AddVote(Vote vote);
     }
 }
