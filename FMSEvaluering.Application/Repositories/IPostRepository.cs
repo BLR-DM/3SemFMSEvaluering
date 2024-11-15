@@ -6,4 +6,6 @@ public interface IPostRepository
 {
     Task AddPost(Post post);
     Task<Post> GetPost(int id);
+    Task AddCommentAsync();
+    Task UpdateCommentAsync(Comment comment, byte[] rowVersion);
 }
