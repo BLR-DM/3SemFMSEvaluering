@@ -18,8 +18,24 @@ public class PostRepository : IPostRepository
         await _db.SaveChangesAsync();
     }
 
-    Task<Post> IPostRepository.GetPost(int id)
+    async Task<Post> IPostRepository.GetPost(int id)
     {
         throw new NotImplementedException();
     }
+
+    async Task IPostRepository.AddVote()
+    {
+       await _db.SaveChangesAsync();
+    }
+
+    async Task IPostRepository.DeleteVote()
+    {
+        await _db.SaveChangesAsync();
+    }
+
+    async Task IPostRepository.UpdateVote()
+    {
+        await _db.SaveChangesAsync();
+    }
+
 }
