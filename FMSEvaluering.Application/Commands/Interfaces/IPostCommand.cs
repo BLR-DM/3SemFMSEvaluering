@@ -1,4 +1,4 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto;
+﻿using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 
 namespace FMSEvaluering.Application.Commands.Interfaces;
 

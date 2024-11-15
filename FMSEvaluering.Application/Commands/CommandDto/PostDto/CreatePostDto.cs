@@ -1,5 +1,3 @@
-﻿namespace FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto;
+﻿namespace FMSEvaluering.Application.Commands.CommandDto.PostDto;
 
-public record CreatePostDto(string description)
-{
-}
+public record CreatePostDto(string Description) { }

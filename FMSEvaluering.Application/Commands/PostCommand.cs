@@ -1,5 +1,4 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +7,7 @@ using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
 using FMSEvaluering.Application.Commands.Interfaces;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 
 namespace FMSEvaluering.Application.Commands
 {

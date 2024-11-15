@@ -1,5 +1,5 @@
 using FMSEvaluering.Application;
-using FMSEvaluering.Application.Commands.CommandDto.EvaluationPostDto;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Infrastructure;
 
