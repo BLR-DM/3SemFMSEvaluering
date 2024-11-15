@@ -1,12 +1,16 @@
-﻿namespace FMSEvaluering.Domain.Entities;
+﻿using System.Xml.Linq;
+
+namespace FMSEvaluering.Domain.Entities;
 
 public class Post : DomainEntity
 {
     private readonly List<Vote> _votes = [];
+    private readonly List<Comment> _comments = new List<Comment>();
 
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public IReadOnlyCollection<Vote> Votes => _votes;
+    public IReadOnlyCollection<Comment> Comments => _comments;
 
     protected Post() {}
 
@@ -41,5 +45,20 @@ public class Post : DomainEntity
     {
         var vote = _votes.FirstOrDefault(v => v.Id == voteId);
         _votes.Remove(vote);
+    }
+
+    public void CreateComment(string text)
+    {
+        var comment = Comment.Create(text);
+        _comments.Add(comment);
+    }
+    public Comment UpdateComment(int commentID, string text)
+    {
+        var comment = Comments.FirstOrDefault(c => c.Id == commentID);
+        if (comment is null)
+            throw new ArgumentException("Denne kommentar findes ikke");
+
+        comment.Update(text);
+        return comment;
     }
 }
