@@ -10,5 +10,6 @@ namespace FMSEvaluering.Application.Repositories
     public interface IVoteRepository
     {
         void AddVote(Vote vote);
+
     }
 }
