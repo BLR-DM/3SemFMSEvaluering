@@ -20,7 +20,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapPost("/evaluationpost",
-    (CreateEvaluationPostDto evaluationPost, IEvaluationPostCommand command) =>
+    (CreatePostDto evaluationPost, IPostCommand command) =>
         command.CreateEvaluationPost(evaluationPost));
 
 app.Run();

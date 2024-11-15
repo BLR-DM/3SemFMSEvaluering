@@ -18,7 +18,7 @@ namespace FMSEvaluering.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddScoped<IEvaluationPostRepository, EvaluationPostRepository>();
+            services.AddScoped<IPostRepository, PostRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
 
             // Add-Migration InitialMigration -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration

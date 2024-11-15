@@ -21,7 +21,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FMSEvaluering.Domain.Entities.EvaluationPost", b =>
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -41,7 +41,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("EvaluationPosts");
+                    b.ToTable("Posts");
                 });
 #pragma warning restore 612, 618
         }

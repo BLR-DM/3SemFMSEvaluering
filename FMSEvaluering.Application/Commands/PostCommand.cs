@@ -11,28 +11,28 @@ using FMSEvaluering.Application.Commands.Interfaces;
 
 namespace FMSEvaluering.Application.Commands
 {
-    public class EvaluationPostCommand : IEvaluationPostCommand
+    public class PostCommand : IPostCommand
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IEvaluationPostRepository _evaluationPostRepository;
+        private readonly IPostRepository _postRepository;
 
-        public EvaluationPostCommand(IUnitOfWork unitOfWork, IEvaluationPostRepository evaluationPostRepository)
+        public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository)
         {
             _unitOfWork = unitOfWork;
-            _evaluationPostRepository = evaluationPostRepository;
+            _postRepository = postRepository;
         }
 
-        async Task IEvaluationPostCommand.CreateEvaluationPost(CreateEvaluationPostDto dto)
+        async Task IPostCommand.CreateEvaluationPost(CreatePostDto dto)
         {
             try
             {
                 _unitOfWork.BeginTransaction();
 
                 // Do
-                var evaluationPost = EvaluationPost.Create(dto.description);
+                var evaluationPost = Post.Create(dto.description);
 
                 // Save
-                await _evaluationPostRepository.AddEvaluationPost(evaluationPost);
+                await _postRepository.AddEvaluationPost(evaluationPost);
 
                 // Commit
                 _unitOfWork.Commit();

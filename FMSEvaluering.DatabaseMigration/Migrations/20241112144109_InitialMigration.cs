@@ -11,7 +11,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "EvaluationPosts",
+                name: "Posts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -29,7 +29,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "EvaluationPosts");
+                name: "Posts");
         }
     }
 }

@@ -7,8 +7,8 @@ using FMSEvaluering.Domain.Entities;
 
 namespace FMSEvaluering.Application.Repositories
 {
-    public interface IEvaluationPostRepository
+    public interface IPostRepository
     {
-        Task AddEvaluationPost(EvaluationPost evaluationPost);
+        Task AddEvaluationPost(Post post);
     }
 }

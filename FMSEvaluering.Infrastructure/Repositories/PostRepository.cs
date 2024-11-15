@@ -8,18 +8,18 @@ using FMSEvaluering.Domain.Entities;
 
 namespace FMSEvaluering.Infrastructure.Repositories
 {
-    public class EvaluationPostRepository : IEvaluationPostRepository
+    public class PostRepository : IPostRepository
     {
         private readonly EvaluationContext _db;
 
-        public EvaluationPostRepository(EvaluationContext db)
+        public PostRepository(EvaluationContext db)
         {
             _db = db;
         }
 
-        async Task IEvaluationPostRepository.AddEvaluationPost(EvaluationPost evaluationPost)
+        async Task IPostRepository.AddEvaluationPost(Post post)
         {
-            await _db.EvaluationPosts.AddAsync(evaluationPost);
+            await _db.Posts.AddAsync(post);
             await _db.SaveChangesAsync();
         }
     }

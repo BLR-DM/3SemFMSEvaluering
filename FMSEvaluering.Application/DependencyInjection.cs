@@ -2,15 +2,14 @@
 using FMSEvaluering.Application.Commands.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FMSEvaluering.Application
-{
-    public static class DependencyInjection
-    {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
-        {
-            services.AddScoped<IEvaluationPostCommand, EvaluationPostCommand>();
+namespace FMSEvaluering.Application;
 
-            return services;
-        }
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddScoped<IPostCommand, PostCommand>();
+
+        return services;
     }
 }

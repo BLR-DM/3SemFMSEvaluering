@@ -2,7 +2,7 @@
 
 namespace FMSEvaluering.Application.Commands.Interfaces;
 
-public interface IEvaluationPostCommand
+public interface IPostCommand
 {
-    Task CreateEvaluationPost(CreateEvaluationPostDto dto);
+    Task CreateEvaluationPost(CreatePostDto dto);
 }
