@@ -34,10 +34,10 @@ namespace FMSEvaluering.Application.Commands
                 var post = _postRepository.GetPost(voteDto.PostId);
 
                 // do
-                var vote = Vote.Create(voteDto.VoteType, post);
+                //var vote = Vote.Create(voteDto.VoteType, post);
 
                 // Save
-                _voteRepository.AddVote(vote);
+                //_voteRepository.AddVote(vote);
 
                 _unitOfWork.Commit();
             }

@@ -29,7 +29,7 @@ namespace FMSEvaluering.Application.Commands
                 _unitOfWork.BeginTransaction();
 
                 // Do
-                var post = Post.Create(dto.description);
+                var post = Post.Create(dto.Description);
 
                 // Save
                 await _postRepository.AddPost(post);
