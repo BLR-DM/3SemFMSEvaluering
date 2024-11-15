@@ -39,13 +39,13 @@ app.MapDelete("/post",
 //VOTE
 app.MapPost("/post/vote",
     async (CreateVoteDto dto, IPostCommand command) =>
-        command.CreateVote(dto));
+        await command.CreateVote(dto));
 app.MapPut("/post/vote",
     async (UpdateVoteDto dto, IPostCommand command) =>
-        command.UpdateVote(dto));
+        await command.UpdateVote(dto));
 app.MapDelete("/post/vote",
     async ([FromBody]DeleteVoteDto dto, IPostCommand command) =>
-        command.DeleteVote(dto));
+        await command.DeleteVote(dto));
 
 //Comment
 //Comment
@@ -53,9 +53,9 @@ app.MapDelete("/post/vote",
 
 app.MapPost("/post/comment",
     async (CreateCommentDto dto, IPostCommand command) =>
-        command.CreateCommentAsync(dto));
+        await command.CreateCommentAsync(dto));
 app.MapPut("/post/comment",
     async (UpdateCommentDto dto, IPostCommand command) =>
-        command.UpdateCommentAsync(dto));
+        await command.UpdateCommentAsync(dto));
 
 app.Run();
