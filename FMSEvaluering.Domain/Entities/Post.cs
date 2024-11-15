@@ -1,24 +1,24 @@
-﻿using System.Xml.Linq;
-
-namespace FMSEvaluering.Domain.Entities;
+﻿namespace FMSEvaluering.Domain.Entities;
 
 public class Post : DomainEntity
 {
+    private readonly List<Comment> _comments = [];
     private readonly List<Vote> _votes = [];
-    private readonly List<Comment> _comments = new List<Comment>();
 
-    public string Description { get; protected set; }
-    public string Solution { get; protected set; }
-    public IReadOnlyCollection<Vote> Votes => _votes;
-    public IReadOnlyCollection<Comment> Comments => _comments;
-
-    protected Post() {}
+    protected Post()
+    {
+    }
 
     private Post(string description, string solution)
     {
         Description = description;
         Solution = solution;
     }
+
+    public string Description { get; protected set; }
+    public string Solution { get; protected set; }
+    public IReadOnlyCollection<Vote> Votes => _votes;
+    public IReadOnlyCollection<Comment> Comments => _comments;
 
     public static Post Create(string description, string solution)
     {
@@ -47,14 +47,17 @@ public class Post : DomainEntity
         _votes.Remove(vote);
     }
 
+    // Comment
+
     public void CreateComment(string text)
     {
         var comment = Comment.Create(text);
         _comments.Add(comment);
     }
-    public Comment UpdateComment(int commentID, string text)
+
+    public Comment UpdateComment(int commentId, string text)
     {
-        var comment = Comments.FirstOrDefault(c => c.Id == commentID);
+        var comment = Comments.FirstOrDefault(c => c.Id == commentId);
         if (comment is null)
             throw new ArgumentException("Denne kommentar findes ikke");
 

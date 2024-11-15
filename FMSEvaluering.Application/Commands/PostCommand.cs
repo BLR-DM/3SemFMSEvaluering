@@ -30,8 +30,7 @@ public class PostCommand : IPostCommand
 
             // Save
             await _postRepository.AddPost(post);
-
-            // Commit
+            
             _unitOfWork.Commit();
         }
         catch (Exception)
@@ -47,13 +46,12 @@ public class PostCommand : IPostCommand
         {
             _unitOfWork.BeginTransaction();
 
-            // Do
+            // Load
             var post = await _postRepository.GetPost(postDto.Id);
 
-            // Save
+            // Do & Save
             await _postRepository.DeletePost(post);
 
-            // Commit
             _unitOfWork.Commit();
         }
         catch (Exception)
@@ -76,7 +74,9 @@ public class PostCommand : IPostCommand
             post.CreateVote(voteDto.VoteType);
 
             // Save
-            _postRepository.AddVote();
+             await _postRepository.AddVote();
+
+             _unitOfWork.Commit();
         }
         catch (Exception)
         {
@@ -99,6 +99,8 @@ public class PostCommand : IPostCommand
 
             // Save
             await _postRepository.UpdateVote();
+
+            _unitOfWork.Commit();
         }
         catch (Exception)
         {
@@ -118,6 +120,8 @@ public class PostCommand : IPostCommand
             post.DeleteVote(voteDto.Id);
             // Save
             await _postRepository.DeleteVote();
+
+            _unitOfWork.Commit();
         }
         catch (Exception)
         {
@@ -139,7 +143,7 @@ public class PostCommand : IPostCommand
             post.CreateComment(commentDto.text);
 
             // Save 
-            _postRepository.AddCommentAsync();
+            await _postRepository.AddCommentAsync();
             _unitOfWork.Commit();
         }
         catch (Exception)
@@ -162,7 +166,7 @@ public class PostCommand : IPostCommand
             var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
 
             // Save
-            _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+            await _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
             _unitOfWork.Commit();
 
         }
