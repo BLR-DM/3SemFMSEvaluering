@@ -10,4 +10,6 @@ public interface IPostRepository
     Task AddVote();
     Task DeleteVote();
     Task UpdateVote();
+    Task AddCommentAsync();
+    Task UpdateCommentAsync(Comment comment, byte[] rowVersion);
 }
