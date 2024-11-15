@@ -22,17 +22,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/post/{id:int}",
-    async (int id, IPostQuery postQuery) =>
-        await postQuery.GetPost(id));
-
 app.MapPost("/post",
-    (CreatePostDto post, IPostCommand command) => 
-        command.CreatePost(post));
+    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post));
+
+app.MapGet("/post/{id}",
+    async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
 
 app.MapDelete("/post", 
-    async ([FromBody] DeletePostDto post, IPostCommand command) => 
-        await command.DeletePost(post));
+    async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
     //.RequireAuthorization("isAdmin");
 
 

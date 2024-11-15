@@ -12,7 +12,7 @@ public class PostQuery : IPostQuery
     {
         _db = db;
     }
-    async Task<PostDto> IPostQuery.GetPost(int postId)
+    async Task<PostDto> IPostQuery.GetPostAsync(int postId)
     {
         var post = await _db.Posts.AsNoTracking()
             .SingleAsync(p => p.Id == postId);

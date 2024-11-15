@@ -19,7 +19,7 @@ public class PostCommand : IPostCommand
         _postRepository = postRepository;
     }
 
-    async Task IPostCommand.CreatePost(CreatePostDto postDto)
+    async Task IPostCommand.CreatePostAsync(CreatePostDto postDto)
     {
         try
         {
@@ -40,7 +40,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.DeletePost(DeletePostDto postDto)
+    async Task IPostCommand.DeletePostAsync(DeletePostDto postDto)
     {
         try
         {

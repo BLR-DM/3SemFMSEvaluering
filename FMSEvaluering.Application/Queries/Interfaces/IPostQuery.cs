@@ -4,5 +4,5 @@ namespace FMSEvaluering.Application.Queries.Interfaces;
 
 public interface IPostQuery
 {
-    Task<PostDto> GetPost(int postId);
+    Task<PostDto> GetPostAsync(int postId);
 }
