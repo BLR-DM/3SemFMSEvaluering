@@ -48,6 +48,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=FMSDataDb;User=sa;Password=Password1234!;MultipleActiveResultSets=true;TrustServerCertificate=true
     ports:
       - "48080:8080"
       - "48081:8081"

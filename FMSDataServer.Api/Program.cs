@@ -1,3 +1,6 @@
+using FMSDataServer.Api;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+builder.Services.AddDbContext<FMSDataDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FMSDataDb"));
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
