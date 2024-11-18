@@ -5,6 +5,7 @@ using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
+using FMSEvaluering.Domain.Values;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -38,6 +39,31 @@ public class PostCommand : IPostCommand
             _unitOfWork.Rollback();
             throw;
         }
+    }
+
+    async Task IPostCommand.AddPostHistory(UpdatePostDto updatePostDto)
+    {
+        try
+        {
+            _unitOfWork.BeginTransaction();
+
+            // Load
+            var post = await _postRepository.GetPost(updatePostDto.PostId);
+            
+            // Do
+            post.SetPostHistory(new PostHistory(updatePostDto.Content));
+            
+            // Save
+            await _postRepository.AddPostHistory(post);
+
+            _unitOfWork.Commit();
+        }
+        catch (Exception)
+        {
+            _unitOfWork.Rollback();
+            throw;
+        }
+
     }
 
     async Task IPostCommand.DeletePostAsync(DeletePostDto postDto)

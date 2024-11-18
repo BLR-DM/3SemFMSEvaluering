@@ -1,10 +1,13 @@
-﻿namespace FMSEvaluering.Application.Queries.QueryDto;
+﻿using FMSEvaluering.Application.Commands.CommandDto;
+
+namespace FMSEvaluering.Application.Queries.QueryDto;
 
 public record PostDto()
 {
     public int Id { get; set; }
     public string Description { get; set; }
     public string Solution { get; set; }
+    public IEnumerable<PostHistoryDto> PostHistoryDto { get; set; }
     public IEnumerable<VoteDto> VoteDto { get; set; }
     public IEnumerable<CommentDto> CommentDto { get; set; }
 

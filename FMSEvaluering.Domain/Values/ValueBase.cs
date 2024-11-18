@@ -3,6 +3,6 @@
 namespace FMSEvaluering.Domain.Values;
 
 [ComplexType]
-public record ValueObject
+public abstract record ValueBase
 {
 }

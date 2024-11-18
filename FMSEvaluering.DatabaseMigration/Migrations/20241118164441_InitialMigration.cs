@@ -5,17 +5,25 @@
 namespace FMSEvaluering.DatabaseMigration.Migrations
 {
     /// <inheritdoc />
-    public partial class PostAsAggregateRootAddedVotesAndComments : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Solution",
-                table: "Posts",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Solution = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Comments",
@@ -29,12 +37,32 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comment", x => x.Id);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comment_Posts_PostId",
+                        name: "FK_Comments_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostHistory",
+                columns: table => new
+                {
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostHistory", x => new { x.PostId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_PostHistory_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -58,7 +86,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comment_PostId",
+                name: "IX_Comments_PostId",
                 table: "Comments",
                 column: "PostId");
 
@@ -75,11 +103,13 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "PostHistory");
+
+            migrationBuilder.DropTable(
                 name: "Votes");
 
-            migrationBuilder.DropColumn(
-                name: "Solution",
-                table: "Posts");
+            migrationBuilder.DropTable(
+                name: "Posts");
         }
     }
 }

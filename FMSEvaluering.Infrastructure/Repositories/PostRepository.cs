@@ -27,6 +27,11 @@ public class PostRepository : IPostRepository
             .SingleAsync(p => p.Id == id);
     }
 
+    async Task IPostRepository.AddPostHistory(Post post)
+    {
+        await _db.SaveChangesAsync();
+    }
+
     async Task IPostRepository.DeletePost(Post post)
     {
         _db.Posts.Remove(post);
