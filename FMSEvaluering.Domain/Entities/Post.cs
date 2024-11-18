@@ -1,9 +1,12 @@
-﻿namespace FMSEvaluering.Domain.Entities;
+﻿using FMSEvaluering.Domain.Values;
+
+namespace FMSEvaluering.Domain.Entities;
 
 public class Post : DomainEntity
 {
     private readonly List<Comment> _comments = [];
     private readonly List<Vote> _votes = [];
+    private readonly List<PostHistory> _history = [];
 
     protected Post()
     {
@@ -17,12 +20,18 @@ public class Post : DomainEntity
 
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
+    public IReadOnlyCollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
     public static Post Create(string description, string solution)
     {
         return new Post(description, solution);
+    }
+
+    public void SetPostHistory(PostHistory postHistory)
+    {
+        _history.Add(postHistory);
     }
 
     // Vote

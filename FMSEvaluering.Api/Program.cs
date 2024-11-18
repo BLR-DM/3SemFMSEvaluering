@@ -25,10 +25,10 @@ if (app.Environment.IsDevelopment())
 
 app.MapPost("/post",
     async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post));
-
+app.MapPut("/post",
+    async (UpdatePostDto postHistory, IPostCommand command) => await command.AddPostHistory(postHistory));
 app.MapGet("/post/{id}",
     async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
-
 app.MapDelete("/post", 
     async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
 //.RequireAuthorization("isAdmin");

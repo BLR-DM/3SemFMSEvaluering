@@ -47,7 +47,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Comment");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("FMSEvaluering.Domain.Entities.Post", b =>
@@ -109,6 +109,34 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                     b.HasOne("FMSEvaluering.Domain.Entities.Post", null)
                         .WithMany("Comments")
                         .HasForeignKey("PostId");
+                });
+
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Post", b =>
+                {
+                    b.OwnsMany("FMSEvaluering.Domain.Values.PostHistory", "History", b1 =>
+                        {
+                            b1.Property<int>("PostId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Content")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("PostId", "Id");
+
+                            b1.ToTable("PostHistory");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PostId");
+                        });
+
+                    b.Navigation("History");
                 });
 
             modelBuilder.Entity("FMSEvaluering.Domain.Entities.Vote", b =>
