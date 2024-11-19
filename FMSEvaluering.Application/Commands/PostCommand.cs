@@ -27,7 +27,7 @@ public class PostCommand : IPostCommand
             _unitOfWork.BeginTransaction();
 
             // Do
-            var post = Post.Create(postDto.Description, postDto.Solution);
+            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserÌd);
 
             // Save
             await _postRepository.AddPost(post);
