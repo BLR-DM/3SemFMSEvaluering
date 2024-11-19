@@ -121,8 +121,14 @@ app.UseHttpsRedirection();
 
 
 
-app.MapPost("/fms/register", async (UserManager<AppUser> _userManager, RegisterDto registerDto) =>
+app.MapPost("/fms/register", async (UserManager<AppUser> _userManager, RegisterDto registerDto, FMSDataDbContext _context) =>
 {
+    var student = await _context.Students.SingleOrDefaultAsync(e => e.Email == registerDto.Email);
+    if (student == null)
+    {
+        return Results.BadRequest("Student with this email doesnt exist");
+    }
+
     if (registerDto.Password != registerDto.ConfirmPassword)
     {
         return Results.BadRequest("Password and confirmation password doesnt match");
@@ -140,6 +146,9 @@ app.MapPost("/fms/register", async (UserManager<AppUser> _userManager, RegisterD
     {
         return Results.BadRequest(result.Errors);
     }
+
+    student.AppUser = user;
+    await _context.SaveChangesAsync();
 
     return Results.Ok(new{Message = "User registered"});
 });
