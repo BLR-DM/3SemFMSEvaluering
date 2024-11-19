@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Gateway.API.Entities
+namespace FMSDataServer.Api.Models
 {
     public class AppUser : IdentityUser
     {

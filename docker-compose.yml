@@ -19,3 +19,9 @@ services:
 
   mssql:
     image: "mcr.microsoft.com/mssql/server:2019-latest"
+
+  fmsdataserver.api:
+    image: ${DOCKER_REGISTRY-}fmsdataserverapi
+    build:
+      context: .
+      dockerfile: FMSDataServer.Api/Dockerfile

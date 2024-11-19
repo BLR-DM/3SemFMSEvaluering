@@ -1,69 +1,47 @@
-using Gateway.API.Database;
-using Gateway.API.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Gateway.API.ExternalServices;
+using Gateway.API.Interfaces;
+using Gateway.API.ModelDto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<UserManager<AppUser>>();
-builder.Services.AddDbContext<GatewayDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("GatewayDbConnection")));
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            // Refresh token?
+        };
+    });
 
-builder.Services.Configure<IdentityOptions>(options =>
+builder.Services.AddAuthorization(options =>
 {
-    // Password settings.
-    options.Password.RequireDigit = false; // HUSK <-!
-    options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 2;
-    options.Password.RequiredUniqueChars = 0;
-
-    // Lockout settings.
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = true;
-
-    // User settings.
-    //options.User.AllowedUserNameCharacters =
-    //    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    options.User.RequireUniqueEmail = false;
+    // Enforce auth by default
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
-
-builder.Services
-    .AddIdentityApiEndpoints<AppUser>() //Gude linje
-    .AddEntityFrameworkStores<GatewayDbContext>(); //Gude linje
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowLocalhost",
-//        builder =>
-//        {
-//            builder.AllowAnyOrigin()
-//                .AllowAnyMethod()
-//                .AllowAnyHeader();
-//        });
-//});
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowLocalhost",
-        builder =>
-        {
-            builder.WithOrigins("https://localhost:18081") // Use https here
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
-});
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IFmsProxy, FmsProxy>();
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhost");
+//app.UseCors("AllowLocalhost");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -72,7 +50,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGroup("/account").MapIdentityApi<AppUser>();
+app.MapPost("/login", async (LoginDto loginDto, IFmsProxy fmsproxy) =>
+{
+    var response = await fmsproxy.CheckCredentials(loginDto.Email, loginDto.Password);
+
+    return Results.Ok(response);
+}).AllowAnonymous();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapReverseProxy();
 
