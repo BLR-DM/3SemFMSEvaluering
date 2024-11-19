@@ -12,21 +12,23 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution)
+    private Post(string description, string solution, string appUserId)
     {
         Description = description;
         Solution = solution;
+        AppUserId = appUserId;
     }
 
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
+    public string AppUserId { get; protected set; }
     public IReadOnlyCollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution)
+    public static Post Create(string description, string solution, string appUserId)
     {
-        return new Post(description, solution);
+        return new Post(description, solution, appUserId);
     }
 
     public void SetPostHistory(PostHistory postHistory)

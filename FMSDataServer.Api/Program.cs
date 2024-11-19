@@ -5,6 +5,7 @@ using FMSDataServer.Api;
 using FMSDataServer.Api.ModelDto;
 using FMSDataServer.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -121,28 +122,38 @@ app.UseHttpsRedirection();
 
 
 
-app.MapPost("/fms/register", async (UserManager<AppUser> _userManager, RegisterDto registerDto) =>
-{
-    if (registerDto.Password != registerDto.ConfirmPassword)
+app.MapPost("/fms/register",
+    async (UserManager<AppUser> _userManager, RegisterDto registerDto, FMSDataDbContext _context) =>
     {
-        return Results.BadRequest("Password and confirmation password doesnt match");
-    }
+        var student = await _context.Students.SingleOrDefaultAsync(e => e.Email == registerDto.Email);
+        if (student == null)
+        {
+            return Results.BadRequest("Student with this email doesnt exist");
+        }
 
-    var user = new AppUser
-    {
-        UserName = registerDto.Email,
-        Email = registerDto.Email
-    };
+        if (registerDto.Password != registerDto.ConfirmPassword)
+        {
+            return Results.BadRequest("Password and confirmation password doesnt match");
+        }
 
-    var result = await _userManager.CreateAsync(user, registerDto.Password);
+        var user = new AppUser
+        {
+            UserName = registerDto.Email,
+            Email = registerDto.Email
+        };
 
-    if (!result.Succeeded)
-    {
-        return Results.BadRequest(result.Errors);
-    }
+        var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-    return Results.Ok(new{Message = "User registered"});
-});
+        if (!result.Succeeded)
+        {
+            return Results.BadRequest(result.Errors);
+        }
+
+        student.AppUser = user;
+        await _context.SaveChangesAsync();
+
+        return Results.Ok(new { Message = "User registered" });
+    });
 
 app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration) =>
 {
@@ -173,7 +184,7 @@ string GenerateJwtToken(AppUser user, IConfiguration configuration)
     var claims = new[]
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email)
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
     };
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
@@ -219,6 +230,7 @@ app.MapPost("/fms/student", async (FMSDataDbContext dbContext, Student student) 
     return Results.Created($"/fms/student/{student.Id}", student);
 });
 
+
 app.MapPost("/fms/teachersubject", async (FMSDataDbContext dbContext, TeacherSubject teacherSubject) =>
 {
     dbContext.TeacherSubjects.Add(teacherSubject);
@@ -252,6 +264,11 @@ app.MapGet("/fms/class", async (FMSDataDbContext dbContext) =>
 app.MapGet("/fms/student", async (FMSDataDbContext dbContext) =>
 {
     return Results.Ok(await dbContext.Students.AsNoTracking().ToListAsync());
+});
+
+app.MapGet("/fms/student/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
+{
+    return Results.Ok(await _context.Students.SingleOrDefaultAsync(s => s.AppUser.Id == appUserId));
 });
 
 app.MapGet("/fms/teachersubject", async (FMSDataDbContext dbContext) =>
