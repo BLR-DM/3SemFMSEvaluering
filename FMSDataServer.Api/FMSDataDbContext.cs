@@ -8,6 +8,7 @@ namespace FMSDataServer.Api
 
         public FMSDataDbContext(DbContextOptions<FMSDataDbContext> options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Lecture> Lectures { get; set; }
