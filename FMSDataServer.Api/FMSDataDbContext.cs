@@ -1,9 +1,10 @@
 ﻿using FMSDataServer.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FMSDataServer.Api
 {
-    public class FMSDataDbContext : DbContext
+    public class FMSDataDbContext : IdentityDbContext<AppUser>
     {
 
         public FMSDataDbContext(DbContextOptions<FMSDataDbContext> options) : base(options)

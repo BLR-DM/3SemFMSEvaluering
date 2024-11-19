@@ -1,21 +1,114 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using FMSDataServer.Api;
+using FMSDataServer.Api.ModelDto;
 using FMSDataServer.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter your token as 'Bearer {your_token}'",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+builder.Services.AddScoped<UserManager<AppUser>>();
 
 builder.Services.AddDbContext<FMSDataDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Password settings.
+    options.Password.RequireDigit = false; // HUSK <-!
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 2;
+    options.Password.RequiredUniqueChars = 0;
+
+    // Lockout settings.
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.AllowedForNewUsers = true;
+
+    // User settings.
+    //options.User.AllowedUserNameCharacters =
+    //    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = false;
+});
+
+builder.Services
+    .AddIdentityApiEndpoints<AppUser>() //Gude linje
+    .AddEntityFrameworkStores<FMSDataDbContext>(); //Gude linje
+                                                   //.AddDefaultTokenProviders();  
+
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+   .AddJwtBearer(options =>
+   {
+       //options.Events = new JwtBearerEvents
+       //{
+       //    OnAuthenticationFailed = context =>
+       //    {
+       //        context.Response.Headers.Add("Authentication-Failed", context.Exception.Message);
+       //        return Task.CompletedTask;
+       //    },
+       //    OnTokenValidated = context =>
+       //    {
+       //        // Log token validation success
+       //        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+       //        logger.LogInformation("Token validated successfully for user: {User}", context.Principal.Identity.Name);
+       //        return Task.CompletedTask;
+       //    }
+       //};
+
+       options.TokenValidationParameters = new TokenValidationParameters
+       {
+           ValidateIssuer = true,
+           ValidateAudience = true,
+           ValidateIssuerSigningKey = true,
+           ValidIssuer = builder.Configuration["Jwt:Issuer"],
+           ValidAudience = builder.Configuration["Jwt:Audience"],
+           IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+       };
+   });
 
 var app = builder.Build();
+
+app.UseAuthentication();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -25,6 +118,77 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
+
+app.MapPost("/fms/register", async (UserManager<AppUser> _userManager, RegisterDto registerDto) =>
+{
+    if (registerDto.Password != registerDto.ConfirmPassword)
+    {
+        return Results.BadRequest("Password and confirmation password doesnt match");
+    }
+
+    var user = new AppUser
+    {
+        UserName = registerDto.Email,
+        Email = registerDto.Email
+    };
+
+    var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+    if (!result.Succeeded)
+    {
+        return Results.BadRequest(result.Errors);
+    }
+
+    return Results.Ok(new{Message = "User registered"});
+});
+
+app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration) =>
+{
+    var user = await _userManager.FindByEmailAsync(loginDto.Email);
+
+    if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
+    {
+        return Results.Unauthorized();
+    }
+
+    var token = GenerateJwtToken(user, _configuration);
+
+    return Results.Ok(token);
+});
+
+app.MapGet("/fms/helloworld", (HttpContext httpContext) =>
+{
+    if (httpContext.User.Identity.IsAuthenticated)
+    {
+        return Results.Ok();
+    }
+
+    return Results.Unauthorized();
+});
+
+string GenerateJwtToken(AppUser user, IConfiguration configuration)
+{
+    var claims = new[]
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email)
+    };
+
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        issuer: configuration["Jwt:Issuer"],
+        audience: configuration["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(30),
+        signingCredentials: creds);
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
+
 
 app.MapPost("/fms/subject", async (FMSDataDbContext dbContext, Subject subject) =>
 {
