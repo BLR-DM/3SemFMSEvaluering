@@ -155,7 +155,7 @@ app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto log
 
     var token = GenerateJwtToken(user, _configuration);
 
-    return Results.Ok(token);
+    return Results.Ok(new { Token = token });
 });
 
 app.MapGet("/fms/helloworld", (HttpContext httpContext) =>
