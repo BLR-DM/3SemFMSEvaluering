@@ -1,22 +1,46 @@
+using System.Text;
 using Gateway.API.ExternalServices;
 using Gateway.API.Interfaces;
 using Gateway.API.ModelDto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    // Enforce auth by default
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
-
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IFmsProxy, FmsProxy>();
 
 var app = builder.Build();
 
-app.UseCors("AllowLocalhost");
+//app.UseCors("AllowLocalhost");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -25,20 +49,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-//app.MapGet("/login", async (LoginDto loginDto, HttpClient httpClient) =>
-//{
-//    var respone = await httpClient.PostAsJsonAsync("http://fmsdataserver.api:8080/fms/login", loginDto);
-
-//    return Results.Ok(respone);
-//});
-
 app.MapPost("/login", async (LoginDto loginDto, IFmsProxy fmsproxy) =>
 {
     var response = await fmsproxy.CheckCredentials(loginDto.Email, loginDto.Password);
-    return Results.Ok(response);
-});
 
+    return Results.Ok(response);
+}).AllowAnonymous();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapReverseProxy();
 
