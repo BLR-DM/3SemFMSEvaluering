@@ -25,3 +25,10 @@ services:
     build:
       context: .
       dockerfile: FMSDataServer.Api/Dockerfile
+
+  fmsevalueringui:
+    image: ${DOCKER_REGISTRY-}fmsevalueringui
+    build:
+      context: .
+      dockerfile: FMSEvalueringUI/Dockerfile
+
