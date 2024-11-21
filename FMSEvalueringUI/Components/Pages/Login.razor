@@ -1,0 +1,58 @@
+﻿@page "/login"
+@using FMSEvalueringUI.ExternalServices
+@using Microsoft.AspNetCore.Mvc
+
+<h3>Login</h3>
+
+@* <div id="login">
+    <h3 class="text-center text-white pt-5">Login form</h3>
+    <div class="container">
+        <div id="login-row" class="row justify-content-center align-items-center">
+            <div id="login-column" class="col-md-6">
+                <div id="login-box" class="col-md-12">
+                    <EditForm Model=@LoginDto OnValidSubmit="@Login12" FormName="Login-Form" Method="post">
+
+                        <div class="form-group">
+                            <label for="Email" class="text-info">Email:</label><br>
+                            <InputText @bind-value="LoginDto.Email" type="email" name="email" id="email" class="form-control" @onchange="p => LoginDto.Email = p.Value.ToString()"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="Password" class="text-info">Password:</label><br>
+                            <InputText @bind-value="LoginDto.Password" type="password" name="password" id="password" class="form-control" @onchange="p => LoginDto.Email = p.Value.ToString()"/>
+                        </div>
+                        <br/>
+                        <div class="form-group">
+                            <button class="btn btn-primary btn-outline-primary" type="submit">Authenticate</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+<EditForm Model="LoginDto" FormName="LoginForm" OnSubmit="Login12">
+    <InputText @bind-value="LoginDto.Email"></InputText>
+    <InputText @bind-value="LoginDto.Password"></InputText>
+    <button type="submit">Login</button>
+</EditForm>
+
+<form>
+    Test token: @Token
+</form>
+
+@code {
+    Proxy proxy = new Proxy();
+
+    [SupplyParameterFromForm] private LoginDto? LoginDto { get; set; } = new LoginDto();
+
+    private string Token { get; set; }
+
+    public async Task Login12()
+    {
+        var tokenResponse = await proxy.CheckCredentials(LoginDto);
+
+        Token = tokenResponse.Value.Token;
+
+    }
+}
