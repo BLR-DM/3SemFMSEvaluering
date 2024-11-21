@@ -1,61 +1,4 @@
 services:
-  fmsevaluering.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      #- ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__EvaluationDbConnection=Server=mssql1.unoeuro.com;Database=lawhouseblr_dk_db_evalueringfms;User Id=lawhouseblr_dk;Password=km5xFBGRe2pErnDcg6h3;Encrypt=False;MultipleActiveResultSets=true;TrustServerCertificate=true
-    ports:
-      - "28080:8080"
-      #- "28081:8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-
-  gateway.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      #- ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__GatewayDbConnection=Server=mssql;Database=UserLoginDb;User=sa;Password=Password1234!;MultipleActiveResultSets=true;TrustServerCertificate=true
-    ports:
-      - "18080:8080"
-      #- "18081:8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-
-  fmsuserservice.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      #- ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "38080:8080"
-      #- "38081:8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-
-  mssql:
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Password1234!"
-    ports:
-      - 11433:1433
-  fmsdataserver.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      #- ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=FMSDataDb;User=sa;Password=Password1234!;MultipleActiveResultSets=true;TrustServerCertificate=true
-    ports:
-      - "48080:8080"
-      #- "48081:8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-
   fmsevalueringui:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -69,3 +12,69 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - mssql
+      - fmsevaluering.api
+      - gateway.api
+      - fmsuserservice.api
+      - fmsdataserver.api
+
+  mssql:
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password1234!"
+    ports:
+      - 11433:1433
+
+  gateway.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__GatewayDbConnection=Server=mssql;Database=UserLoginDb;User=sa;Password=Password1234!;MultipleActiveResultSets=true;TrustServerCertificate=true
+    ports:
+      - "18080:8080"
+      - "18081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  fmsevaluering.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__EvaluationDbConnection=Server=mssql1.unoeuro.com;Database=lawhouseblr_dk_db_evalueringfms;User Id=lawhouseblr_dk;Password=km5xFBGRe2pErnDcg6h3;Encrypt=False;MultipleActiveResultSets=true;TrustServerCertificate=true
+    ports:
+      - "28080:8080"
+      - "28081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  fmsuserservice.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "38080:8080"
+      - "38081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+  fmsdataserver.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=FMSDataDb;User=sa;Password=Password1234!;MultipleActiveResultSets=true;TrustServerCertificate=true
+    ports:
+      - "48080:8080"
+      - "48081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+

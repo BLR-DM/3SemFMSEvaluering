@@ -25,13 +25,10 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    // Enforce auth by default
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+builder.Services.AddAuthorizationBuilder()
+    .SetFallbackPolicy(new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
-        .Build();
-});
+        .Build());
 
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
@@ -57,6 +54,7 @@ app.MapPost("/login", async (LoginDto loginDto, IFmsProxy fmsproxy) =>
     return Results.Ok(response);
 }).AllowAnonymous();
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

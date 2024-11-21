@@ -1,4 +1,13 @@
 services:
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+
+  fmsevalueringui:
+    image: ${DOCKER_REGISTRY-}fmsevalueringui
+    build:
+      context: .
+      dockerfile: FMSEvalueringUI/Dockerfile
+
   fmsevaluering.api:
     image: ${DOCKER_REGISTRY-}fmsevalueringapi
     build:
@@ -15,20 +24,11 @@ services:
     image: ${DOCKER_REGISTRY-}fmsuserserviceapi
     build:
       context: .
-      dockerfile: FMSUserService.Api/Dockerfile
-
-  mssql:
-    image: "mcr.microsoft.com/mssql/server:2019-latest"
+      dockerfile: FMSUserService.Api/Dockerfile      
 
   fmsdataserver.api:
     image: ${DOCKER_REGISTRY-}fmsdataserverapi
     build:
       context: .
       dockerfile: FMSDataServer.Api/Dockerfile
-
-  fmsevalueringui:
-    image: ${DOCKER_REGISTRY-}fmsevalueringui
-    build:
-      context: .
-      dockerfile: FMSEvalueringUI/Dockerfile
 

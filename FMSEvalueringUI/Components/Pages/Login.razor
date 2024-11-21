@@ -1,6 +1,5 @@
 ﻿@page "/login"
 @using FMSEvalueringUI.ExternalServices
-@using Microsoft.AspNetCore.Mvc
 
 <h3>Login</h3>
 
@@ -32,8 +31,8 @@
 </div> *@
 
 <EditForm Model="LoginDto" FormName="LoginForm" OnSubmit="Login12">
-    <InputText @bind-value="LoginDto.Email"></InputText>
-    <InputText @bind-value="LoginDto.Password"></InputText>
+    <InputText @bind-Value="LoginDto.Email"></InputText>
+    <InputText @bind-Value="LoginDto.Password"></InputText>
     <button type="submit">Login</button>
 </EditForm>
 

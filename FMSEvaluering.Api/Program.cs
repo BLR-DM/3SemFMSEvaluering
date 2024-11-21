@@ -64,6 +64,7 @@ app.MapPut("/post/comment",
     async (UpdateCommentDto dto, IPostCommand command) =>
         await command.UpdateCommentAsync(dto));
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
