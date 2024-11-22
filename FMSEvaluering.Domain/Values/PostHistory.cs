@@ -6,6 +6,8 @@ public record PostHistory
     public PostHistory(string content)
     {
         Content = content;
+        EditedDate = DateTime.Now;
     }
     public string Content { get; private set; }
+    public DateTime EditedDate{ get; private set; }
 }

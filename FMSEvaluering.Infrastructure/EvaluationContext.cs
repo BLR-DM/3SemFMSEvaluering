@@ -11,14 +11,14 @@ public class EvaluationContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Post>(entity =>
-        {
-            entity.OwnsMany(p => p.History, history =>
+        modelBuilder.Entity<Post>().OwnsMany(
+            p => p.History, a =>
             {
-                //history.WithOwner().HasForeignKey("PostId"); // Optional FK customization
-                history.Property(h => h.Content).IsRequired(); // Configure the property
+                a.WithOwner().HasForeignKey("PostId");
+                a.Property(h => h.Content).IsRequired();
+                a.Property(h => h.EditedDate).IsRequired();
+                a.HasKey("PostId", "EditedDate");
             });
-        });
     }
 
     public DbSet<Post> Posts { get; set; }

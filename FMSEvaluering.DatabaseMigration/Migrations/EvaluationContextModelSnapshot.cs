@@ -58,6 +58,10 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -118,17 +122,14 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                             b1.Property<int>("PostId")
                                 .HasColumnType("int");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                            b1.Property<DateTime>("EditedDate")
+                                .HasColumnType("datetime2");
 
                             b1.Property<string>("Content")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("PostId", "Id");
+                            b1.HasKey("PostId", "EditedDate");
 
                             b1.ToTable("PostHistory");
 

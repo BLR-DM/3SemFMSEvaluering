@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMSEvaluering.DatabaseMigration.Migrations
 {
     [DbContext(typeof(EvaluationContext))]
-    [Migration("20241118164441_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20241122225132_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,6 +60,10 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -121,17 +125,14 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                             b1.Property<int>("PostId")
                                 .HasColumnType("int");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                            b1.Property<DateTime>("EditedDate")
+                                .HasColumnType("datetime2");
 
                             b1.Property<string>("Content")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("PostId", "Id");
+                            b1.HasKey("PostId", "EditedDate");
 
                             b1.ToTable("PostHistory");
 
