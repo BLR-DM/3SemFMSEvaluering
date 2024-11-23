@@ -15,7 +15,7 @@ public class ClassroomAccessHandler : AuthorizationHandler<ClassroomAccessRequir
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ClassroomAccessRequirement requirement)
     {
         // Check if the user has a claim for "StudentId"
-        var studentId = context.User.FindFirst("Sub").Value;
+        var studentId = context.User.FindFirst("sub").Value;
         if (string.IsNullOrEmpty(studentId))
         {
             return Task.CompletedTask;
