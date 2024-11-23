@@ -1,10 +1,13 @@
+using System.Security.Claims;
 using FMSEvaluering.Application;
+using FMSEvaluering.Application.Authorization;
 using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +19,11 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanCreate", policy =>
+        policy.RequireClaim("class", "DVME231"));
+});
 
 var app = builder.Build();
 
@@ -26,8 +33,25 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//app.MapPost("/post",
+//    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post))
+//    .RequireAuthorization("CanCreate");
+
 app.MapPost("/post",
-    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post));
+    async (CreatePostDto post, IAuthorizationService authService, ClaimsPrincipal user, IPostCommand command) =>
+    {
+        var requirement = new ClassroomAccessRequirement(post.ClassId);
+        var result = await authService.AuthorizeAsync(user, null, requirement);
+
+        if (!result.Succeeded)
+        {
+            return Results.Forbid();
+        }
+
+        await command.CreatePostAsync(post);
+
+        return Results.Created();
+    });
 
 app.MapPut("/post",
     async (UpdatePostDto postHistory, IPostCommand command) => await command.AddPostHistory(postHistory));

@@ -155,7 +155,7 @@ app.MapPost("/fms/register",
         return Results.Ok(new { Message = "User registered" });
     });
 
-app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration) =>
+app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration, FMSDataDbContext _context) =>
 {
     var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
@@ -164,7 +164,11 @@ app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto log
         return Results.Unauthorized();
     }
 
-    var token = GenerateJwtToken(user, _configuration);
+    var student = await _context.Students
+        .Include(s => s.Class)
+        .SingleAsync(s => s.AppUser.Id == user.Id);
+
+    var token = GenerateJwtToken(user, _configuration, student);
 
     return Results.Ok(new { Token = token });
 });
@@ -179,12 +183,13 @@ app.MapGet("/fms/helloworld", (HttpContext httpContext) =>
     return Results.Unauthorized();
 });
 
-string GenerateJwtToken(AppUser user, IConfiguration configuration)
+string GenerateJwtToken(AppUser user, IConfiguration configuration, Student student)
 {
     var claims = new[]
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim("Class", student.Class.Name),
     };
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
@@ -268,7 +273,7 @@ app.MapGet("/fms/student", async (FMSDataDbContext dbContext) =>
 
 app.MapGet("/fms/student/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
 {
-    return Results.Ok(await _context.Students.SingleOrDefaultAsync(s => s.AppUser.Id == appUserId));
+    return Results.Ok(await _context.Students.AsNoTracking().SingleOrDefaultAsync(s => s.AppUser.Id == appUserId));
 });
 
 app.MapGet("/fms/teachersubject", async (FMSDataDbContext dbContext) =>

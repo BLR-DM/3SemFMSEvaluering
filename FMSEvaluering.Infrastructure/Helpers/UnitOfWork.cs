@@ -18,26 +18,39 @@ namespace FMSEvaluering.Infrastructure.Helpers
         {
             _db = db;
         }
-        void IUnitOfWork.Commit()
+        async Task IUnitOfWork.Commit()
         {
             if (_transaction == null) throw new Exception("You must call 'BeginTransaction' before Commit is called");
 
-            _transaction.Commit();
-            _transaction.Dispose();
+            try
+            {
+                await _db.SaveChangesAsync();
+                await _transaction.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await _transaction.RollbackAsync();
+                throw;
+            }
+            finally
+            {
+                await _transaction.DisposeAsync();
+            }
+            
         }
 
-        void IUnitOfWork.Rollback()
+        async Task IUnitOfWork.Rollback()
         {
             if(_transaction == null) throw new Exception("You must call 'BeginTransaction' before Rollback is called");
 
-            _transaction.Rollback();
-            _transaction.Dispose();
+            await _transaction.RollbackAsync();
+            await _transaction.DisposeAsync();
         }
 
-        void IUnitOfWork.BeginTransaction(IsolationLevel isolationLevel)
+        async Task IUnitOfWork.BeginTransaction(IsolationLevel isolationLevel)
         {
             if (_db.Database.CurrentTransaction != null) return;
-            _transaction = _db.Database.BeginTransaction(isolationLevel);
+            _transaction = await _db.Database.BeginTransactionAsync(isolationLevel);
         }
     }
 }
