@@ -24,19 +24,18 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Do
             var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserÌd);
 
             // Save
             await _postRepository.AddPost(post);
-            
-            _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }
@@ -45,22 +44,20 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Load
             var post = await _postRepository.GetPost(updatePostDto.PostId);
             
             // Do
             post.SetPostHistory(new PostHistory(updatePostDto.Content));
-            
-            // Save
-            await _postRepository.AddPostHistory(post);
 
-            _unitOfWork.Commit();
+            // Save
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
 
@@ -70,19 +67,18 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Load
             var post = await _postRepository.GetPost(postDto.Id);
 
             // Do & Save
-            await _postRepository.DeletePost(post);
-
-            _unitOfWork.Commit();
+            _postRepository.DeletePost(post);
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }
@@ -91,7 +87,7 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Load 
             var post = await _postRepository.GetPost(voteDto.PostId);
@@ -100,13 +96,11 @@ public class PostCommand : IPostCommand
             post.CreateVote(voteDto.VoteType);
 
             // Save
-             await _postRepository.AddVote();
-
-             _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }
@@ -115,7 +109,7 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Load
             var post = await _postRepository.GetPost(voteDto.PostId);
@@ -124,13 +118,11 @@ public class PostCommand : IPostCommand
             post.UpdateVote(voteDto.Id, voteDto.VoteType);
 
             // Save
-            await _postRepository.UpdateVote();
-
-            _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }
@@ -139,19 +131,17 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
             // Load 
             var post = await _postRepository.GetPost(voteDto.PostId);
             // Do
             post.DeleteVote(voteDto.Id);
             // Save
-            await _postRepository.DeleteVote();
-
-            _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }
@@ -160,7 +150,7 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Load
             var post = await _postRepository.GetPost(commentDto.postID);
@@ -169,12 +159,11 @@ public class PostCommand : IPostCommand
             post.CreateComment(commentDto.text);
 
             // Save 
-            await _postRepository.AddCommentAsync();
-            _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }
@@ -183,7 +172,7 @@ public class PostCommand : IPostCommand
     {
         try
         {
-            _unitOfWork.BeginTransaction();
+            await _unitOfWork.BeginTransaction();
 
             // Load
             var post = await _postRepository.GetPost(commentDto.postID);
@@ -192,13 +181,13 @@ public class PostCommand : IPostCommand
             var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
 
             // Save
-            await _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
-            _unitOfWork.Commit();
+            _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+            await _unitOfWork.Commit();
 
         }
         catch (Exception)
         {
-            _unitOfWork.Rollback();
+            await _unitOfWork.Rollback();
             throw;
         }
     }

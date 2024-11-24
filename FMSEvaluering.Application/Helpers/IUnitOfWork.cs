@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 
-namespace FMSEvaluering.Application.Helpers
+namespace FMSEvaluering.Application.Helpers;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        void Commit();
-        void Rollback();
-        void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Serializable);
-    }
+    Task Commit();
+    Task Rollback();
+    Task BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Serializable);
 }

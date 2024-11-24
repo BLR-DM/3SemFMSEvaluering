@@ -16,7 +16,6 @@ public class PostRepository : IPostRepository
     async Task IPostRepository.AddPost(Post post)
     {
         await _db.Posts.AddAsync(post);
-        await _db.SaveChangesAsync();
     }
 
     async Task<Post> IPostRepository.GetPost(int id)
@@ -27,40 +26,13 @@ public class PostRepository : IPostRepository
             .SingleAsync(p => p.Id == id);
     }
 
-    async Task IPostRepository.AddPostHistory(Post post)
-    {
-        await _db.SaveChangesAsync();
-    }
-
-    async Task IPostRepository.DeletePost(Post post)
+    void IPostRepository.DeletePost(Post post)
     {
         _db.Posts.Remove(post);
-        await _db.SaveChangesAsync();
     }
 
-    async Task IPostRepository.AddVote()
-    {
-       await _db.SaveChangesAsync();
-    }
-
-    async Task IPostRepository.DeleteVote()
-    {
-        await _db.SaveChangesAsync();
-    }
-
-    async Task IPostRepository.UpdateVote()
-    {
-        await _db.SaveChangesAsync();
-    }
-
-    async Task IPostRepository.AddCommentAsync()
-    {
-        await _db.SaveChangesAsync();
-    }
-
-    async Task IPostRepository.UpdateCommentAsync(Comment comment, byte[] rowVersion)
+    void IPostRepository.UpdateCommentAsync(Comment comment, byte[] rowVersion)
     {
         _db.Entry(comment).Property(nameof(comment.RowVersion)).OriginalValue = rowVersion;
-        await _db.SaveChangesAsync();
     }
 }
