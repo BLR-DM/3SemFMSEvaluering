@@ -8,6 +8,7 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Infrastructure;
+using FMSEvaluering.Infrastructure.Authorization;
 using FMSEvaluering.Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,7 @@ builder.Services.AddApplication();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IFmsProxy, FmsProxy>();
+builder.Services.AddScoped<IAuthorizationHandler, ClassroomAccessHandler>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -87,8 +89,12 @@ app.UseAuthorization();
 //    .RequireAuthorization("CanCreate");
 
 app.MapPost("/post",
-    async (CreatePostDto post, IAuthorizationService authService, ClaimsPrincipal user, IPostCommand command) =>
+    async (HttpContext context, CreatePostDto post, IAuthorizationService authService, ClaimsPrincipal user, IPostCommand command) =>
     {
+        if (!context.User.Identity.IsAuthenticated) // remove?
+        {
+            return Results.Unauthorized();
+        }
         var requirement = new ClassroomAccessRequirement(post.ClassId);
         var result = await authService.AuthorizeAsync(user, null, requirement);
 
