@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMSEvaluering.DatabaseMigration.Migrations
 {
     [DbContext(typeof(EvaluationContext))]
-    [Migration("20241122225132_Initial")]
-    partial class Initial
+    [Migration("20241124222152_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,38 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Forum.Forum", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Forums");
+
+                    b.HasDiscriminator().HasValue("Forum");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("FMSEvaluering.Domain.Entities.Post", b =>
                 {
                     b.Property<int>("Id")
@@ -69,6 +101,9 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ForumId")
+                        .HasColumnType("int");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -80,6 +115,8 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ForumId");
 
                     b.ToTable("Posts");
                 });
@@ -111,6 +148,33 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                     b.ToTable("Votes");
                 });
 
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Forum.ClassForum", b =>
+                {
+                    b.HasBaseType("FMSEvaluering.Domain.Entities.Forum.Forum");
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("ClassForum");
+                });
+
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Forum.PublicForum", b =>
+                {
+                    b.HasBaseType("FMSEvaluering.Domain.Entities.Forum.Forum");
+
+                    b.HasDiscriminator().HasValue("PublicForum");
+                });
+
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Forum.SubjectForum", b =>
+                {
+                    b.HasBaseType("FMSEvaluering.Domain.Entities.Forum.Forum");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("SubjectForum");
+                });
+
             modelBuilder.Entity("FMSEvaluering.Domain.Entities.Comment", b =>
                 {
                     b.HasOne("FMSEvaluering.Domain.Entities.Post", null)
@@ -120,6 +184,12 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
 
             modelBuilder.Entity("FMSEvaluering.Domain.Entities.Post", b =>
                 {
+                    b.HasOne("FMSEvaluering.Domain.Entities.Forum.Forum", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("ForumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsMany("FMSEvaluering.Domain.Values.PostHistory", "History", b1 =>
                         {
                             b1.Property<int>("PostId")
@@ -148,6 +218,11 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                     b.HasOne("FMSEvaluering.Domain.Entities.Post", null)
                         .WithMany("Votes")
                         .HasForeignKey("PostId");
+                });
+
+            modelBuilder.Entity("FMSEvaluering.Domain.Entities.Forum.Forum", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("FMSEvaluering.Domain.Entities.Post", b =>

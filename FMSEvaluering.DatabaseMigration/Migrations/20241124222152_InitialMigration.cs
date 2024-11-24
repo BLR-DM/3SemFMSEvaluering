@@ -6,11 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FMSEvaluering.DatabaseMigration.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Forums",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
+                    ClassId = table.Column<int>(type: "int", nullable: true),
+                    SubjectId = table.Column<int>(type: "int", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Forums", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
@@ -20,11 +37,18 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Solution = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ForumId = table.Column<int>(type: "int", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_Forums_ForumId",
+                        column: x => x.ForumId,
+                        principalTable: "Forums",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,6 +116,11 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Posts_ForumId",
+                table: "Posts",
+                column: "ForumId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Votes_PostId",
                 table: "Votes",
                 column: "PostId");
@@ -111,6 +140,9 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
 
             migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Forums");
         }
     }
 }
