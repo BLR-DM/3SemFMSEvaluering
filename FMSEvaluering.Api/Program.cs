@@ -68,8 +68,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("CanCreate", policy =>
+    options.AddPolicy("CanCreatePost", policy =>
         policy.RequireClaim("class", "DVME231"));
+
+    options.AddPolicy("Student", policy =>
+        policy.RequireClaim("usertype", "student"));
+
+    options.AddPolicy("Teacher", policy => 
+        policy.RequireClaim("usertype", "teacher"));
 });
 
 var app = builder.Build();
@@ -106,7 +112,7 @@ app.MapPost("/post",
         await command.CreatePostAsync(post);
 
         return Results.Created();
-    });
+    }).RequireAuthorization("Student");
 
 app.MapPut("/post",
     async (UpdatePostDto postHistory, IPostCommand command) => await command.AddPostHistory(postHistory));
@@ -118,6 +124,9 @@ app.MapDelete("/post",
     async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
 //.RequireAuthorization("isAdmin");
 
+app.MapGet("/teacher", () => "hej med dig teacher").RequireAuthorization("Teacher");
+
+app.MapGet("/student", () => "hej med dig elev").RequireAuthorization("Student");
 
 //VOTE
 //VOTE

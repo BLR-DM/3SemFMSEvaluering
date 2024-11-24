@@ -44,6 +44,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<UserManager<AppUser>>();
+builder.Services.AddScoped<DataInitializer>();
 
 builder.Services.AddDbContext<FMSDataDbContext>(options =>
 {
@@ -128,10 +129,28 @@ if (app.Environment.IsDevelopment())
 app.MapPost("/fms/register",
     async (UserManager<AppUser> _userManager, RegisterDto registerDto, FMSDataDbContext _context) =>
     {
-        var student = await _context.Students.SingleOrDefaultAsync(e => e.Email == registerDto.Email);
-        if (student == null)
+        var user = new AppUser
         {
-            return Results.BadRequest("Student with this email doesnt exist");
+            UserName = registerDto.Email,
+            Email = registerDto.Email
+        };
+
+        var student = await _context.Students.SingleOrDefaultAsync(e => e.Email == registerDto.Email);
+        if (student != null)
+        {
+            student.AppUser = user;
+        }
+        else
+        {
+            var teacher = await _context.Teachers.SingleOrDefaultAsync(t => t.Email == registerDto.Email);
+            if (teacher != null)
+            {
+                teacher.AppUser = user;
+            }
+            else
+            {
+                return Results.BadRequest("No user with this email exist");
+            }
         }
 
         if (registerDto.Password != registerDto.ConfirmPassword)
@@ -139,11 +158,6 @@ app.MapPost("/fms/register",
             return Results.BadRequest("Password and confirmation password doesnt match");
         }
 
-        var user = new AppUser
-        {
-            UserName = registerDto.Email,
-            Email = registerDto.Email
-        };
 
         var result = await _userManager.CreateAsync(user, registerDto.Password);
 
@@ -152,7 +166,6 @@ app.MapPost("/fms/register",
             return Results.BadRequest(result.Errors);
         }
 
-        student.AppUser = user;
         await _context.SaveChangesAsync();
 
         return Results.Ok(new { Message = "User registered" });
@@ -167,11 +180,27 @@ app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto log
         return Results.Unauthorized();
     }
 
+    var token = "";
+
     var student = await _context.Students
         .Include(s => s.Class)
-        .SingleAsync(s => s.AppUser.Id == user.Id);
-
-    var token = GenerateJwtToken(user, _configuration, student);
+        .SingleOrDefaultAsync(s => s.AppUser.Id == user.Id);
+    if (student != null)
+    {
+        token = GenerateJwtToken(user, _configuration, student);
+    }
+    else
+    {
+        var teacher = await _context.Teachers.SingleOrDefaultAsync(t => t.AppUser.Id == user.Id);
+        if (teacher != null)
+        {
+            token = GenerateJwtTokenTeacher(user, _configuration, teacher);
+        }
+        else
+        {
+            return Results.Unauthorized();
+        }
+    }
 
     return Results.Ok(new { Token = token });
 }).AllowAnonymous();
@@ -192,7 +221,29 @@ string GenerateJwtToken(AppUser user, IConfiguration configuration, Student stud
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim("class", student.Class.Name),
+        new Claim("usertype", "student"),
+    };
+
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        issuer: configuration["Jwt:Issuer"],
+        audience: configuration["Jwt:Audience"],
+        claims: claims,
+        expires: DateTime.Now.AddMinutes(30),
+        signingCredentials: creds);
+
+    return new JwtSecurityTokenHandler().WriteToken(token);
+}
+
+string GenerateJwtTokenTeacher(AppUser user, IConfiguration configuration, Teacher teacher)
+{
+    var claims = new[]
+    {
+        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim("usertype", "teacher"),
     };
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
@@ -306,6 +357,11 @@ app.MapGet("/fms/teachersubject", async (FMSDataDbContext dbContext) =>
 app.MapGet("/fms/lecture", async (FMSDataDbContext dbContext) =>
 {
     return Results.Ok(await dbContext.Lectures.AsNoTracking().ToListAsync());
+});
+
+app.MapPost("/insertdata", async (DataInitializer data) =>
+{
+    data.InsertData();
 });
 
 

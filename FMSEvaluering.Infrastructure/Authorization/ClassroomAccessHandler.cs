@@ -17,6 +17,7 @@ public class ClassroomAccessHandler : AuthorizationHandler<ClassroomAccessRequir
     {
         // Check if the user has a claim for "StudentId"
         var studentId = context.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
         if (string.IsNullOrEmpty(studentId))
         {
             return Task.CompletedTask;
