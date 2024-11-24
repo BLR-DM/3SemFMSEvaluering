@@ -1,4 +1,5 @@
 ﻿using FMSEvaluering.Domain.Entities;
+using FMSEvaluering.Domain.Entities.Forum;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure;
@@ -19,9 +20,16 @@ public class EvaluationContext : DbContext
                 a.Property(h => h.EditedDate).IsRequired();
                 a.HasKey("PostId", "EditedDate");
             });
+
+        modelBuilder.Entity<Forum>()
+            .HasDiscriminator<string>("Discriminator")
+            .HasValue<SubjectForum>("SubjectForum")
+            .HasValue<ClassForum>("ClassForum")
+            .HasValue<PublicForum>("PublicForum");
     }
 
     public DbSet<Post> Posts { get; set; }
     public DbSet<Vote> Votes { get; set; } // Test
     public DbSet<Comment> Comments { get; set; } // Test
+    public DbSet<Forum> Forums { get; set; }
 }
