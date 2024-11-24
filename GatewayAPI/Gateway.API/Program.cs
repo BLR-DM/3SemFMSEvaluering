@@ -34,7 +34,7 @@ builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IFmsProxy, FmsProxy>();
+builder.Services.AddHttpClient<IFmsProxy, FmsProxy>();
 
 var app = builder.Build();
 
@@ -57,7 +57,6 @@ app.MapPost("/login", async (LoginDto loginDto, IFmsProxy fmsproxy) =>
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapReverseProxy();
 
 app.Run();

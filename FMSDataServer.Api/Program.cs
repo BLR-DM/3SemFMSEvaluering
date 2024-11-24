@@ -107,9 +107,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        };
    });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -118,7 +121,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 
 
@@ -171,7 +174,7 @@ app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto log
     var token = GenerateJwtToken(user, _configuration, student);
 
     return Results.Ok(new { Token = token });
-});
+}).AllowAnonymous();
 
 app.MapGet("/fms/helloworld", (HttpContext httpContext) =>
 {
@@ -189,7 +192,7 @@ string GenerateJwtToken(AppUser user, IConfiguration configuration, Student stud
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim("Class", student.Class.Name),
+        new Claim("class", student.Class.Name),
     };
 
     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));

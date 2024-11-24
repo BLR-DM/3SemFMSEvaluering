@@ -73,7 +73,7 @@ public class PostCommand : IPostCommand
             var post = await _postRepository.GetPost(postDto.Id);
 
             // Do & Save
-            await _postRepository.DeletePost(post);
+            _postRepository.DeletePost(post);
             await _unitOfWork.Commit();
         }
         catch (Exception)
@@ -181,7 +181,7 @@ public class PostCommand : IPostCommand
             var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
 
             // Save
-            await _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+            _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
             await _unitOfWork.Commit();
 
         }

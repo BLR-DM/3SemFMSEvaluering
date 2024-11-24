@@ -26,12 +26,12 @@ public class PostRepository : IPostRepository
             .SingleAsync(p => p.Id == id);
     }
 
-    async Task IPostRepository.DeletePost(Post post)
+    void IPostRepository.DeletePost(Post post)
     {
         _db.Posts.Remove(post);
     }
 
-    async Task IPostRepository.UpdateCommentAsync(Comment comment, byte[] rowVersion)
+    void IPostRepository.UpdateCommentAsync(Comment comment, byte[] rowVersion)
     {
         _db.Entry(comment).Property(nameof(comment.RowVersion)).OriginalValue = rowVersion;
     }

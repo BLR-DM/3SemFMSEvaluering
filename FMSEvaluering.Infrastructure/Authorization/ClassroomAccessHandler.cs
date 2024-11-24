@@ -6,9 +6,9 @@ namespace FMSEvaluering.Infrastructure.Authorization;
 
 public class ClassroomAccessHandler : AuthorizationHandler<ClassroomAccessRequirement>
 {
-    private readonly FmsProxy _fmsProxy;
+    private readonly IFmsProxy _fmsProxy;
 
-    public ClassroomAccessHandler(FmsProxy fmsProxy)
+    public ClassroomAccessHandler(IFmsProxy fmsProxy)
     {
         _fmsProxy = fmsProxy;
     }

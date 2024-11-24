@@ -3,7 +3,7 @@ using FMSEvaluering.Infrastructure.ExternalServices.Dto;
 
 namespace FMSEvaluering.Infrastructure.ExternalServices;
 
-public class FmsProxy
+public class FmsProxy : IFmsProxy
 {
     private readonly HttpClient _client;
 
@@ -12,7 +12,7 @@ public class FmsProxy
         _client = client;
     }
 
-    public async Task<string> StudentIsPartOfClassroom(string studentId)
+    async Task<string> IFmsProxy.StudentIsPartOfClassroom(string studentId)
     {
         try
         {
