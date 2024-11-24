@@ -22,6 +22,7 @@ public class Post : DomainEntity
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public string AppUserId { get; protected set; }
+    // public int ForumId { get; protected set; } // Mangler implementering
     public ICollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
