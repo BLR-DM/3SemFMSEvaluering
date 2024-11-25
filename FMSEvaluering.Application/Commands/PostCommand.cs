@@ -83,68 +83,71 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.CreateVote(CreateVoteDto voteDto)
-    {
-        try
-        {
-            await _unitOfWork.BeginTransaction();
 
-            // Load 
-            var post = await _postRepository.GetPost(voteDto.PostId);
 
-            // Do
-            post.CreateVote(voteDto.VoteType);
 
-            // Save
-            await _unitOfWork.Commit();
-        }
-        catch (Exception)
-        {
-            await _unitOfWork.Rollback();
-            throw;
-        }
-    }
+    //async Task IPostCommand.CreateVote(CreateVoteDto voteDto)
+    //{
+    //    try
+    //    {
+    //        await _unitOfWork.BeginTransaction();
 
-    async Task IPostCommand.UpdateVote(UpdateVoteDto voteDto)
-    {
-        try
-        {
-            await _unitOfWork.BeginTransaction();
+    //        // Load 
+    //        var post = await _postRepository.GetPost(voteDto.PostId);
 
-            // Load
-            var post = await _postRepository.GetPost(voteDto.PostId);
+    //        // Do
+    //        post.CreateVote(voteDto.VoteType);
 
-            // Do
-            post.UpdateVote(voteDto.Id, voteDto.VoteType);
+    //        // Save
+    //        await _unitOfWork.Commit();
+    //    }
+    //    catch (Exception)
+    //    {
+    //        await _unitOfWork.Rollback();
+    //        throw;
+    //    }
+    //}
 
-            // Save
-            await _unitOfWork.Commit();
-        }
-        catch (Exception)
-        {
-            await _unitOfWork.Rollback();
-            throw;
-        }
-    }
+    //async Task IPostCommand.UpdateVote(UpdateVoteDto voteDto)
+    //{
+    //    try
+    //    {
+    //        await _unitOfWork.BeginTransaction();
 
-    async Task IPostCommand.DeleteVote(DeleteVoteDto voteDto)
-    {
-        try
-        {
-            await _unitOfWork.BeginTransaction();
-            // Load 
-            var post = await _postRepository.GetPost(voteDto.PostId);
-            // Do
-            post.DeleteVote(voteDto.Id);
-            // Save
-            await _unitOfWork.Commit();
-        }
-        catch (Exception)
-        {
-            await _unitOfWork.Rollback();
-            throw;
-        }
-    }
+    //        // Load
+    //        var post = await _postRepository.GetPost(voteDto.PostId);
+
+    //        // Do
+    //        post.UpdateVote(voteDto.Id, voteDto.VoteType);
+
+    //        // Save
+    //        await _unitOfWork.Commit();
+    //    }
+    //    catch (Exception)
+    //    {
+    //        await _unitOfWork.Rollback();
+    //        throw;
+    //    }
+    //}
+
+    //async Task IPostCommand.DeleteVote(DeleteVoteDto voteDto)
+    //{
+    //    try
+    //    {
+    //        await _unitOfWork.BeginTransaction();
+    //        // Load 
+    //        var post = await _postRepository.GetPost(voteDto.PostId);
+    //        // Do
+    //        post.DeleteVote(voteDto.Id);
+    //        // Save
+    //        await _unitOfWork.Commit();
+    //    }
+    //    catch (Exception)
+    //    {
+    //        await _unitOfWork.Rollback();
+    //        throw;
+    //    }
+    //}
 
     async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto)
     {
@@ -186,6 +189,28 @@ public class PostCommand : IPostCommand
 
         }
         catch (Exception)
+        {
+            await _unitOfWork.Rollback();
+            throw;
+        }
+    }
+
+    async Task IPostCommand.HandleVote(CreateVoteDto voteDto, string appUserId, int postId)
+    {   
+        try
+        {
+            await _unitOfWork.BeginTransaction();
+
+            // Load
+            var post = await _postRepository.GetPost(postId);
+
+            // Do
+            post.HandleVote(voteDto.VoteType, appUserId);
+
+            // Save
+            await _unitOfWork.Commit();
+        }
+        catch (Exception e)
         {
             await _unitOfWork.Rollback();
             throw;

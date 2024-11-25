@@ -39,23 +39,47 @@ public class Post : DomainEntity
 
     // Vote
 
-    public void CreateVote(bool voteType)
+    public void HandleVote(bool voteType, string appUserId)
     {
-        var vote = Vote.Create(voteType);
+        var vote = Votes.FirstOrDefault(v => v.AppUserId == appUserId);
+
+        if (vote == null)
+        {
+            CreateVote(voteType, appUserId);
+        }
+        else if (vote.VoteType == voteType)
+        {
+            DeleteVote(appUserId);
+        }
+        else
+        {
+            UpdateVote(voteType, appUserId);
+        }
+    }
+
+    public void CreateVote(bool voteType, string appUserId)
+    {
+        if (Votes.Any(v => v.AppUserId == appUserId))
+        {
+            throw new InvalidOperationException("User has already voted");
+        }
+
+        var vote = Vote.Create(voteType, appUserId);
         _votes.Add(vote);
     }
 
-    public Vote UpdateVote(int voteId, bool voteType)
+    public Vote UpdateVote(bool voteType, string appUserId)
     {
-        var vote = _votes.FirstOrDefault(v => v.Id == voteId);
+        var vote = _votes.FirstOrDefault(v => v.AppUserId == appUserId);
+
         vote.Update(voteType);
 
         return vote;
     }
 
-    public void DeleteVote(int voteId)
+    public void DeleteVote(string appUserId)
     {
-        var vote = _votes.FirstOrDefault(v => v.Id == voteId);
+        var vote = _votes.FirstOrDefault(v => v.AppUserId == appUserId);
         _votes.Remove(vote);
     }
 

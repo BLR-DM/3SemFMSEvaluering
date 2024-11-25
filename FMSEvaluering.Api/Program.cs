@@ -132,7 +132,26 @@ app.MapGet("/student", () => "hej med dig elev").RequireAuthorization("Student")
 //VOTE
 //VOTE
 //VOTE
-app.MapVoteEndpoints();
+//app.MapVoteEndpoints();
+
+app.MapPost("/post/{postId}/vote",
+    async (int postId, CreateVoteDto voteDto, HttpContext httpContext, IPostCommand command) =>
+    {
+        var appUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        try
+        {
+            await command.HandleVote(voteDto, appUserId, postId);
+            return Results.Ok("Vote registered");
+        }
+        catch (Exception)
+        {
+            return Results.BadRequest("Failed to register the vote");
+            throw;
+        }
+
+
+    }).WithTags(("Vote"));
 
 //Comment
 //Comment
