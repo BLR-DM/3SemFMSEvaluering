@@ -9,6 +9,5 @@ namespace FMSEvaluering.Application.Commands.CommandDto.VoteDto
     public record CreateVoteDto
     {
         public bool VoteType { get; set; }
-        public int PostId { get; set; }
     }
 }

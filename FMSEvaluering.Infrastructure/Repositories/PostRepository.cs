@@ -23,6 +23,7 @@ public class PostRepository : IPostRepository
         return await _db.Posts
             .Include(p => p.Votes)
             .Include(p => p.Comments)
+            .Include(p => p.History)
             .SingleAsync(p => p.Id == id);
     }
 

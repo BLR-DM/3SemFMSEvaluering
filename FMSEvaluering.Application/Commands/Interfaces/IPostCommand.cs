@@ -10,9 +10,10 @@ public interface IPostCommand
     Task CreatePostAsync(CreatePostDto postDto);
     Task AddPostHistory(UpdatePostDto updatePostDto);
     Task DeletePostAsync(DeletePostDto postDto);
-    Task CreateVote(CreateVoteDto voteDto);
-    Task DeleteVote(DeleteVoteDto voteDto);
-    Task UpdateVote(UpdateVoteDto voteDto);
+    //Task CreateVote(CreateVoteDto voteDto);
+    //Task DeleteVote(DeleteVoteDto voteDto);
+    //Task UpdateVote(UpdateVoteDto voteDto);
     Task CreateCommentAsync(CreateCommentDto commentDto);
     Task UpdateCommentAsync(UpdateCommentDto commentDto);
+    Task HandleVote(CreateVoteDto voteDto, string appUserId, int postId);
 }
