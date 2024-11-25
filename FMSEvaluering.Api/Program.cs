@@ -132,15 +132,7 @@ app.MapGet("/student", () => "hej med dig elev").RequireAuthorization("Student")
 //VOTE
 //VOTE
 //VOTE
-app.MapPost("/post/vote",
-    async (CreateVoteDto dto, IPostCommand command) =>
-        await command.CreateVote(dto));
-app.MapPut("/post/vote",
-    async (UpdateVoteDto dto, IPostCommand command) =>
-        await command.UpdateVote(dto));
-app.MapDelete("/post/vote",
-    async ([FromBody]DeleteVoteDto dto, IPostCommand command) =>
-        await command.DeleteVote(dto));
+app.MapVoteEndpoints();
 
 //Comment
 //Comment
