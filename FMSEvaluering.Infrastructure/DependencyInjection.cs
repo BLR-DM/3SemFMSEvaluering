@@ -17,6 +17,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IPostQuery, PostQuery>();
+        services.AddScoped<IForumRepository, ForumRepository>();
+        services.AddScoped<IForumQuery, ForumQuery>();
         services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
 
         // Add-Migration InitialMigration -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration
