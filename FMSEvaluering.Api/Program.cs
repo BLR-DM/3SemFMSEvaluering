@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using FMSEvaluering.Api.Endpoints;
 using FMSEvaluering.Application;
 using FMSEvaluering.Application.Authorization;
 using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
@@ -152,5 +153,6 @@ app.MapPut("/post/comment",
     async (UpdateCommentDto dto, IPostCommand command) =>
         await command.UpdateCommentAsync(dto));
 
+app.MapForumEndpoints();
 
 app.Run();
