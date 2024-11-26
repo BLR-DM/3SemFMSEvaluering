@@ -19,9 +19,9 @@ public class FmsProxy : IFmsProxy
             var requestUri = $"http://fmsdataserver.api:8080/fms/student/{studentId}";
             var student = await _client.GetFromJsonAsync<StudentDto>(requestUri);
 
-            return student.ClassId;
+            return student is null ? string.Empty : student.ClassId;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return string.Empty;
         }

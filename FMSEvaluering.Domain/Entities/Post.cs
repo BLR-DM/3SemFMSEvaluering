@@ -17,6 +17,8 @@ public class Post : DomainEntity
         Description = description;
         Solution = solution;
         AppUserId = appUserId;
+
+        // AssureStudentIsPartOfClass()
     }
 
     public string Description { get; protected set; }
@@ -32,8 +34,11 @@ public class Post : DomainEntity
         return new Post(description, solution, appUserId);
     }
 
-    public void UpdatePost(string newContent)
+    public void UpdatePost(string newContent, string userId)
     {
+        if (AppUserId != userId)
+            return;
+
         SetPostHistory(Description);
         Description = newContent;
     }

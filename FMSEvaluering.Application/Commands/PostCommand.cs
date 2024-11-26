@@ -49,7 +49,7 @@ public class PostCommand : IPostCommand
             var post = await _postRepository.GetPost(updatePostDto.PostId);
             
             // Do
-            post.UpdatePost(updatePostDto.Content);
+            post.UpdatePost(updatePostDto.Content, updatePostDto.AppUserId);
             _postRepository.UpdatePost(post, updatePostDto.RowVersion);
 
             // Save
