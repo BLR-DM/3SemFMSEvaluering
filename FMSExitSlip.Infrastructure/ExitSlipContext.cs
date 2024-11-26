@@ -11,5 +11,7 @@ namespace FMSExitSlip.Infrastructure
         }
 
         public DbSet<ExitSlip> ExitSlips { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Response> Responses { get; set; }
     }
 }
