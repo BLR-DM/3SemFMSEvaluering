@@ -80,7 +80,7 @@ public class Post : DomainEntity
             throw new InvalidOperationException("User has already voted");
         }
 
-        var vote = Vote.Create(voteType, appUserId, _votes);
+        var vote = Vote.Create(voteType, appUserId);
         _votes.Add(vote);
     }
 
