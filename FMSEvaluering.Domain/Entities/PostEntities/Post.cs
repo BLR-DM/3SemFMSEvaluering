@@ -39,16 +39,16 @@ public class Post : DomainEntity
     }
 
 
-    public void UpdatePost(string newContent, string userId)
+    public void Update(string newContent, string userId)
     {
         if (AppUserId != userId)
             return;
 
-        SetPostHistory(Description);
+        SetHistory(Description);
         Description = newContent;
     }
 
-    private void SetPostHistory(string originalContent)
+    private void SetHistory(string originalContent)
     {
         _history.Add(new PostHistory(originalContent));
     }
