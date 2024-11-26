@@ -1,6 +1,6 @@
 ﻿using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Queries.QueryDto;
-using FMSEvaluering.Domain.Entities.Forum;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure.Queries;

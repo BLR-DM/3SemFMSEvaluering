@@ -1,4 +1,4 @@
-﻿namespace FMSEvaluering.Domain.Entities;
+﻿namespace FMSEvaluering.Domain.Entities.PostEntities;
 
 public class Vote : DomainEntity
 {

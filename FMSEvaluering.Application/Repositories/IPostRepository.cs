@@ -1,4 +1,4 @@
-﻿using FMSEvaluering.Domain.Entities;
+﻿using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Application.Repositories;
 

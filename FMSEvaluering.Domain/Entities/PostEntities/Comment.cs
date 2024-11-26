@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FMSEvaluering.Domain.Entities
+namespace FMSEvaluering.Domain.Entities.PostEntities
 {
     public class Comment : DomainEntity
     {

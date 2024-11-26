@@ -1,5 +1,5 @@
 ﻿using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.Entities;
+using FMSEvaluering.Domain.Entities.PostEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure.Repositories;

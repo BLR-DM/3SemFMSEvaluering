@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.Entities.Forum;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure.Repositories

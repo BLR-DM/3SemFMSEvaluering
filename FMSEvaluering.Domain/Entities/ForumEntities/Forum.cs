@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FMSEvaluering.Domain.Entities.PostEntities;
 
-namespace FMSEvaluering.Domain.Entities.Forum
+namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
     public abstract class Forum : DomainEntity
     {
         public string Name { get; protected set; }
-        private readonly List<Post> _posts = new List<Post>();
+        private readonly List<Post> _posts = [];
 
-        protected Forum() { }
+        protected Forum() {}
 
         public IReadOnlyCollection<Post> Posts => _posts;
 
-        public void AddPost(Post post)
+        public virtual void ValidatePostCreation(int studentId)
         {
-            _posts.Add(post);
         }
+
+        //public void AddPost(Post post)
+        //{
+        //    _posts.Add(post);
+        //}
 
         public static Forum CreatePublicForum(string name)
         {

@@ -8,7 +8,7 @@ using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.Entities.Forum;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 
 namespace FMSEvaluering.Application.Commands
 {
