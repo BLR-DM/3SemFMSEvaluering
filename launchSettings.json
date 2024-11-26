@@ -7,7 +7,8 @@
         "fmsevaluering.api": "StartDebugging",
         "gateway.api": "StartDebugging",
         "fmsuserservice.api": "StartDebugging",
-        "fmsevalueringui": "StartDebugging"
+        "fmsevalueringui": "StartDebugging",
+        "fmsexitslip.api": "StartDebugging"
       }
     }
   }

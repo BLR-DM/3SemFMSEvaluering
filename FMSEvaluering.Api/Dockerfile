@@ -16,6 +16,7 @@ COPY ["FMSEvaluering.Api/FMSEvaluering.Api.csproj", "FMSEvaluering.Api/"]
 COPY ["FMSEvaluering.Application/FMSEvaluering.Application.csproj", "FMSEvaluering.Application/"]
 COPY ["FMSEvaluering.Domain/FMSEvaluering.Domain.csproj", "FMSEvaluering.Domain/"]
 COPY ["FMSEvaluering.Infrastructure/FMSEvaluering.Infrastructure.csproj", "FMSEvaluering.Infrastructure/"]
+
 COPY ["FMSEvaluering.DatabaseMigration/FMSEvaluering.DatabaseMigration.csproj", "FMSEvaluering.DatabaseMigration/"]
 RUN dotnet restore "./FMSEvaluering.Api/FMSEvaluering.Api.csproj"
 COPY . .

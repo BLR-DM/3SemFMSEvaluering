@@ -31,4 +31,3 @@ services:
     build:
       context: .
       dockerfile: FMSDataServer.Api/Dockerfile
-

@@ -7,15 +7,15 @@ public class Vote : DomainEntity
 
     protected Vote() { }
 
-    private Vote(bool voteType, string appUserId, IEnumerable<Vote> existingVotes)
+    private Vote(bool voteType, string appUserId)
     {
         AppUserId = appUserId;
         VoteType = voteType;
     }
 
-    public static Vote Create(bool voteType, string appUserId, IEnumerable<Vote> existingVotes)
+    public static Vote Create(bool voteType, string appUserId)
     {
-        return new Vote(voteType, appUserId, existingVotes);
+        return new Vote(voteType, appUserId);
     }
 
     public void Update(bool voteType)
