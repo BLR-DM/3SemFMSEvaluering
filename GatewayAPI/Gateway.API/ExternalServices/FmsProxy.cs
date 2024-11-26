@@ -26,7 +26,7 @@ public class FmsProxy : IFmsProxy
                 return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
             }
 
-            var tokenResponse = await response.Content.ReadFromJsonAsync<JwtTokenDto>(); // Adjust type as needed
+            var tokenResponse = await response.Content.ReadFromJsonAsync<JwtTokenDto>();
             return Results.Ok(tokenResponse);
         }
         catch (Exception ex)
