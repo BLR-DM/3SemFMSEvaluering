@@ -31,7 +31,7 @@ public class ForumQuery : IForumQuery
             {
                 Id = f.Id,
                 Name = f.Name,
-                ForumType = nameof(ClassForum),
+                ForumType = f.GetType().Name,
                 ClassId = 2, // test
                 Posts = f.Posts.Select(p => new PostDto
                 {
