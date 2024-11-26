@@ -11,7 +11,7 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
 
         public IReadOnlyCollection<Post> Posts => _posts;
 
-        public virtual void ValidatePostCreation(int studentId)
+        public virtual void ValidatePostCreation(string studentId)
         {
         }
 

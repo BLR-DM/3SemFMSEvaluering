@@ -19,14 +19,16 @@ public class Post : DomainEntity
         Solution = solution;
         AppUserId = appUserId;
         Forum = forum;
+        CreatedDate = DateTime.Now;
 
-        Forum.ValidatePostCreation(int.Parse(appUserId));
+        Forum.ValidatePostCreation(AppUserId); // FmsProxy her? 
     }
 
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public string AppUserId { get; protected set; }
     public Forum Forum { get; protected set; }
+    public DateTime CreatedDate { get; private set; }
     public ICollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
