@@ -27,6 +27,11 @@ public class PostRepository : IPostRepository
             .SingleAsync(p => p.Id == id);
     }
 
+    void IPostRepository.UpdatePost(Post post, byte[] rowVersion)
+    {
+        _db.Entry(post).Property(nameof(post.RowVersion)).OriginalValue = rowVersion;
+    }
+
     void IPostRepository.DeletePost(Post post)
     {
         _db.Posts.Remove(post);

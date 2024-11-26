@@ -5,7 +5,6 @@ using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities;
-using FMSEvaluering.Domain.Values;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -27,10 +26,10 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Do
-            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserÌd);
-
-            // Save
+            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId);
             await _postRepository.AddPost(post);
+            
+            // Save
             await _unitOfWork.Commit();
         }
         catch (Exception)
@@ -40,7 +39,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.AddPostHistory(UpdatePostDto updatePostDto)
+    async Task IPostCommand.UpdatePost(UpdatePostDto updatePostDto)
     {
         try
         {
@@ -50,7 +49,8 @@ public class PostCommand : IPostCommand
             var post = await _postRepository.GetPost(updatePostDto.PostId);
             
             // Do
-            post.SetPostHistory(new PostHistory(updatePostDto.Content));
+            post.UpdatePost(updatePostDto.Content);
+            _postRepository.UpdatePost(post, updatePostDto.RowVersion);
 
             // Save
             await _unitOfWork.Commit();

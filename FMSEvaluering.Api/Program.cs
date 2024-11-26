@@ -95,28 +95,25 @@ app.UseAuthorization();
 //    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post))
 //    .RequireAuthorization("CanCreate");
 
-app.MapPost("/post",
-    async (HttpContext context, CreatePostDto post, IAuthorizationService authService, ClaimsPrincipal user, IPostCommand command) =>
+app.MapPost("/post", // "/forum/{id}/post"?
+    async (CreatePostDto post, IAuthorizationService authService, IPostCommand command) =>
     {
-        if (!context.User.Identity.IsAuthenticated) // remove?
-        {
-            return Results.Unauthorized();
-        }
-        var requirement = new ClassroomAccessRequirement(post.ClassId);
-        var result = await authService.AuthorizeAsync(user, null, requirement);
+        var requirement = new ClassroomAccessRequirement(post.ClassId); // Check if forum has requirements
+        if (ClaimsPrincipal.Current is null)
+            return Results.Forbid();
+
+        var result = await authService.AuthorizeAsync(ClaimsPrincipal.Current, null, requirement);
 
         if (!result.Succeeded)
-        {
             return Results.Forbid();
-        }
 
         await command.CreatePostAsync(post);
-
         return Results.Created();
+
     }).RequireAuthorization("Student");
 
 app.MapPut("/post",
-    async (UpdatePostDto postHistory, IPostCommand command) => await command.AddPostHistory(postHistory));
+    async (UpdatePostDto postHistory, IPostCommand command) => await command.UpdatePost(postHistory));
 
 app.MapGet("/post/{id}",
     async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
@@ -137,6 +134,7 @@ app.MapGet("/student", () => "hej med dig elev").RequireAuthorization("Student")
 app.MapPost("/post/{postId}/vote",
     async (int postId, CreateVoteDto voteDto, HttpContext httpContext, IPostCommand command) =>
     {
+        // var id = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
         var appUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
         try

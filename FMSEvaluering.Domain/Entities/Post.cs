@@ -22,7 +22,7 @@ public class Post : DomainEntity
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public string AppUserId { get; protected set; }
-    // public int ForumId { get; protected set; } // Mangler implementering
+    //public string ForumId { get; protected set; } // Mangler implementering
     public ICollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
@@ -32,9 +32,15 @@ public class Post : DomainEntity
         return new Post(description, solution, appUserId);
     }
 
-    public void SetPostHistory(PostHistory postHistory)
+    public void UpdatePost(string newContent)
     {
-        _history.Add(postHistory);
+        SetPostHistory(Description);
+        Description = newContent;
+    }
+
+    private void SetPostHistory(string originalContent)
+    {
+        _history.Add(new PostHistory(originalContent));
     }
 
     // Vote
@@ -64,7 +70,7 @@ public class Post : DomainEntity
             throw new InvalidOperationException("User has already voted");
         }
 
-        var vote = Vote.Create(voteType, appUserId);
+        var vote = Vote.Create(voteType, appUserId, _votes);
         _votes.Add(vote);
     }
 

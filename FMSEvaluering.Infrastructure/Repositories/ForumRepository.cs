@@ -29,7 +29,7 @@ namespace FMSEvaluering.Infrastructure.Repositories
 
         async Task<Forum> IForumRepository.GetForum(int id)
         {
-            return await _db.Forums.FindAsync(id);
+            return await _db.Forums.SingleAsync(f => f.Id == id);
         }
     }
 }

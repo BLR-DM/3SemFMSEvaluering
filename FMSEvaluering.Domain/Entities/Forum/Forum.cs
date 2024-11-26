@@ -15,7 +15,10 @@ namespace FMSEvaluering.Domain.Entities.Forum
 
         public IReadOnlyCollection<Post> Posts => _posts;
 
-
+        public void AddPost(Post post)
+        {
+            _posts.Add(post);
+        }
 
         public static Forum CreatePublicForum(string name)
         {
