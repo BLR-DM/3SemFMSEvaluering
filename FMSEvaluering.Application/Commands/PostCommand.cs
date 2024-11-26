@@ -4,20 +4,21 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.Entities;
-using FMSEvaluering.Domain.Values;
+using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Application.Commands;
 
 public class PostCommand : IPostCommand
 {
     private readonly IPostRepository _postRepository;
+    private readonly IForumRepository _forumRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository)
+    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository)
     {
         _unitOfWork = unitOfWork;
         _postRepository = postRepository;
+        _forumRepository = forumRepository;
     }
 
     async Task IPostCommand.CreatePostAsync(CreatePostDto postDto)
@@ -26,11 +27,14 @@ public class PostCommand : IPostCommand
         {
             await _unitOfWork.BeginTransaction();
 
-            // Do
-            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserÌd);
+            // Load
+            var forum = await _forumRepository.GetForum(int.Parse(postDto.ForumId));
 
-            // Save
+            // Do
+            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum);
             await _postRepository.AddPost(post);
+            
+            // Save
             await _unitOfWork.Commit();
         }
         catch (Exception)
@@ -40,7 +44,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.AddPostHistory(UpdatePostDto updatePostDto)
+    async Task IPostCommand.UpdatePost(UpdatePostDto updatePostDto)
     {
         try
         {
@@ -50,7 +54,8 @@ public class PostCommand : IPostCommand
             var post = await _postRepository.GetPost(updatePostDto.PostId);
             
             // Do
-            post.SetPostHistory(new PostHistory(updatePostDto.Content));
+            post.Update(updatePostDto.Content, updatePostDto.AppUserId);
+            _postRepository.UpdatePost(post, updatePostDto.RowVersion);
 
             // Save
             await _unitOfWork.Commit();

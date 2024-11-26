@@ -1,5 +1,5 @@
-﻿using FMSEvaluering.Domain.Entities;
-using FMSEvaluering.Domain.Entities.Forum;
+﻿using FMSEvaluering.Domain.Entities.ForumEntities;
+using FMSEvaluering.Domain.Entities.PostEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure;

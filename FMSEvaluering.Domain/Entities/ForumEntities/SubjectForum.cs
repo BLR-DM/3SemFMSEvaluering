@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FMSEvaluering.Domain.Entities.Forum
+﻿namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
     public class SubjectForum : Forum
     {

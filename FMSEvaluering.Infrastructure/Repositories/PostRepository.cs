@@ -1,5 +1,5 @@
 ﻿using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.Entities;
+using FMSEvaluering.Domain.Entities.PostEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace FMSEvaluering.Infrastructure.Repositories;
@@ -25,6 +25,11 @@ public class PostRepository : IPostRepository
             .Include(p => p.Comments)
             .Include(p => p.History)
             .SingleAsync(p => p.Id == id);
+    }
+
+    void IPostRepository.UpdatePost(Post post, byte[] rowVersion)
+    {
+        _db.Entry(post).Property(nameof(post.RowVersion)).OriginalValue = rowVersion;
     }
 
     void IPostRepository.DeletePost(Post post)

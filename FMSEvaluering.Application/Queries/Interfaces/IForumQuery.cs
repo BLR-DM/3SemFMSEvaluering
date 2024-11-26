@@ -6,4 +6,5 @@ public interface IForumQuery
 {
     Task<ForumDto> GetForumAsync(int forumId);
     Task<List<ForumDto>> GetForumsAsync();
+    Task<ForumWithPostDto> GetForumWithPostAsync(int forumId);
 }

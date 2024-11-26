@@ -1,4 +1,4 @@
-﻿using FMSEvaluering.Domain.Entities;
+﻿using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Application.Repositories;
 
@@ -6,7 +6,7 @@ public interface IPostRepository
 {
     Task AddPost(Post post);
     Task<Post> GetPost(int id);
-    //Task AddPostHistory(Post post);
+    void UpdatePost(Post post, byte[] rowVersion);
     void DeletePost(Post post);
     //Task AddVote();
     //Task DeleteVote();

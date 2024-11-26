@@ -1,6 +1,7 @@
-﻿using FMSEvaluering.Domain.Values;
+﻿using FMSEvaluering.Domain.Entities.ForumEntities;
+using FMSEvaluering.Domain.Values;
 
-namespace FMSEvaluering.Domain.Entities;
+namespace FMSEvaluering.Domain.Entities.PostEntities;
 
 public class Post : DomainEntity
 {
@@ -12,29 +13,44 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId)
+    private Post(string description, string solution, string appUserId, Forum forum)
     {
         Description = description;
         Solution = solution;
         AppUserId = appUserId;
+        Forum = forum;
+        CreatedDate = DateTime.Now;
+
+        Forum.ValidatePostCreation(AppUserId); // FmsProxy her? 
     }
 
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public string AppUserId { get; protected set; }
-    // public int ForumId { get; protected set; } // Mangler implementering
+    public Forum Forum { get; protected set; }
+    public DateTime CreatedDate { get; private set; }
     public ICollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution, string appUserId)
+    public static Post Create(string description, string solution, string appUserId, Forum forum)
     {
-        return new Post(description, solution, appUserId);
+        return new Post(description, solution, appUserId, forum);
     }
 
-    public void SetPostHistory(PostHistory postHistory)
+
+    public void Update(string newContent, string userId)
     {
-        _history.Add(postHistory);
+        if (AppUserId != userId)
+            return;
+
+        SetHistory(Description);
+        Description = newContent;
+    }
+
+    private void SetHistory(string originalContent)
+    {
+        _history.Add(new PostHistory(originalContent));
     }
 
     // Vote
@@ -64,7 +80,7 @@ public class Post : DomainEntity
             throw new InvalidOperationException("User has already voted");
         }
 
-        var vote = Vote.Create(voteType, appUserId);
+        var vote = Vote.Create(voteType, appUserId, _votes);
         _votes.Add(vote);
     }
 

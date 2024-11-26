@@ -8,7 +8,7 @@ namespace FMSEvaluering.Application.Queries.QueryDto
 {
     public record PostHistoryDto
     {
-        public int Id { get; set; }
         public string Content { get; set; }
+        public string EditedDate { get; set; }
     }
 }

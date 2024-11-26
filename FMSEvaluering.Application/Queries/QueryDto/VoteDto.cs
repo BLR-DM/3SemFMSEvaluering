@@ -8,7 +8,6 @@ namespace FMSEvaluering.Application.Queries.QueryDto
 {
     public record VoteDto
     {
-        public int Id { get; set; }
         public bool VoteType { get; set; }
     }
 }

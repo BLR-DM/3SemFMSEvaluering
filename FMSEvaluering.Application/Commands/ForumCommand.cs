@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FMSEvaluering.Application.Commands.CommandDto.ForumDto;
+using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.Entities.Forum;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 
 namespace FMSEvaluering.Application.Commands
 {
@@ -15,11 +16,19 @@ namespace FMSEvaluering.Application.Commands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IForumRepository _forumRepository;
+        private readonly IPostRepository _postRepository;
 
-        public ForumCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository)
+        public ForumCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IPostRepository _postRepository)
         {
             _unitOfWork = unitOfWork;
             _forumRepository = forumRepository;
+            this._postRepository = _postRepository;
+        }
+        async Task IForumCommand.AddPost(CreatePostDto postDto)
+        {
+            var forum = _forumRepository.GetForum(int.Parse(postDto.ForumId));
+
+
         }
 
         async Task IForumCommand.CreatePublicForumAsync(CreatePublicForumDto forumDto)
