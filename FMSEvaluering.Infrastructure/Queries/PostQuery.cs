@@ -1,5 +1,4 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto;
-using FMSEvaluering.Application.Queries.Interfaces;
+﻿using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Queries.QueryDto;
 using Microsoft.EntityFrameworkCore;
 using PostHistoryDto = FMSEvaluering.Application.Queries.QueryDto.PostHistoryDto;
@@ -27,20 +26,23 @@ public class PostQuery : IPostQuery
             Id = post.Id,
             Description = post.Description,
             Solution = post.Solution,
+            CreatedDate = post.CreatedDate.ToShortDateString(),
+            UpVotes = post.Votes.Count(v => v.VoteType == true),
+            DownVotes = post.Votes.Count(v => v.VoteType == false),
             PostHistoryDto = post.History.Select(ph => new PostHistoryDto
             {
-                Content = ph.Content
-            }),
-            VoteDto = post.Votes.Select(v => new VoteDto
-            {
-                Id = v.Id,
-                VoteType = v.VoteType
-            }),
+                Content = ph.Content,
+                EditedDate = ph.EditedDate.ToShortDateString()
+            }).ToList(),
+            //VoteDto = post.Votes.Select(v => new VoteDto
+            //{
+            //    VoteType = v.VoteType
+            //}),
             CommentDto = post.Comments.Select(c => new CommentDto
             {
                 Id = c.Id,
                 Text = c.Text
-            })
+            }).ToList()
         };
     }
 }

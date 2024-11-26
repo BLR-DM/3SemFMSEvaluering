@@ -96,13 +96,11 @@ app.UseAuthorization();
 //    .RequireAuthorization("CanCreate");
 
 app.MapPost("/post", // "/forum/{id}/post"?
-    async (CreatePostDto post, IAuthorizationService authService, IPostCommand command) =>
+    async (CreatePostDto post, IAuthorizationService authService, ClaimsPrincipal user, IPostCommand command) =>
     {
         var requirement = new ClassroomAccessRequirement(post.ClassId); // Check if forum has requirements
-        if (ClaimsPrincipal.Current is null)
-            return Results.Forbid();
 
-        var result = await authService.AuthorizeAsync(ClaimsPrincipal.Current, null, requirement);
+        var result = await authService.AuthorizeAsync(user, null, requirement);
 
         if (!result.Succeeded)
             return Results.Forbid();
