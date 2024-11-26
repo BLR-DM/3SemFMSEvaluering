@@ -8,6 +8,10 @@ namespace FMSExitSlip.Domain.Entities
 {
     public class ExitSlip : DomainEntity
     {
-        public string Test { get; protected set; }
+        private readonly List<Question> _questions = [];
+        public string Title { get; protected set; }
+        public int LectureId { get; protected set; }
+
+        public ICollection<Question> Questions => _questions;
     }
 }

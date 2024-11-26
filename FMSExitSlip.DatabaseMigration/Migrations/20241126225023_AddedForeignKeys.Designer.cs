@@ -4,6 +4,7 @@ using FMSExitSlip.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMSExitSlip.DatabaseMigration.Migrations
 {
     [DbContext(typeof(ExitSlipContext))]
-    partial class ExitSlipContextModelSnapshot : ModelSnapshot
+    [Migration("20241126225023_AddedForeignKeys")]
+    partial class AddedForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
