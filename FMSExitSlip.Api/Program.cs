@@ -54,6 +54,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Student", policy =>
+        policy.RequireClaim("usertype", "student"));
+
+    options.AddPolicy("Teacher", policy =>
+        policy.RequireClaim("usertype", "teacher"));
+});
 
 var app = builder.Build();
 

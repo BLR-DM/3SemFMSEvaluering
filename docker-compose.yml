@@ -20,14 +20,15 @@ services:
       context: .
       dockerfile: GatewayAPI/Gateway.API/Dockerfile
 
-  fmsuserservice.api:
-    image: ${DOCKER_REGISTRY-}fmsuserserviceapi
-    build:
-      context: .
-      dockerfile: FMSUserService.Api/Dockerfile      
-
   fmsdataserver.api:
     image: ${DOCKER_REGISTRY-}fmsdataserverapi
     build:
       context: .
       dockerfile: FMSDataServer.Api/Dockerfile
+
+  fmsexitslip.api:
+    image: ${DOCKER_REGISTRY-}fmsexitslipapi
+    build:
+      context: .
+      dockerfile: FMSExitSlip.Api/Dockerfile
+
