@@ -12,8 +12,34 @@ namespace FMSExitSlip.Domain.Entities
         public string Title { get; protected set; }
         public int MaxQuestions { get; protected set; }
         public bool IsPublished { get; protected set; } = false;
+        public string AppUserId { get; protected set; }
         public int LectureId { get; protected set; }
 
         public ICollection<Question> Questions => _questions;
+
+        protected ExitSlip() { }
+
+        private ExitSlip(string title, int maxQuestions, string appUserId, int lectureId, IEnumerable<ExitSlip> otherExitSlips)
+        {
+            Title = title;
+            MaxQuestions = maxQuestions;
+            AppUserId = appUserId;
+            LectureId = lectureId;
+
+            AssureOnlyOneExitSlipPrLesson(otherExitSlips);
+        }
+
+        public static ExitSlip Create(string title, int maxQuestions, string appUserId, int lectureId, IEnumerable<ExitSlip> otherExitSlips)
+        {
+            return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips);
+        }
+
+        private void AssureOnlyOneExitSlipPrLesson(IEnumerable<ExitSlip> otherExitSlips)
+        {
+            if (otherExitSlips.Any(l => l.LectureId == LectureId))
+            {
+                throw new Exception("Only one exit slip per lesson is allowed.");
+            }
+        }
     }
 }
