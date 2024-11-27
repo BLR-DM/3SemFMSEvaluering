@@ -12,5 +12,17 @@ namespace FMSExitSlip.Domain.Entities
         public string Text { get; protected set; }
         public string AppUserId { get; protected set; }
         public ICollection<Response> Responses => _responses;
+
+        protected Question() { }
+        private Question(string text, string appUserId)
+        {
+            Text = text;
+            AppUserId = appUserId;
+        }
+
+        public static Question Create(string text, string appUserId)
+        {
+            return new Question(text, appUserId);
+        }
     }
 }
