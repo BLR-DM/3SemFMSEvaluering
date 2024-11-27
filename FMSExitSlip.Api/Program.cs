@@ -1,6 +1,9 @@
+using System.Security.Claims;
 using System.Text;
 using FMSExitSlip.Api.Endpoints;
 using FMSExitSlip.Application;
+using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
+using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -78,6 +81,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapExitSlipEndpoints();
+
+app.MapPost("/exitslip/question",
+    async (CreateQuestionDto questionDto, HttpContext httpContext, IExitSlipCommand command) =>
+    {
+        var appUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        try
+        {
+            await command.AddQuestion(questionDto, appUserId);
+            return Results.Ok("Question added");
+        }
+        catch (Exception)
+        {
+            return Results.BadRequest("Failed to add the question");
+            throw;
+        }
+    });
 
 app.Run();
 
