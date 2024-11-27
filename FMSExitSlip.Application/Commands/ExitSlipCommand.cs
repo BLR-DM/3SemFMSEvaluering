@@ -57,7 +57,7 @@ namespace FMSExitSlip.Application.Commands
                 var otherExitSlips = await _exitSlipRepository.GetExitSlipsAsync();
 
                 // Do
-                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.IsPublished, exitSlipDto.LectureId, appUserId, otherExitSlips);
+                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, appUserId, otherExitSlips);
                 await _exitSlipRepository.AddExitSlipAsync(exitSlip);
 
                 // Save

@@ -19,7 +19,7 @@ namespace FMSExitSlip.Domain.Entities
         
         protected ExitSlip() { }
 
-        private ExitSlip(string title, int maxQuestions, bool isPublished, string appUserId, int lectureId, IEnumerable<ExitSlip> otherExitSlips)
+        private ExitSlip(string title, int maxQuestions, string appUserId, int lectureId, IEnumerable<ExitSlip> otherExitSlips)
         {
             Title = title;
             MaxQuestions = maxQuestions;
@@ -29,9 +29,9 @@ namespace FMSExitSlip.Domain.Entities
             AssureOnlyOneExitSlipPrLesson(otherExitSlips);
         }
 
-        public static ExitSlip Create(string title, int maxQuestions, bool isPublished, int lectureId, string appUserId, IEnumerable<ExitSlip> otherExitSlips)
+        public static ExitSlip Create(string title, int maxQuestions, int lectureId, string appUserId, IEnumerable<ExitSlip> otherExitSlips)
         {
-            return new ExitSlip(title, maxQuestions, isPublished, appUserId, lectureId, otherExitSlips);
+            return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips);
         }
 
         private void AssureOnlyOneExitSlipPrLesson(IEnumerable<ExitSlip> otherExitSlips)

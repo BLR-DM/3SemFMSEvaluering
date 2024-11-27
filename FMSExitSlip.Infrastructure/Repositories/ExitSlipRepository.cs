@@ -25,7 +25,7 @@ namespace FMSExitSlip.Infrastructure.Repositories
 
         async Task<ExitSlip> IExitSlipRepository.GetExitSlipAsync(int id)
         {
-            return await _db.ExitSlips.SingleOrDefaultAsync(e => e.Id == id);
+            return await _db.ExitSlips.Include(e => e.Questions).SingleOrDefaultAsync(e => e.Id == id);
         }
 
         async Task<IEnumerable<ExitSlip>> IExitSlipRepository.GetExitSlipsAsync()

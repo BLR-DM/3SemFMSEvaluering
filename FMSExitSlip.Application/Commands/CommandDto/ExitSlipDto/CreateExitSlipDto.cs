@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto
 {
-    public record CreateExitSlipDto (string Title, int MaxQuestions, bool IsPublished, int LectureId){ }
+    public record CreateExitSlipDto (string Title, int MaxQuestions, int LectureId){ }
 }
