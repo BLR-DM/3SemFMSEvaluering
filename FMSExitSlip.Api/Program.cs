@@ -3,6 +3,7 @@ using System.Text;
 using FMSExitSlip.Api.Endpoints;
 using FMSExitSlip.Application;
 using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
+using FMSExitSlip.Application.Commands.CommandDto.ResponseDto;
 using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -98,6 +99,14 @@ app.MapPost("/exitslip/question",
             throw;
         }
     }).RequireAuthorization("Teacher").WithTags("Questions");
+
+app.MapPost("/exitslip/{id}/question/response",
+    async (int id, CreateResponseDto responseDto, HttpContext httpContext, IExitSlipCommand command) =>
+    {
+        //var appUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        await command.CreateResponseAsync(responseDto, id);
+    }).RequireAuthorization("Student").WithTags("Responses");
 
 app.Run();
 
