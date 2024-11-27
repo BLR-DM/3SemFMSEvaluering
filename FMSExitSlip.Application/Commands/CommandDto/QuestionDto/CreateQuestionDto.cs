@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto
+namespace FMSExitSlip.Application.Commands.CommandDto.QuestionDto
 {
-    public record CreateExitSlipDto(string Text) {}
+    public record CreateQuestionDto(string Text) { }
 }

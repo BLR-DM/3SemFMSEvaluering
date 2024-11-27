@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
+using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
 using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Application.Helpers;
 using FMSExitSlip.Application.Repositories;
@@ -24,16 +24,14 @@ namespace FMSExitSlip.Application.Commands
             _exitSlipRepository = exitSlipRepository;
         }
 
-        async Task IExitSlipCommand.CreateQuestion(CreateExitSlipDto exitSlipDto)
+        async Task IExitSlipCommand.CreateQuestion(CreateQuestionDto questionDto, string appUserId)
         {
             try
             {
                 await _unitOfWork.BeginTransaction();
 
                 // Load
-                //var exitSlip = _exitSlipRepository
-
-
+                //var exitSlip = _exitSlipRepository.GetExitSlipAsync()
             }
             catch (Exception)
             {
