@@ -6,7 +6,5 @@ using System.Threading.Tasks;
 
 namespace FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto
 {
-    internal class CreateExitSlipDto
-    {
-    }
+    public record CreateExitSlipDto(string Text) {}
 }

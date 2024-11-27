@@ -16,7 +16,7 @@ namespace FMSExitSlip.Domain.Entities
         public int LectureId { get; protected set; }
 
         public ICollection<Question> Questions => _questions;
-
+        
         protected ExitSlip() { }
 
         private ExitSlip(string title, int maxQuestions, string appUserId, int lectureId, IEnumerable<ExitSlip> otherExitSlips)
@@ -40,6 +40,27 @@ namespace FMSExitSlip.Domain.Entities
             {
                 throw new Exception("Only one exit slip per lesson is allowed.");
             }
+
+        }
+        
+         public void CreateQuestion(string text, string appUserId)
+        {
+            EnsureExitSlipDoesntExceedMaxQuestions();
+            EnsureExitSlipIsNotPublished();
+
+            _questions.Add(Question.Create(text, appUserId));
+        }
+
+        public void EnsureExitSlipIsNotPublished()
+        {
+            if (IsPublished)
+                throw new InvalidOperationException("Cannot add questions to a published exitslip");
+        }
+
+        public void EnsureExitSlipDoesntExceedMaxQuestions()
+        {
+            if (Questions.Count >= MaxQuestions)
+                throw new InvalidOperationException($"Cannot add more than {MaxQuestions} questions");
         }
     }
 }
