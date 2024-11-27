@@ -24,18 +24,24 @@ namespace FMSExitSlip.Application.Commands
             _exitSlipRepository = exitSlipRepository;
         }
 
-        async Task IExitSlipCommand.CreateQuestion(CreateQuestionDto questionDto, string appUserId)
+        async Task IExitSlipCommand.AddQuestion(CreateQuestionDto questionDto, string appUserId)
         {
             try
             {
                 await _unitOfWork.BeginTransaction();
 
                 // Load
-                //var exitSlip = _exitSlipRepository.GetExitSlipAsync()
+                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(questionDto.exitSlipId);
+
+                // Do
+                exitSlip.CreateQuestion(questionDto.Text, appUserId);
+
+                // Save
+                await _unitOfWork.Commit();
             }
             catch (Exception)
             {
-
+                await _unitOfWork.Rollback();
                 throw;
             }
         }
