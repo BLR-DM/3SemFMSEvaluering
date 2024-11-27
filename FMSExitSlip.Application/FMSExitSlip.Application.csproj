@@ -9,6 +9,10 @@
 		<ProjectReference Include="..\FMSExitSlip.Domain\FMSExitSlip.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Commands\CommandDto\ExitSlipDto\" />
+	</ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
