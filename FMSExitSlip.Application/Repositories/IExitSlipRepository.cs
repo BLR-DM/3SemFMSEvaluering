@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FMSExitSlip.Domain.Entities;
 
 namespace FMSExitSlip.Application.Repositories
 {
     public interface IExitSlipRepository
     {
+        Task AddExitSlipAsync(ExitSlip exitSlip);
+        Task<ExitSlip> GetExitSlipAsync(int id);
+        Task<IEnumerable<ExitSlip>> GetExitSlipsAsync();
     }
 }
