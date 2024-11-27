@@ -138,5 +138,28 @@ namespace FMSExitSlip.Application.Commands
                 throw;
             }
         }
+
+        async Task IExitSlipCommand.PublishExitSlip(int id, string appUserId)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+
+                // Load
+                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(id);
+
+                // Do
+                exitSlip.Publish(appUserId);
+                _exitSlipRepository.PublishExitSlip(exitSlip);
+
+                // Save
+                await _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.Rollback();
+                throw;
+            }
+        }
     }
 }

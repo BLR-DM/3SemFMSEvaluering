@@ -14,5 +14,6 @@ namespace FMSExitSlip.Application.Repositories
         Task<IEnumerable<ExitSlip>> GetExitSlipsAsync();
         void UpdateResponse(Response response, byte[] rowVersion);
         void DeleteResponse(Response response, byte[] rowVersion);
+        void PublishExitSlip(ExitSlip exitSlip);
     }
 }
