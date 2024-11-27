@@ -108,5 +108,13 @@ app.MapPost("/exitslip/{id}/question/response",
         await command.CreateResponseAsync(responseDto, id);
     }).RequireAuthorization("Student").WithTags("Responses");
 
+app.MapPut("/exitslip/{id}/question/response",
+    async (int id, UpdateResponseDto responseDto, HttpContext httpContext, IExitSlipCommand command) =>
+    {
+        //var appUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        await command.UpdateResponseAsync(responseDto, id);
+    }).RequireAuthorization("Student").WithTags("Responses");
+
 app.Run();
 
