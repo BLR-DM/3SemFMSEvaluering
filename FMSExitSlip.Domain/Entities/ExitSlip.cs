@@ -51,16 +51,51 @@ namespace FMSExitSlip.Domain.Entities
             _questions.Add(Question.Create(text, appUserId));
         }
 
+        public void CreateResponse(string text, string appUserId, int questionId)
+        {
+            EnsureExitSlipIsPublished();
+
+            var question = GetQuestionById(questionId);
+            question.AddResponse(text, appUserId);
+        }
+
+        public Response UpdateResponse(int responseId, string text, string appUserId, int questionId)
+        {
+            EnsureExitSlipIsPublished();
+
+            var question = GetQuestionById(questionId);
+            return question.UpdateResponse(responseId, text, appUserId);
+        }
+
         public void EnsureExitSlipIsNotPublished()
         {
             if (IsPublished)
                 throw new InvalidOperationException("Cannot add questions to a published exitslip");
         }
 
+        public void EnsureExitSlipIsPublished()
+        {
+            if (!IsPublished)
+                throw new InvalidOperationException("Cannot add responses to an unpublished exitslip");
+        }
+
         public void EnsureExitSlipDoesntExceedMaxQuestions()
         {
             if (Questions.Count >= MaxQuestions)
                 throw new InvalidOperationException($"Cannot add more than {MaxQuestions} questions");
+        }
+
+        public Response DeleteResponse(int responseId, string appUserId, int questionId)
+        {
+            var question = GetQuestionById(questionId);
+            var response = question.DeleteResponse(responseId, appUserId);
+            return response;
+        }
+
+        private Question GetQuestionById(int id)
+        {
+            var question = _questions.FirstOrDefault(q => q.Id == id);
+            return question ?? throw new ArgumentException("Question was not found");
         }
     }
 }

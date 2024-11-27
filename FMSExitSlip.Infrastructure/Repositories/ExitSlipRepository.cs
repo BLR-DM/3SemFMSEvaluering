@@ -32,5 +32,16 @@ namespace FMSExitSlip.Infrastructure.Repositories
         {
             return await _db.ExitSlips.ToListAsync();
         }
+
+        void IExitSlipRepository.UpdateResponse(Response response, byte[] rowVersion)
+        {
+            _db.Entry(response).Property(nameof(response.RowVersion)).OriginalValue = rowVersion;
+        }
+
+        void IExitSlipRepository.DeleteResponse(Response response, byte[] rowVersion)
+        {
+            _db.Entry(response).Property(nameof(response.RowVersion)).OriginalValue = rowVersion;
+            _db.Responses.Remove(response);
+        }
     }
 }

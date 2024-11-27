@@ -1,14 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace FMSExitSlip.Domain.Entities;
 
-namespace FMSExitSlip.Domain.Entities
+public class Response : DomainEntity
 {
-    public class Response : DomainEntity
+    public string Text { get; protected set; }
+    public string AppUserId { get; protected set; }
+
+    protected Response() {}
+
+    public Response(string text, string addUserId, IEnumerable<Response> responses)
     {
-        public string Text { get; protected set; }
-        public string AppUserId { get; protected set; }
+        Text = text;
+        AppUserId = addUserId;
+
+        AssureOnlyOneResponsePrQuestion(responses);
+    }
+
+    public static Response Create(string text, string appUserId, IEnumerable<Response> responses)
+    {
+        return new Response(text, appUserId, responses);
+    }
+
+    public void Update(string text, string appUserId)
+    {
+        AssureUserIsSameUser(appUserId);
+        Text = text;
+    }
+
+    public void Delete(string appUserId)
+    {
+        AssureUserIsSameUser(appUserId);
+    }
+
+    private void AssureUserIsSameUser(string appUserId)
+    {
+        if (!AppUserId.Equals(appUserId))
+            throw new ArgumentException("Only the creater of the response can edit it");
+    }
+
+    private void AssureOnlyOneResponsePrQuestion(IEnumerable<Response> responses)
+    {
+        if (responses.Any(r => r.AppUserId == AppUserId))
+            throw new InvalidOperationException("Only one answer to a question is allowed");
     }
 }
