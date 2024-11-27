@@ -51,7 +51,7 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPost(updatePostDto.PostId);
+            var post = await _postRepository.GetPostAsync(updatePostDto.PostId);
             
             // Do
             post.Update(updatePostDto.Content, updatePostDto.AppUserId);
@@ -75,10 +75,10 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPost(postDto.Id);
+            var post = await _postRepository.GetPostAsync(postDto.Id);
 
             // Do & Save
-            _postRepository.DeletePost(post);
+            _postRepository.DeletePost(post, postDto.RowVersion);
             await _unitOfWork.Commit();
         }
         catch (Exception)
@@ -98,7 +98,7 @@ public class PostCommand : IPostCommand
     //        await _unitOfWork.BeginTransaction();
 
     //        // Load 
-    //        var post = await _postRepository.GetPost(voteDto.PostId);
+    //        var post = await _postRepository.GetPostAsync(voteDto.PostId);
 
     //        // Do
     //        post.CreateVote(voteDto.VoteType);
@@ -120,7 +120,7 @@ public class PostCommand : IPostCommand
     //        await _unitOfWork.BeginTransaction();
 
     //        // Load
-    //        var post = await _postRepository.GetPost(voteDto.PostId);
+    //        var post = await _postRepository.GetPostAsync(voteDto.PostId);
 
     //        // Do
     //        post.UpdateVote(voteDto.Id, voteDto.VoteType);
@@ -141,7 +141,7 @@ public class PostCommand : IPostCommand
     //    {
     //        await _unitOfWork.BeginTransaction();
     //        // Load 
-    //        var post = await _postRepository.GetPost(voteDto.PostId);
+    //        var post = await _postRepository.GetPostAsync(voteDto.PostId);
     //        // Do
     //        post.DeleteVote(voteDto.Id);
     //        // Save
@@ -161,7 +161,7 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPost(commentDto.postID);
+            var post = await _postRepository.GetPostAsync(commentDto.postID);
 
             // Do
             post.CreateComment(commentDto.text);
@@ -183,7 +183,7 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPost(commentDto.postID);
+            var post = await _postRepository.GetPostAsync(commentDto.postID);
 
             // Do
             var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
@@ -207,7 +207,7 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPost(postId);
+            var post = await _postRepository.GetPostAsync(postId);
 
             // Do
             post.HandleVote(voteDto.VoteType, appUserId);
