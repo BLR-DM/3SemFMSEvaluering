@@ -48,7 +48,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.AddResponseAsync(CreateResponseDto responseDto, int exitSlipId)
+        async Task IExitSlipCommand.CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId)
         {
             try
             {
