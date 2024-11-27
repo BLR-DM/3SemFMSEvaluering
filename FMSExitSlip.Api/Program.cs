@@ -97,7 +97,7 @@ app.MapPost("/exitslip/question",
             return Results.BadRequest("Failed to add the question");
             throw;
         }
-    });
+    }).RequireAuthorization("Teacher").WithTags("Questions");
 
 app.Run();
 
