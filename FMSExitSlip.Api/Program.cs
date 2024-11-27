@@ -1,4 +1,5 @@
 using System.Text;
+using FMSExitSlip.Api.Endpoints;
 using FMSExitSlip.Application;
 using FMSExitSlip.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -76,6 +77,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapExitSlipEndpoints();
 
 app.Run();
 

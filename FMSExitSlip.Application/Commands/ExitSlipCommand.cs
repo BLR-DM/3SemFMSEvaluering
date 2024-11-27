@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
 using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
 using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Application.Helpers;
@@ -40,7 +41,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.CreateExitSlipAsync(string title, int maxQuestions, string appUserId, int lectureId)
+        async Task IExitSlipCommand.CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId)
         {
             try
             {
@@ -50,7 +51,7 @@ namespace FMSExitSlip.Application.Commands
                 var otherExitSlips = await _exitSlipRepository.GetExitSlipsAsync();
 
                 // Do
-                var exitSlip = ExitSlip.Create(title, maxQuestions, appUserId, lectureId, otherExitSlips);
+                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.IsPublished, exitSlipDto.LectureId, appUserId, otherExitSlips);
                 await _exitSlipRepository.AddExitSlipAsync(exitSlip);
 
                 // Save
