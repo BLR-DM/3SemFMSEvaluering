@@ -23,6 +23,22 @@ namespace FMSExitSlip.Api.Endpoints
                     return Results.BadRequest("Failed to create ExitSlip");
                 }
             }).RequireAuthorization("Teacher").WithTags("ExitSlip");
+
+            app.MapPut("/exitslip/{id}/publish", async (int id, HttpContext HttpContext, IExitSlipCommand command) =>
+            {
+                var appUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                try
+                {
+                    await command.PublishExitSlip(id, appUserId);
+                    return Results.Ok("ExitSlip published");
+                }
+                catch (Exception)
+                {
+
+                    return Results.BadRequest("Failed to publish ExitSlip");
+                }
+
+            }).RequireAuthorization("Teacher").WithTags("ExitSlip");
         }
     }
 }

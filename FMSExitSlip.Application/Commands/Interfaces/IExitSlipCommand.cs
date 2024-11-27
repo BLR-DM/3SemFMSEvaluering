@@ -11,4 +11,5 @@ public interface IExitSlipCommand
     Task CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId);
     Task UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId);
     Task DeleteResponseAsync(DeleteResponseDto responseDto, int exitSlipId);
+    Task PublishExitSlip(int id, string appUserId);
 }

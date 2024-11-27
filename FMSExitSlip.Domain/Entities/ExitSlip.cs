@@ -34,6 +34,13 @@ namespace FMSExitSlip.Domain.Entities
             return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips);
         }
 
+        public void Publish(string appUserId)
+        {
+            EnsureExitSlipIsNotPublished();
+            EnsureTeacherSameAsCreator(appUserId);
+            IsPublished = true;
+        }
+
         private void AssureOnlyOneExitSlipPrLesson(IEnumerable<ExitSlip> otherExitSlips)
         {
             if (otherExitSlips.Any(l => l.LectureId == LectureId))
@@ -77,7 +84,7 @@ namespace FMSExitSlip.Domain.Entities
         public void EnsureExitSlipIsNotPublished()
         {
             if (IsPublished)
-                throw new InvalidOperationException("Cannot add questions to a published exitslip");
+                throw new InvalidOperationException("Cannot moditfy a published exitslip");
         }
 
         public void EnsureExitSlipIsPublished()
@@ -90,6 +97,12 @@ namespace FMSExitSlip.Domain.Entities
         {
             if (Questions.Count >= MaxQuestions)
                 throw new InvalidOperationException($"Cannot add more than {MaxQuestions} questions");
+        }
+
+        public void EnsureTeacherSameAsCreator(string appUserId)
+        {
+            if (!AppUserId.Equals(appUserId))
+                throw new InvalidOperationException("Only the creator of the exit slip can modify it");
         }
 
         private Question GetQuestionById(int id)
