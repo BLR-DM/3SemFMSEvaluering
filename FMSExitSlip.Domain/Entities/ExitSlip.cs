@@ -59,12 +59,12 @@ namespace FMSExitSlip.Domain.Entities
             question.AddResponse(text, appUserId);
         }
 
-        public Response UpdateResponse(int responseId, string text, int questionId)
+        public Response UpdateResponse(int responseId, string text, string appUserId, int questionId)
         {
             EnsureExitSlipIsPublished();
 
             var question = GetQuestionById(questionId);
-            return question.UpdateResponse(responseId, text);
+            return question.UpdateResponse(responseId, text, appUserId);
         }
 
         public void EnsureExitSlipIsNotPublished()
@@ -83,6 +83,13 @@ namespace FMSExitSlip.Domain.Entities
         {
             if (Questions.Count >= MaxQuestions)
                 throw new InvalidOperationException($"Cannot add more than {MaxQuestions} questions");
+        }
+
+        public Response DeleteResponse(int responseId, string appUserId, int questionId)
+        {
+            var question = GetQuestionById(questionId);
+            var response = question.DeleteResponse(responseId, appUserId);
+            return response;
         }
 
         private Question GetQuestionById(int id)

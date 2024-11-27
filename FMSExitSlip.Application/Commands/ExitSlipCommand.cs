@@ -80,8 +80,31 @@ namespace FMSExitSlip.Application.Commands
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
 
                 // Do
-                var response = exitSlip.UpdateResponse(responseDto.ResponseId, responseDto.Text, responseDto.QuestionId);
-                //await _exitSlipRepository.UpdateResponseAsync(response, responseDto.RowVersion); ?
+                var response = exitSlip.UpdateResponse(responseDto.ResponseId, responseDto.Text, responseDto.AppUserId, responseDto.QuestionId);
+                _exitSlipRepository.UpdateResponse(response, responseDto.RowVersion);
+
+                // Save
+                await _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
+        async Task IExitSlipCommand.DeleteResponseAsync(DeleteResponseDto responseDto, int exitSlipId)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+
+                // Load
+                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Do
+                var response = exitSlip.DeleteResponse(responseDto.ResponseId, responseDto.AppUserId, responseDto.QuestionId);
+                _exitSlipRepository.DeleteResponse(response, responseDto.RowVersion);
 
                 // Save
                 await _unitOfWork.Commit();

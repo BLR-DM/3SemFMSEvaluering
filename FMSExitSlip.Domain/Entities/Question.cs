@@ -31,12 +31,25 @@ namespace FMSExitSlip.Domain.Entities
             _responses.Add(response);
         }
 
-        public Response UpdateResponse(int responseId, string text)
+        public Response UpdateResponse(int responseId, string text, string appUserId)
+        {
+            var response = GetResponseById(responseId);
+            response.Update(text, appUserId);
+            return response;
+        }
+
+        public Response DeleteResponse(int responseId, string appUserId)
+        {
+            var response = GetResponseById(responseId);
+            response.Delete(appUserId);
+            _responses.Remove(response);
+            return response;
+        }
+
+        private Response GetResponseById(int responseId)
         {
             var response = Responses.FirstOrDefault(r => r.Id == responseId);
-            if (response == null) throw new ArgumentException("Response not found");
-            response.Update(text);
-            return response;
+            return response ?? throw new ArgumentException("Response not found");
         }
     }
 }

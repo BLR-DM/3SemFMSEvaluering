@@ -20,9 +20,21 @@ public class Response : DomainEntity
         return new Response(text, appUserId, responses);
     }
 
-    public void Update(string text)
+    public void Update(string text, string appUserId)
     {
+        AssureUserIsSameUser(appUserId);
         Text = text;
+    }
+
+    public void Delete(string appUserId)
+    {
+        AssureUserIsSameUser(appUserId);
+    }
+
+    private void AssureUserIsSameUser(string appUserId)
+    {
+        if (!AppUserId.Equals(appUserId))
+            throw new ArgumentException("Only the creater of the response can edit it");
     }
 
     private void AssureOnlyOneResponsePrQuestion(IEnumerable<Response> responses)
