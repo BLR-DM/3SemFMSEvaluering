@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
+﻿using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
 using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
-using FMSExitSlip.Domain.Entities;
+using FMSExitSlip.Application.Commands.CommandDto.ResponseDto;
 
-namespace FMSExitSlip.Application.Commands.Interfaces
+namespace FMSExitSlip.Application.Commands.Interfaces;
+
+public interface IExitSlipCommand
 {
-    public interface IExitSlipCommand
-    {
-        Task AddQuestion(CreateQuestionDto questionDto, string appUserId);
-        Task CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId);
-    }
+    Task AddQuestion(CreateQuestionDto questionDto, string appUserId);
+    Task CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId);
+    Task AddResponseAsync(CreateResponseDto responseDto, int exitSlipId);
+    Task UpdateResponseAsync(UpdateResponseDto updateResponseDto, int exitSlipId);
 }
