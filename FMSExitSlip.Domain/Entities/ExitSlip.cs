@@ -37,6 +37,7 @@ namespace FMSExitSlip.Domain.Entities
         public void Publish(string appUserId)
         {
             EnsureExitSlipIsNotPublished();
+            EnsureQuestionsBeforePublish();
             EnsureTeacherSameAsCreator(appUserId);
             IsPublished = true;
         }
@@ -47,7 +48,6 @@ namespace FMSExitSlip.Domain.Entities
             {
                 throw new Exception("Only one exit slip per lesson is allowed.");
             }
-
         }
         
          public void CreateQuestion(string text, string appUserId)
@@ -91,6 +91,12 @@ namespace FMSExitSlip.Domain.Entities
         {
             if (!IsPublished)
                 throw new InvalidOperationException("Cannot add responses to an unpublished exitslip");
+        }
+
+        public void EnsureQuestionsBeforePublish()
+        {
+            if (Questions.Count == 0)
+                throw new InvalidOperationException("Cannot publish an exit slip without questions");
         }
 
         public void EnsureExitSlipDoesntExceedMaxQuestions()
