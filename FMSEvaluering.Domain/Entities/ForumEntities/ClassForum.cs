@@ -10,9 +10,9 @@
             ClassId = classId;
         }
 
-        public override void ValidatePostCreation(string studentId) // FmsProxy?
+        public override void ValidatePostCreation(string studentClassId)
         {
-            if (!studentId.Equals(ClassId.ToString())) // studentId = user.ClassId eller ClassId
+            if (!ClassId.ToString().Equals(studentClassId))
                 throw new InvalidOperationException("Student is not part of class.");
         }
     }

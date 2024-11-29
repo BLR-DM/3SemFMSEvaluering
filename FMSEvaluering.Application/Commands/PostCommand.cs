@@ -4,8 +4,9 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.DomainService;
+using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.PostEntities;
+using System;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -13,15 +14,15 @@ public class PostCommand : IPostCommand
 {
     private readonly IPostRepository _postRepository;
     private readonly IForumRepository _forumRepository;
-    private readonly IClassroomAccessService _classroomAccessService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository, IClassroomAccessService classroomAccessService)
+    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository, IServiceProvider serviceProvider)
     {
         _unitOfWork = unitOfWork;
         _postRepository = postRepository;
         _forumRepository = forumRepository;
-        _classroomAccessService = classroomAccessService;
+        _serviceProvider = serviceProvider;
     }
 
     async Task IPostCommand.CreatePostAsync(CreatePostDto postDto)
@@ -31,11 +32,11 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var forum = await _forumRepository.GetForum(int.Parse(postDto.ForumId));
+            var forum = await _forumRepository.GetForumAsync(int.Parse(postDto.ForumId));
 
             // Do
-            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum, postDto.ClassId, _classroomAccessService);
-            await _postRepository.AddPost(post);
+            var post = await Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum, _serviceProvider);
+            await _postRepository.AddPostAsync(post);
             
             // Save
             await _unitOfWork.Commit();

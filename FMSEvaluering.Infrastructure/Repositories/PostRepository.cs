@@ -1,7 +1,6 @@
 ﻿using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities.PostEntities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace FMSEvaluering.Infrastructure.Repositories;
 
@@ -14,7 +13,7 @@ public class PostRepository : IPostRepository
         _db = db;
     }
 
-    async Task IPostRepository.AddPost(Post post)
+    async Task IPostRepository.AddPostAsync(Post post)
     {
         try
         {

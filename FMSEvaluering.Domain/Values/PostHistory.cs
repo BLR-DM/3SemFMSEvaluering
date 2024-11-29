@@ -9,5 +9,5 @@ public record PostHistory
         EditedDate = DateTime.Now;
     }
     public string Content { get; private set; }
-    public DateTime EditedDate{ get; private set; }
+    public DateTime EditedDate { get; private set; }
 }

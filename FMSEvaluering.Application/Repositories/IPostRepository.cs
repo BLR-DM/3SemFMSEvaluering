@@ -4,7 +4,7 @@ namespace FMSEvaluering.Application.Repositories;
 
 public interface IPostRepository
 {
-    Task AddPost(Post post);
+    Task AddPostAsync(Post post);
     Task<Post> GetPostAsync(int id);
     void UpdatePost(Post post, byte[] rowVersion);
 
