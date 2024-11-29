@@ -165,10 +165,10 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(commentDto.postID);
+            var post = await _postRepository.GetPostAsync(commentDto.PostId);
 
             // Do
-            post.CreateComment(commentDto.text);
+            post.CreateComment(commentDto.Text);
 
             // Save 
             await _unitOfWork.Commit();
@@ -187,13 +187,13 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(commentDto.postID);
+            var post = await _postRepository.GetPostAsync(commentDto.PostId);
 
             // Do
-            var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
+            var comment = post.UpdateComment(commentDto.CommentId, commentDto.Text);
 
             // Save
-            _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+            _postRepository.UpdateCommentAsync(comment, commentDto.RowVersion);
             await _unitOfWork.Commit();
 
         }

@@ -92,12 +92,13 @@ app.UseAuthorization();
 //    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post))
 //    .RequireAuthorization("CanCreate");
 
-app.MapPost("/post", // "/forum/{id}/post"?
+app.MapPost("/post", // "/forum/{id}/post"? <- If forumId is not in Dto
     async (CreatePostDto post, IPostCommand command) =>
     {
         try
         {
-            await command.CreatePostAsync(post);
+            // Pass in AppUserId from ClaimsPrincipal user (user.FindFirst(ClaimTypes.NameIdentifier).Value) for safety?
+            await command.CreatePostAsync(post); 
             return Results.Created();
         }
         catch (Exception)
