@@ -1,10 +1,14 @@
-﻿using FMSEvaluering.Domain.Entities.ForumEntities;
+﻿using FMSEvaluering.Domain.DomainService;
+using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Domain.Values;
 
 namespace FMSEvaluering.Domain.Entities.PostEntities;
 
 public class Post : DomainEntity
 {
+    private readonly IClassroomAccessService _classroomAccessService;
+
     private readonly List<Comment> _comments = [];
     private readonly List<Vote> _votes = [];
     private readonly List<PostHistory> _history = [];
@@ -13,14 +17,16 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId, Forum forum)
+    private Post(string description, string solution, string appUserId, Forum forum, IClassroomAccessService classroomAccessService)
     {
+        _classroomAccessService = classroomAccessService;
         Description = description;
         Solution = solution;
         AppUserId = appUserId;
         Forum = forum;
         CreatedDate = DateTime.Now;
 
+        AssureStudentIsPartOfClassroom(); //async??
         Forum.ValidatePostCreation(AppUserId); // FmsProxy her? 
     }
 
@@ -33,9 +39,9 @@ public class Post : DomainEntity
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution, string appUserId, Forum forum)
+    public static Post Create(string description, string solution, string appUserId, Forum forum, IClassroomAccessService classroomAccessService)
     {
-        return new Post(description, solution, appUserId, forum);
+        return new Post(description, solution, appUserId, forum, classroomAccessService);
     }
 
 
@@ -115,5 +121,15 @@ public class Post : DomainEntity
 
         comment.Update(text);
         return comment;
+    }
+
+    public async void AssureStudentIsPartOfClassroom(string classId)
+    {
+        var studentClassId = await _classroomAccessService.GetStudentClassId(AppUserId);
+
+        if (!studentClassId.Equals(classId))
+        {
+            throw new InvalidOperationException("You is not part of this class.");
+        }
     }
 }

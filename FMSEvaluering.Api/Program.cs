@@ -7,6 +7,7 @@ using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
+using FMSEvaluering.Application.ExternalServices;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Infrastructure;
 using FMSEvaluering.Infrastructure.Authorization;
@@ -50,7 +51,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 builder.Services.AddHttpClient();
-builder.Services.AddHttpClient<IFmsProxy, FmsProxy>();
+builder.Services.AddHttpClient<IFmsDataProxy, FmsDataProxy>();
 builder.Services.AddScoped<IAuthorizationHandler, ClassroomAccessHandler>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

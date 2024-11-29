@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using FMSEvaluering.Application.Authorization;
+using FMSEvaluering.Application.ExternalServices;
 using FMSEvaluering.Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Authorization;
 
@@ -7,11 +8,11 @@ namespace FMSEvaluering.Infrastructure.Authorization;
 
 public class ClassroomAccessHandler : AuthorizationHandler<ClassroomAccessRequirement>
 {
-    private readonly IFmsProxy _fmsProxy;
+    private readonly IFmsDataProxy _fmsDataProxy;
 
-    public ClassroomAccessHandler(IFmsProxy fmsProxy)
+    public ClassroomAccessHandler(IFmsDataProxy fmsDataProxy)
     {
-        _fmsProxy = fmsProxy;
+        _fmsDataProxy = fmsDataProxy;
     }
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ClassroomAccessRequirement requirement)
     {
@@ -23,7 +24,7 @@ public class ClassroomAccessHandler : AuthorizationHandler<ClassroomAccessRequir
             return Task.CompletedTask;
         }
 
-        var classId = _fmsProxy.StudentIsPartOfClassroom(studentId);
+        var classId = _fmsDataProxy.StudentIsPartOfClassroom(studentId);
 
         if (classId.Result.Equals(requirement.ClassroomId))
         {
