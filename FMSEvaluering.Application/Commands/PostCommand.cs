@@ -34,7 +34,7 @@ public class PostCommand : IPostCommand
             var forum = await _forumRepository.GetForum(int.Parse(postDto.ForumId));
 
             // Do
-            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum, _classroomAccessService);
+            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum, postDto.ClassId, _classroomAccessService);
             await _postRepository.AddPost(post);
             
             // Save

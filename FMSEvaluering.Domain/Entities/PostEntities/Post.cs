@@ -1,5 +1,4 @@
 ﻿using FMSEvaluering.Domain.DomainService;
-using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Domain.Values;
 
@@ -17,7 +16,7 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId, Forum forum, IClassroomAccessService classroomAccessService)
+    private Post(string description, string solution, string appUserId, Forum forum, string classId, IClassroomAccessService classroomAccessService)
     {
         _classroomAccessService = classroomAccessService;
         Description = description;
@@ -26,7 +25,7 @@ public class Post : DomainEntity
         Forum = forum;
         CreatedDate = DateTime.Now;
 
-        AssureStudentIsPartOfClassroom(); //async??
+        AssureStudentIsPartOfClassroom(classId); //async??
         Forum.ValidatePostCreation(AppUserId); // FmsProxy her? 
     }
 
@@ -39,9 +38,9 @@ public class Post : DomainEntity
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution, string appUserId, Forum forum, IClassroomAccessService classroomAccessService)
+    public static Post Create(string description, string solution, string appUserId, Forum forum, string classId, IClassroomAccessService classroomAccessService)
     {
-        return new Post(description, solution, appUserId, forum, classroomAccessService);
+        return new Post(description, solution, appUserId, forum, classId, classroomAccessService);
     }
 
 
