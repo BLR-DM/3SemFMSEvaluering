@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace FMSEvaluering.Application.Commands.CommandDto.ForumDto
 {
-    public record DeleteForumDto
-    {
-        public int Id { get; set; }
-    }
+    public record DeleteForumDto(int Id);
 }

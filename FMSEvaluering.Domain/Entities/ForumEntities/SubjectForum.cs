@@ -9,5 +9,10 @@
             Name = name;
             SubjectId = subjectId;
         }
+
+        public override void ValidatePostCreation(string studentData)
+        {
+            // Do something
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FMSEvaluering.Application.Commands.CommandDto.CommentDto
 {
-    public record UpdateCommentDto(int commentID, string text, byte[] rowVersion, int postID)
+    public record UpdateCommentDto(int CommentId, string Text, byte[] RowVersion, int PostId)
     {
     }
 }

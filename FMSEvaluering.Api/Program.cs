@@ -2,17 +2,13 @@ using System.Security.Claims;
 using System.Text;
 using FMSEvaluering.Api.Endpoints;
 using FMSEvaluering.Application;
-using FMSEvaluering.Application.Authorization;
 using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Infrastructure;
-using FMSEvaluering.Infrastructure.Authorization;
-using FMSEvaluering.Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -50,8 +46,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 builder.Services.AddHttpClient();
-builder.Services.AddHttpClient<IFmsProxy, FmsProxy>();
-builder.Services.AddScoped<IAuthorizationHandler, ClassroomAccessHandler>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -95,18 +89,19 @@ app.UseAuthorization();
 //    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post))
 //    .RequireAuthorization("CanCreate");
 
-app.MapPost("/post", // "/forum/{id}/post"?
-    async (CreatePostDto post, IAuthorizationService authService, ClaimsPrincipal user, IPostCommand command) =>
+app.MapPost("/forum/{forumId}/post",
+    async (int forumId, CreatePostDto post, ClaimsPrincipal user, IPostCommand command) =>
     {
-        var requirement = new ClassroomAccessRequirement(post.ClassId); // Check if forum has requirements
-
-        var result = await authService.AuthorizeAsync(user, null, requirement);
-
-        if (!result.Succeeded)
-            return Results.Forbid();
-
-        await command.CreatePostAsync(post);
-        return Results.Created();
+        try
+        {
+            var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await command.CreatePostAsync(forumId, appUserId, post); 
+            return Results.Created("testURI", post); // Test return value
+        }
+        catch (Exception)
+        {
+            return Results.Problem("Couldn't create post");
+        }
 
     }).RequireAuthorization("Student");
 

@@ -26,7 +26,7 @@ namespace FMSEvaluering.Application.Commands
         }
         async Task IForumCommand.AddPost(CreatePostDto postDto)
         {
-            var forum = _forumRepository.GetForum(int.Parse(postDto.ForumId));
+            var forum = _forumRepository.GetForumAsync(int.Parse(postDto.ForumId));
 
 
         }
@@ -99,7 +99,7 @@ namespace FMSEvaluering.Application.Commands
                 await _unitOfWork.BeginTransaction();
 
                 // Load
-                var forum = await _forumRepository.GetForum(forumDto.Id);
+                var forum = await _forumRepository.GetForumAsync(forumDto.Id);
 
                 // Do
                 _forumRepository.DeleteForum(forum);

@@ -1,6 +1,9 @@
 ﻿using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Repositories;
+using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Infrastructure.ExternalServices;
+using FMSEvaluering.Infrastructure.ExternalServices.ServiceProxyImpl;
 using FMSEvaluering.Infrastructure.Helpers;
 using FMSEvaluering.Infrastructure.Queries;
 using FMSEvaluering.Infrastructure.Repositories;
@@ -20,6 +23,13 @@ public static class DependencyInjection
         services.AddScoped<IForumRepository, ForumRepository>();
         services.AddScoped<IForumQuery, ForumQuery>();
         services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
+        services.AddScoped<IValidateStudentDomainService, ValidateStudentDomainService>();
+
+        // External services
+        services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>
+        {
+            client.BaseAddress = new Uri(configuration["FmsDataProxy:BaseAddress"]);
+        });
 
         // Add-Migration InitialMigration -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration
         // Update-Database -Context EvaluationContext -Project FMSEvaluering.DatabaseMigration

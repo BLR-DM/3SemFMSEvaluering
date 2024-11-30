@@ -4,11 +4,13 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
     public abstract class Forum : DomainEntity
     {
-        public string Name { get; protected set; }
         private readonly List<Post> _posts = [];
 
-        protected Forum() {}
+        protected Forum()
+        {
+        }
 
+        public string Name { get; protected set; }
         public IReadOnlyCollection<Post> Posts => _posts;
 
         public virtual void ValidatePostCreation(string studentId)

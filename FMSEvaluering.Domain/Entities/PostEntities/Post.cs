@@ -1,5 +1,7 @@
-﻿using FMSEvaluering.Domain.Entities.ForumEntities;
+﻿using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Domain.Values;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FMSEvaluering.Domain.Entities.PostEntities;
 
@@ -13,7 +15,7 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId, Forum forum)
+    private Post(string description, string solution, string appUserId, Forum forum, FmsValidationResult fmsValidationResponse)
     {
         Description = description;
         Solution = solution;
@@ -21,7 +23,8 @@ public class Post : DomainEntity
         Forum = forum;
         CreatedDate = DateTime.Now;
 
-        Forum.ValidatePostCreation(AppUserId); // FmsProxy her? 
+        //AssureStudentIsPartOfClass(fmsValidationResponse.ClassId); //async??
+        Forum.ValidatePostCreation(fmsValidationResponse.ClassId); 
     }
 
     public string Description { get; protected set; }
@@ -33,16 +36,17 @@ public class Post : DomainEntity
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution, string appUserId, Forum forum)
+    public static async Task<Post> Create(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider)
     {
-        return new Post(description, solution, appUserId, forum);
+        var fmsDataService = serviceProvider.GetRequiredService<IValidateStudentDomainService>();
+        var fmsValidationResponse = await fmsDataService.ValidateStudent(appUserId);
+        return new Post(description, solution, appUserId, forum, fmsValidationResponse);
     }
 
 
     public void Update(string newContent, string userId)
     {
-        if (AppUserId != userId)
-            return;
+        AssureUserIsSameUser(userId);
 
         SetHistory(Description);
         Description = newContent;
@@ -51,6 +55,12 @@ public class Post : DomainEntity
     private void SetHistory(string originalContent)
     {
         _history.Add(new PostHistory(originalContent));
+    }
+
+    private void AssureUserIsSameUser(string userId)
+    {
+        if (!AppUserId.Equals(userId))
+            throw new ArgumentException("Only the creater of the post can edit it");
     }
 
     // Vote
@@ -116,4 +126,15 @@ public class Post : DomainEntity
         comment.Update(text);
         return comment;
     }
+
+    //public void AssureStudentIsPartOfClass(string studentClassId)
+    //{
+    //    if (Forum is ClassForum classForum)
+    //    {
+    //        if (!studentClassId.Equals(classForum.ClassId.ToString()))
+    //        {
+    //            throw new InvalidOperationException("You is not part of this class.");
+    //        }
+    //    }
+    //}
 }

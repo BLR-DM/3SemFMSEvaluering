@@ -23,7 +23,7 @@ public class ForumRepository : IForumRepository
         _db.Forums.Remove(forum);
     }
 
-    async Task<Forum> IForumRepository.GetForum(int id)
+    async Task<Forum> IForumRepository.GetForumAsync(int id)
     {
         return await _db.Forums.SingleAsync(f => f.Id == id);
     }

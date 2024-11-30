@@ -4,7 +4,9 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
+using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.PostEntities;
+using System;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -12,27 +14,29 @@ public class PostCommand : IPostCommand
 {
     private readonly IPostRepository _postRepository;
     private readonly IForumRepository _forumRepository;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository)
+    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository, IServiceProvider serviceProvider)
     {
         _unitOfWork = unitOfWork;
         _postRepository = postRepository;
         _forumRepository = forumRepository;
+        _serviceProvider = serviceProvider;
     }
 
-    async Task IPostCommand.CreatePostAsync(CreatePostDto postDto)
+    async Task IPostCommand.CreatePostAsync(int forumId, string appUserId, CreatePostDto postDto)
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var forum = await _forumRepository.GetForum(int.Parse(postDto.ForumId));
+            var forum = await _forumRepository.GetForumAsync(forumId);
 
             // Do
-            var post = Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum);
-            await _postRepository.AddPost(post);
+            var post = await Post.Create(postDto.Description, postDto.Solution, appUserId, forum, _serviceProvider);
+            await _postRepository.AddPostAsync(post);
             
             // Save
             await _unitOfWork.Commit();
@@ -161,10 +165,10 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(commentDto.postID);
+            var post = await _postRepository.GetPostAsync(commentDto.PostId);
 
             // Do
-            post.CreateComment(commentDto.text);
+            post.CreateComment(commentDto.Text);
 
             // Save 
             await _unitOfWork.Commit();
@@ -183,13 +187,13 @@ public class PostCommand : IPostCommand
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(commentDto.postID);
+            var post = await _postRepository.GetPostAsync(commentDto.PostId);
 
             // Do
-            var comment = post.UpdateComment(commentDto.commentID, commentDto.text);
+            var comment = post.UpdateComment(commentDto.CommentId, commentDto.Text);
 
             // Save
-            _postRepository.UpdateCommentAsync(comment, commentDto.rowVersion);
+            _postRepository.UpdateCommentAsync(comment, commentDto.RowVersion);
             await _unitOfWork.Commit();
 
         }
