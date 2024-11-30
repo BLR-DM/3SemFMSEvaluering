@@ -94,6 +94,7 @@ public class ForumQuery : IForumQuery
     {
         var forum = await _db.Forums.AsNoTracking()
             .Where(f => f.Id == id)
+            .Include(f => f.Posts).ThenInclude(p => p.Votes)
             .Select(f => new ForumWithPostDto
             {
                 Id = f.Id,
