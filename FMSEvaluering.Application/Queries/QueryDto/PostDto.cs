@@ -1,6 +1,4 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto;
-
-namespace FMSEvaluering.Application.Queries.QueryDto;
+﻿namespace FMSEvaluering.Application.Queries.QueryDto;
 
 public record PostDto()
 {

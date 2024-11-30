@@ -7,6 +7,7 @@ using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
+using FMSEvaluering.Domain.Entities.PostEntities;
 using FMSEvaluering.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -104,15 +105,27 @@ app.MapPost("/forum/{forumId}/post",
         }
     }).RequireAuthorization("Student");
 
-app.MapPut("/post",
-    async (UpdatePostDto postHistory, IPostCommand command) => await command.UpdatePost(postHistory));
-
-app.MapGet("/post/{id}",
-    async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
+app.MapPut("/post/",
+    async (UpdatePostDto post, ClaimsPrincipal user, IPostCommand command) =>
+    {
+        try
+        {
+            var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await command.UpdatePost(post, appUserId);
+            return Results.Created("testURI", post);
+        }
+        catch (Exception)
+        {
+            return Results.Problem("Couldn't update post");
+        }
+    });
 
 app.MapDelete("/post",
     async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
 //.RequireAuthorization("isAdmin");
+
+app.MapGet("/post/{id}",
+    async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
 
 app.MapGet("/teacher", () => "hej med dig teacher").RequireAuthorization("Teacher");
 

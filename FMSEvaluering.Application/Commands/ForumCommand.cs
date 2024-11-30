@@ -24,9 +24,9 @@ namespace FMSEvaluering.Application.Commands
             _forumRepository = forumRepository;
             this._postRepository = _postRepository;
         }
-        async Task IForumCommand.AddPost(CreatePostDto postDto)
+        async Task IForumCommand.AddPost(CreatePostDto postDto, int forumId)
         {
-            var forum = _forumRepository.GetForumAsync(int.Parse(postDto.ForumId));
+            var forum = await _forumRepository.GetForumAsync(forumId);
 
 
         }

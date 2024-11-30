@@ -47,7 +47,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.UpdatePost(UpdatePostDto updatePostDto)
+    async Task IPostCommand.UpdatePost(UpdatePostDto updatePostDto, string appUserId)
     {
         try
         {
@@ -57,7 +57,7 @@ public class PostCommand : IPostCommand
             var post = await _postRepository.GetPostAsync(updatePostDto.PostId);
 
             // Do
-            post.Update(updatePostDto.Content, updatePostDto.AppUserId);
+            post.Update(updatePostDto.Content, appUserId);
             _postRepository.UpdatePost(post, updatePostDto.RowVersion);
 
             // Save
