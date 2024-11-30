@@ -25,17 +25,17 @@ public class PostCommand : IPostCommand
         _serviceProvider = serviceProvider;
     }
 
-    async Task IPostCommand.CreatePostAsync(CreatePostDto postDto)
+    async Task IPostCommand.CreatePostAsync(int forumId, string appUserId, CreatePostDto postDto)
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var forum = await _forumRepository.GetForumAsync(int.Parse(postDto.ForumId));
+            var forum = await _forumRepository.GetForumAsync(forumId);
 
             // Do
-            var post = await Post.Create(postDto.Description, postDto.Solution, postDto.AppUserId, forum, _serviceProvider);
+            var post = await Post.Create(postDto.Description, postDto.Solution, appUserId, forum, _serviceProvider);
             await _postRepository.AddPostAsync(post);
             
             // Save
