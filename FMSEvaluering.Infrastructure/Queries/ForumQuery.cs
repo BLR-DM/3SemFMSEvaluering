@@ -89,4 +89,29 @@ public class ForumQuery : IForumQuery
 
         throw new InvalidOperationException("Unknown forum type");
     }
+
+    async Task<ForumWithPostDto> IForumQuery.GetForumWithPostsForTeacherAsync(int id, int reqUpvotes)
+    {
+        var forum = await _db.Forums.AsNoTracking()
+            .Where(f => f.Id == id)
+            .Select(f => new ForumWithPostDto
+            {
+                Id = f.Id,
+                Name = f.Name,
+                ForumType = f.GetType().Name,
+                Posts = f.Posts.Where(p => p.Votes.Count(v => v.VoteType == true) >= reqUpvotes)
+                    .Select(p => new PostDto
+                    {
+                        Id = p.Id,
+                        Description = p.Description,
+                        Solution = p.Solution,
+                        AppUserId = p.AppUserId,
+                        CreatedDate = p.CreatedDate.ToShortDateString(),
+                        UpVotes = p.Votes.Count(v => v.VoteType == true),
+                        DownVotes = p.Votes.Count(v => v.VoteType == false),
+                    }).ToList()
+            })
+            .SingleAsync();
+        return forum;
+    }
 }

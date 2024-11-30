@@ -46,6 +46,13 @@ namespace FMSEvaluering.Api.Endpoints
                 return Results.Ok(result);
             }).WithTags("Forum");
 
+            // hent forum for en teacher
+            app.MapGet("forum/{id}", async (int id, IForumQuery query) =>
+            {
+                var result = await query.GetForumWithPostsForTeacherAsync(id, 2);
+                return Results.Ok(result);
+            });
+
         }
     }
 }
