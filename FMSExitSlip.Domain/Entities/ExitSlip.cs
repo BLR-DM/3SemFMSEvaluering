@@ -8,7 +8,7 @@ namespace FMSExitSlip.Domain.Entities
 {
     public class ExitSlip : DomainEntity
     {
-        private readonly List<Question> _questions = [];
+        protected readonly List<Question> _questions = [];
         public string Title { get; protected set; }
         public int MaxQuestions { get; protected set; }
         public bool IsPublished { get; protected set; } = false;
