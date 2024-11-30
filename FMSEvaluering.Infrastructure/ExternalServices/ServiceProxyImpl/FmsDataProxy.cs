@@ -25,7 +25,6 @@ public class FmsDataProxy : IFmsDataProxy
         catch (Exception)
         {
             throw new InvalidOperationException("Something went wrong with FmsDataProxy");
-            ;
         }
     }
 }

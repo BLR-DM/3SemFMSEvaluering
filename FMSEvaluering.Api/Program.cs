@@ -8,9 +8,7 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Infrastructure;
-using FMSEvaluering.Infrastructure.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -48,7 +46,6 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IAuthorizationHandler, ClassroomAccessHandler>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -99,7 +96,7 @@ app.MapPost("/post", // "/forum/{id}/post"? <- If forumId is not in Dto
         {
             // Pass in AppUserId from ClaimsPrincipal user (user.FindFirst(ClaimTypes.NameIdentifier).Value) for safety?
             await command.CreatePostAsync(post); 
-            return Results.Created();
+            return Results.Created("testURI", post);
         }
         catch (Exception)
         {
