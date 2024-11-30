@@ -7,7 +7,7 @@ namespace FMSEvaluering.Application.Commands.Interfaces;
 
 public interface IPostCommand
 {
-    Task CreatePostAsync(int forumId, string appUserId, CreatePostDto postDto);
+    Task CreatePostAsync(CreatePostDto postDto, string appUserId, int forumId);
     Task UpdatePost(UpdatePostDto updatePostDto);
     Task DeletePostAsync(DeletePostDto postDto);
     //Task CreateVote(CreateVoteDto voteDto);

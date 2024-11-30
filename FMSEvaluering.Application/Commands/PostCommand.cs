@@ -4,20 +4,19 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.PostEntities;
-using System;
 
 namespace FMSEvaluering.Application.Commands;
 
 public class PostCommand : IPostCommand
 {
-    private readonly IPostRepository _postRepository;
     private readonly IForumRepository _forumRepository;
+    private readonly IPostRepository _postRepository;
     private readonly IServiceProvider _serviceProvider;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository, IServiceProvider serviceProvider)
+    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository,
+        IServiceProvider serviceProvider)
     {
         _unitOfWork = unitOfWork;
         _postRepository = postRepository;
@@ -25,7 +24,7 @@ public class PostCommand : IPostCommand
         _serviceProvider = serviceProvider;
     }
 
-    async Task IPostCommand.CreatePostAsync(int forumId, string appUserId, CreatePostDto postDto)
+    async Task IPostCommand.CreatePostAsync(CreatePostDto postDto, string appUserId, int forumId)
     {
         try
         {
@@ -37,7 +36,7 @@ public class PostCommand : IPostCommand
             // Do
             var post = await Post.Create(postDto.Description, postDto.Solution, appUserId, forum, _serviceProvider);
             await _postRepository.AddPostAsync(post);
-            
+
             // Save
             await _unitOfWork.Commit();
         }
@@ -56,7 +55,7 @@ public class PostCommand : IPostCommand
 
             // Load
             var post = await _postRepository.GetPostAsync(updatePostDto.PostId);
-            
+
             // Do
             post.Update(updatePostDto.Content, updatePostDto.AppUserId);
             _postRepository.UpdatePost(post, updatePostDto.RowVersion);
@@ -69,7 +68,6 @@ public class PostCommand : IPostCommand
             await _unitOfWork.Rollback();
             throw;
         }
-
     }
 
     async Task IPostCommand.DeletePostAsync(DeletePostDto postDto)
@@ -91,8 +89,6 @@ public class PostCommand : IPostCommand
             throw;
         }
     }
-
-
 
 
     //async Task IPostCommand.CreateVote(CreateVoteDto voteDto)
@@ -195,7 +191,6 @@ public class PostCommand : IPostCommand
             // Save
             _postRepository.UpdateCommentAsync(comment, commentDto.RowVersion);
             await _unitOfWork.Commit();
-
         }
         catch (Exception)
         {
@@ -205,7 +200,7 @@ public class PostCommand : IPostCommand
     }
 
     async Task IPostCommand.HandleVote(CreateVoteDto voteDto, string appUserId, int postId)
-    {   
+    {
         try
         {
             await _unitOfWork.BeginTransaction();

@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Description = "Please enter your token as 'Bearer {your_token}'",
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
+        Type = SecuritySchemeType.ApiKey
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(options =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            new string[] { }
         }
     });
 });
@@ -69,7 +69,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Student", policy =>
         policy.RequireClaim("usertype", "student"));
 
-    options.AddPolicy("Teacher", policy => 
+    options.AddPolicy("Teacher", policy =>
         policy.RequireClaim("usertype", "teacher"));
 });
 
@@ -95,14 +95,13 @@ app.MapPost("/forum/{forumId}/post",
         try
         {
             var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            await command.CreatePostAsync(forumId, appUserId, post); 
+            await command.CreatePostAsync(post, appUserId, forumId);
             return Results.Created("testURI", post); // Test return value
         }
         catch (Exception)
         {
             return Results.Problem("Couldn't create post");
         }
-
     }).RequireAuthorization("Student");
 
 app.MapPut("/post",
@@ -111,7 +110,7 @@ app.MapPut("/post",
 app.MapGet("/post/{id}",
     async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
 
-app.MapDelete("/post", 
+app.MapDelete("/post",
     async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
 //.RequireAuthorization("isAdmin");
 
@@ -125,10 +124,10 @@ app.MapGet("/student", () => "hej med dig elev").RequireAuthorization("Student")
 //app.MapVoteEndpoints();
 
 app.MapPost("/post/{postId}/vote",
-    async (int postId, CreateVoteDto voteDto, HttpContext httpContext, IPostCommand command) =>
+    async (int postId, CreateVoteDto voteDto, ClaimsPrincipal user, IPostCommand command) =>
     {
         // var id = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-        var appUserId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         try
         {
@@ -138,11 +137,8 @@ app.MapPost("/post/{postId}/vote",
         catch (Exception)
         {
             return Results.BadRequest("Failed to register the vote");
-            throw;
         }
-
-
-    }).WithTags(("Vote"));
+    }).WithTags("Vote");
 
 //Comment
 //Comment
