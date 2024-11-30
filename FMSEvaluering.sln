@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMSExitSlip.Domain", "FMSEx
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMSExitSlip.Infrastructure", "FMSExitSlip.Infrastructure\FMSExitSlip.Infrastructure.csproj", "{34DE2E70-FD2B-4CFE-C1B6-35CC05110F29}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMSExitSlip.Domain.Test", "FMSExitSlip.Domain.Test\FMSExitSlip.Domain.Test.csproj", "{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{34DE2E70-FD2B-4CFE-C1B6-35CC05110F29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34DE2E70-FD2B-4CFE-C1B6-35CC05110F29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34DE2E70-FD2B-4CFE-C1B6-35CC05110F29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -128,6 +134,7 @@ Global
 		{C6AD6D34-2DA2-A6B0-D008-F1149FEAD161} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DF382CEA-0656-E16D-91A3-DDB758391FDD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{34DE2E70-FD2B-4CFE-C1B6-35CC05110F29} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BF2D27B-1149-4E80-89BE-8DB7BE546943}
