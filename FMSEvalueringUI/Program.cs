@@ -1,11 +1,22 @@
+using FMSEvalueringUI;
 using FMSEvalueringUI.Components;
 using FMSEvalueringUI.ExternalServices;
+using FMSEvalueringUI.ExternalServices.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient<IDataServerProxy, DataServerProxy>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["FmsDataProxy:BaseAddress"]);
+});
+builder.Services.AddHttpClient<IEvalueringProxy, EvalueringProxy>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["FmsEvalueringProxy:BaseAddress"]);
+});
 
 var app = builder.Build();
 
@@ -17,7 +28,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

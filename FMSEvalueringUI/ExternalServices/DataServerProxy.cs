@@ -1,18 +1,25 @@
-﻿using FMSEvalueringUI.ModelDto;
+﻿using System.Net;
+using FMSEvalueringUI.ExternalServices.Interfaces;
+using FMSEvalueringUI.ModelDto;
 
 namespace FMSEvalueringUI.ExternalServices
 {
-    public class Proxy
+    public class DataServerProxy : IDataServerProxy
     {
-        HttpClient _client = new HttpClient();
+        private readonly HttpClient _httpClient;
 
 
-        public async Task<JwtTokenDto> CheckCredentials(LoginDto loginDto)
+        public DataServerProxy(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
+        async Task<JwtTokenDto> IDataServerProxy.CheckCredentials(LoginDto loginDto)
         {
             try
             {
-                var requestUri = "http://gateway.api:8080/login";
-                var response = await _client.PostAsJsonAsync(requestUri, new { loginDto.Email, loginDto.Password });
+                var requestUri = "/login";
+                var response = await _httpClient.PostAsJsonAsync(requestUri, new { loginDto.Email, loginDto.Password });
                 if (!response.IsSuccessStatusCode)
                 {
                     //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);

@@ -1,5 +1,7 @@
 ﻿@page "/login"
 @using FMSEvalueringUI.ExternalServices
+@using FMSEvalueringUI.ExternalServices.Interfaces
+@inject IDataServerProxy _dataServerProxy
 
 <h3>Login</h3>
 
@@ -13,19 +15,18 @@
     Test token: @Token
 </div>
 
+
 @code {
     [SupplyParameterFromForm]
     private LoginDto LoginDto { get; set; } = new LoginDto();
 
     private string? Token { get; set; }
 
-    private Proxy proxy = new Proxy();
-
     public async Task Login12()
     {
         if (LoginDto is not null)
         {
-            var tokenResponse = await proxy.CheckCredentials(LoginDto);
+            var tokenResponse = await _dataServerProxy.CheckCredentials(LoginDto);
             Token = tokenResponse?.Value?.Token ?? "Invalid response.";
         }
         else
@@ -33,4 +34,5 @@
             Token = "Form data is null.";
         }
     }
+
 }

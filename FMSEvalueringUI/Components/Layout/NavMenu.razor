@@ -1,4 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using FMSEvalueringUI.ExternalServices.Interfaces
+@inject IEvalueringProxy _evalueringProxy
+@rendermode InteractiveServer
+
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">FMSEvalueringUI</a>
     </div>
@@ -25,13 +30,75 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
             </NavLink>
         </div>
-        
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/login">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Login
             </NavLink>
         </div>
-        
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" @onclick="ToggleDropdown">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Forums
+            </NavLink>
+            @if (isDropdownVisible)
+            {
+                <ul class="dropdown-menu show" style="position: static;">
+                    @if (isLoading)
+                    {
+                        <li class="dropdown-item">Loading...</li>
+                    }
+                    else if (forums.Any())
+                    {
+                        @foreach (var forum in forums)
+                        {
+                            <li class="dropdown-item">@forum.Name</li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="dropdown-item">No forums available</li>
+                    }
+                </ul>
+            }
+        </div>
+
     </nav>
 </div>
+
+@code {
+    private List<ForumDto> forums = new();
+    private bool isDropdownVisible = false;
+    private bool isLoading = false;
+
+    private void Test()
+    {
+        Console.WriteLine("hej");
+    }
+
+    private async Task ToggleDropdown()
+    {
+        isDropdownVisible = !isDropdownVisible;
+        StateHasChanged();
+
+        if (isDropdownVisible && forums.Count == 0)
+        {
+            Console.WriteLine("Loading forums TEst");
+            isLoading = true;
+            try
+            {
+                forums = await _evalueringProxy.GetForumsAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Error loading forums: {ex.Message}");
+            }
+            finally
+            {
+                isLoading = false;
+                StateHasChanged();
+            }
+        }
+    }
+}
 
