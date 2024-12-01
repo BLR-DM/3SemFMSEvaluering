@@ -25,10 +25,6 @@ public class PostQuery : IPostQuery
             .Include(p => p.Votes)
             .SingleAsync(p => p.Id == postId);
 
-        //var forum = await _db.Forums.AsNoTracking()
-        //    .Include(f => f.Posts)
-        //    .SingleOrDefaultAsync(f => f.Id == forumId);
-
         if (post.Forum == null)
             throw new ArgumentException("Forum not found");
 
@@ -36,8 +32,6 @@ public class PostQuery : IPostQuery
 
         if (!hasAccess)
             throw new UnauthorizedAccessException("You do not have access");
-
-        //var post = forum.Posts.Single(p => p.Id == postId);
 
         return new PostDto
         {
@@ -52,10 +46,6 @@ public class PostQuery : IPostQuery
                 Content = ph.Content,
                 EditedDate = ph.EditedDate.ToShortDateString()
             }).ToList(),
-            //VoteDto = post.Votes.Select(v => new VoteDto
-            //{
-            //    VoteType = v.VoteType
-            //}),
             CommentDto = post.Comments.Select(c => new CommentDto
             {
                 Id = c.Id,
