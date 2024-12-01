@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMSDataServer.Api.Migrations
 {
     [DbContext(typeof(FMSDataDbContext))]
-    [Migration("20241124194909_added-appuser-to-teacher")]
-    partial class addedappusertoteacher
+    [Migration("20241201182331_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -194,6 +194,10 @@ namespace FMSDataServer.Api.Migrations
 
                     b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()

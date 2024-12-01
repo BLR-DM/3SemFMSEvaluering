@@ -44,7 +44,6 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddScoped<UserManager<AppUser>>();
-builder.Services.AddScoped<DataInitializer>();
 
 builder.Services.AddDbContext<FMSDataDbContext>(options =>
 {
@@ -386,11 +385,6 @@ app.MapGet("/fms/teachersubject", async (FMSDataDbContext dbContext) =>
 app.MapGet("/fms/lecture", async (FMSDataDbContext dbContext) =>
 {
     return Results.Ok(await dbContext.Lectures.AsNoTracking().ToListAsync());
-});
-
-app.MapPost("/insertdata", async (DataInitializer data) =>
-{
-    data.InsertData();
 });
 
 
