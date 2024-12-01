@@ -53,3 +53,4 @@ public class PostQuery : IPostQuery
             }).ToList()
         };
     }
+}
