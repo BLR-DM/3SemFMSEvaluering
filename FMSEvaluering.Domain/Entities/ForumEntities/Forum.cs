@@ -1,4 +1,5 @@
-﻿using FMSEvaluering.Domain.Entities.PostEntities;
+﻿using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
@@ -13,8 +14,9 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
         public string Name { get; protected set; }
         public IReadOnlyCollection<Post> Posts => _posts;
 
-        public virtual void ValidatePostCreation(string studentId)
+        public virtual async Task<bool> ValidateUserAccessToForum(string userId, IServiceProvider serviceProvider, string role)
         {
+            return false; // Default: return false. PublicForum doesn't need conditional so, it would return true
         }
 
         //public void AddPost(Post post)

@@ -40,11 +40,11 @@ namespace FMSEvaluering.Api.Endpoints
             }).WithTags("Forum");
 
             // Oversigt over Posts for given forum (includer ikke history, comments)
-            app.MapGet("/forum/{id}/post", async (int id, IForumQuery query) =>
-            {
-                var result = await query.GetForumWithPostAsync(id);
-                return Results.Ok(result);
-            }).WithTags("Forum");
+            //app.MapGet("/forum/{id}/post", async (int id, IForumQuery query) =>
+            //{
+            //    var result = await query.GetForumWithPostAsync(id);
+            //    return Results.Ok(result);
+            //}).WithTags("Forum");
 
             // hent forum for en teacher med posts med votes over 2
             app.MapGet("forum/{id}/posts/teacher", async (int id, IForumQuery query) =>

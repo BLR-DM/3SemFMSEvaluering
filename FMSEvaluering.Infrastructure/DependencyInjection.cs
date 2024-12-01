@@ -2,6 +2,7 @@
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Infrastructure.ExternalServices;
 using FMSEvaluering.Infrastructure.ExternalServices.ServiceProxyImpl;
 using FMSEvaluering.Infrastructure.Helpers;
@@ -23,7 +24,7 @@ public static class DependencyInjection
         services.AddScoped<IForumRepository, ForumRepository>();
         services.AddScoped<IForumQuery, ForumQuery>();
         services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
-        services.AddScoped<IValidateStudentDomainService, ValidateStudentDomainService>();
+        services.AddScoped<IStudentDomainService, StudentDomainService>();
 
         // External services
         services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>

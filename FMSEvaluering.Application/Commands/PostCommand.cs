@@ -5,18 +5,18 @@ using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Domain.Entities.PostEntities;
+using System;
 
 namespace FMSEvaluering.Application.Commands;
 
 public class PostCommand : IPostCommand
 {
     private readonly IForumRepository _forumRepository;
-    private readonly IPostRepository _postRepository;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IPostRepository _postRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository,
-        IServiceProvider serviceProvider)
+    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository, IForumRepository forumRepository, IServiceProvider serviceProvider)
     {
         _unitOfWork = unitOfWork;
         _postRepository = postRepository;
@@ -34,7 +34,7 @@ public class PostCommand : IPostCommand
             var forum = await _forumRepository.GetForumAsync(forumId);
 
             // Do
-            var post = await Post.Create(postDto.Description, postDto.Solution, appUserId, forum, _serviceProvider);
+            var post = Post.Create(postDto.Description, postDto.Solution, appUserId, forum, _serviceProvider);
             await _postRepository.AddPostAsync(post);
 
             // Save

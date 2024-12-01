@@ -124,8 +124,20 @@ app.MapDelete("/post",
     async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
 //.RequireAuthorization("isAdmin");
 
-app.MapGet("/post/{id}",
-    async (int id, IPostQuery postQuery) => await postQuery.GetPostAsync(id));
+app.MapGet("/forum/post/{postId}",
+    async (int postId, ClaimsPrincipal user, IPostQuery postQuery) =>
+    {
+        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return await postQuery.GetPostAsync(postId, appUserId);
+    });
+
+app.MapGet("/forum/{forumId}/post",
+    async (int forumId, ClaimsPrincipal user, IPostQuery postQuery) =>
+    {
+        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var role = user.FindFirst("usertype").Value;
+        return await postQuery.GetPostsAsync(forumId, appUserId, role);
+    });
 
 app.MapGet("/teacher", () => "hej med dig teacher").RequireAuthorization("Teacher");
 
