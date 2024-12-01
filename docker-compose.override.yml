@@ -13,12 +13,12 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  mssql:
-    environment:
-      ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Password1234!"
-    ports:
-      - 11433:1433
+  # mssql:
+  #   environment:
+  #     ACCEPT_EULA: "Y"
+  #     SA_PASSWORD: "Password1234!"
+  #   ports:
+  #     - 11433:1433
 
   gateway.api:
     environment:
@@ -51,7 +51,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=FMSDataDb;User=sa;Password=Password1234!;MultipleActiveResultSets=true;TrustServerCertificate=true
+      - ConnectionStrings__DefaultConnection=Server=mssql12.unoeuro.com;Database=uclblr_dk_db_dataserver;User=uclblr_dk;Password=9xzdwmf3FcbkrHBna2ED;Encrypt=false;MultipleActiveResultSets=true;TrustServerCertificate=true;
     ports:
       - "48080:8080"
       - "48081:8081"
