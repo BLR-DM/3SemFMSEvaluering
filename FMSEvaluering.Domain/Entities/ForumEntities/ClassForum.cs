@@ -5,22 +5,35 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
     public class ClassForum : Forum
     {
-        private readonly IServiceProvider _serviceProvider;
+        protected ClassForum()
+        {
+        }
+
         public int ClassId { get; set; }
 
-        internal ClassForum(string name, int classId, IServiceProvider serviceProvider)
+        public ClassForum(string name, int classId)
         {
-            _serviceProvider = serviceProvider;
             Name = name;
             ClassId = classId;
         }
         
-        public override async Task<bool> ValideUserAccessToForum(string appUserId)
+        public override async Task<bool> ValidateUserAccessToForum(string appUserId, IServiceProvider serviceProvider, string role)
         {
-            var fmsDataService = _serviceProvider.GetRequiredService<IValidateStudentDomainService>();
-            var fmsValidationResponse = await fmsDataService.ValidateUserAccess(appUserId);
+            switch (role)
+            {
+                case "student":
+                    var studentDomainService = serviceProvider.GetRequiredService<IStudentDomainService>();
+                    var studentDto = await studentDomainService.GetStudentAsync(appUserId);
+                    return ClassId.ToString().Equals(studentDto.ClassId);
 
-            return ClassId.ToString().Equals(fmsValidationResponse.ClassId);
+                case "teacher":
+                    var teacherDomainService = serviceProvider.GetRequiredService<IValidateTeacherDomainService>();
+                    break;
+            }
+            var sd = serviceProvider.GetRequiredService<IStudentDomainService>();
+            var fmsValidasdationResponse = await fmsDataService.ValidateUserAccess(appUserId, role);
+
+            
         }
     }
 }

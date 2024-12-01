@@ -10,7 +10,7 @@
             SubjectId = subjectId;
         }
 
-        public override async Task<bool> ValideUserAccessToForum(string studentData)
+        public override async Task<bool> ValidateUserAccessToForum(string studentData, IServiceProvider serviceProvider)
         {
             // Do something
             return false;

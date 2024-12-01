@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FMSEvaluering.Application.Commands.CommandDto.ForumDto;
+﻿using FMSEvaluering.Application.Commands.CommandDto.ForumDto;
 using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
+using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.ForumEntities;
 
 namespace FMSEvaluering.Application.Commands
@@ -16,13 +12,13 @@ namespace FMSEvaluering.Application.Commands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IForumRepository _forumRepository;
-        private readonly IPostRepository _postRepository;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ForumCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IPostRepository _postRepository)
+        public ForumCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IServiceProvider serviceProvider)
         {
             _unitOfWork = unitOfWork;
             _forumRepository = forumRepository;
-            this._postRepository = _postRepository;
+            _serviceProvider = serviceProvider;
         }
         async Task IForumCommand.AddPost(CreatePostDto postDto, int forumId)
         {

@@ -35,7 +35,6 @@ public class ForumQuery : IForumQuery
                 ClassId = 2, // test
                 Posts = f.Posts.Select(p => new PostDto
                 {
-                    Id = p.Id,
                     Description = p.Description,
                     Solution = p.Solution,
                     AppUserId = p.AppUserId,

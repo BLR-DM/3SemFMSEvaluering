@@ -11,20 +11,22 @@ public class FmsDataProxy : IFmsDataProxy
         _client = client;
     }
 
-    async Task<FmsValidationResultDto> IFmsDataProxy.GetStudentAsync(string appUserId)
+    async Task<StudentResultDto> IFmsDataProxy.GetStudentAsync(string appUserId)
     {
         try
         {
-            var studentDto = await _client.GetFromJsonAsync<FmsValidationResultDto>($"/fms/student/{appUserId}");
+            var studentResult = await _client.GetFromJsonAsync<StudentResultDto>($"/fms/student/{appUserId}");
 
-            if (studentDto is null)
+            if (studentResult is null)
                 throw new InvalidOperationException("Student not found");
 
-            return studentDto;
+            return studentResult;
         }
         catch (Exception)
         {
             throw new InvalidOperationException("Something went wrong with FmsDataProxy");
         }
     }
+
+    async Task<TeacherResultDto>
 }

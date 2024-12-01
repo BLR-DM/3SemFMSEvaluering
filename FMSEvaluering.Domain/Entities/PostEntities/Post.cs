@@ -7,6 +7,7 @@ namespace FMSEvaluering.Domain.Entities.PostEntities;
 
 public class Post : DomainEntity
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly List<Comment> _comments = [];
     private readonly List<Vote> _votes = [];
     private readonly List<PostHistory> _history = [];
@@ -15,8 +16,9 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId, Forum forum)
+    private Post(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         Description = description;
         Solution = solution;
         AppUserId = appUserId;
@@ -24,7 +26,7 @@ public class Post : DomainEntity
         CreatedDate = DateTime.Now;
 
         //AssureStudentIsPartOfClass(fmsValidationResponse.ClassId); //async??
-        Forum.ValideUserAccessToForum(appUserId); // async?
+        Forum.ValidateUserAccessToForum(appUserId, _serviceProvider); // async?
     }
 
     public string Description { get; protected set; }
@@ -36,9 +38,9 @@ public class Post : DomainEntity
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution, string appUserId, Forum forum)
+    public static Post Create(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider)
     {
-        return new Post(description, solution, appUserId, forum);
+        return new Post(description, solution, appUserId, forum, serviceProvider);
     }
 
 

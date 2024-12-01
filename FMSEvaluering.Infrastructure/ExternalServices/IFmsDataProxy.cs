@@ -2,7 +2,19 @@
 
 public interface IFmsDataProxy
 {
-    Task<FmsValidationResultDto> GetStudentAsync(string appUserId);
+    Task<StudentResultDto> GetStudentAsync(string appUserId);
+    Task<TeacherResultDto> GetTeacherAsync(string appUserId);
 }
 
-public record FmsValidationResultDto(string FirstName, string LastName, string Email, string ClassId, string AppUserId);
+public record StudentResultDto(string FirstName, string LastName, string Email, string ClassId, string AppUserId);
+public record TeacherResultDto
+{
+    public string Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    public List<TeacherSubject> TeacherSubjects { get; set; }
+    public AppUser AppUser { get; set; }
+}
+
+public record TeacherSubjectResultDto(string Id, )
