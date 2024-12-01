@@ -15,7 +15,7 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId, Forum forum, FmsValidationResult fmsValidationResponse)
+    private Post(string description, string solution, string appUserId, Forum forum)
     {
         Description = description;
         Solution = solution;
@@ -24,7 +24,7 @@ public class Post : DomainEntity
         CreatedDate = DateTime.Now;
 
         //AssureStudentIsPartOfClass(fmsValidationResponse.ClassId); //async??
-        Forum.ValidatePostCreation(fmsValidationResponse.ClassId); 
+        Forum.ValideUserAccessToForum(appUserId); // async?
     }
 
     public string Description { get; protected set; }
@@ -36,11 +36,9 @@ public class Post : DomainEntity
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static async Task<Post> Create(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider)
+    public static Post Create(string description, string solution, string appUserId, Forum forum)
     {
-        var fmsDataService = serviceProvider.GetRequiredService<IValidateStudentDomainService>();
-        var fmsValidationResponse = await fmsDataService.ValidateStudent(appUserId);
-        return new Post(description, solution, appUserId, forum, fmsValidationResponse);
+        return new Post(description, solution, appUserId, forum);
     }
 
 

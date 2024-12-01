@@ -2,7 +2,7 @@
 {
     public interface IValidateStudentDomainService
     {
-        Task<FmsValidationResult> ValidateStudent(string studentId);
+        Task<FmsValidationResult> ValidateUserAccess(string studentId);
     }
 
     public record FmsValidationResult(string FirstName, string LastName, string Email, string ClassId, string AppUserId);

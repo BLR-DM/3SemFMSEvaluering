@@ -11,7 +11,7 @@ public class ValidateStudentDomainService : IValidateStudentDomainService
         _fmsDataProxy = fmsDataProxy;
     }
 
-    async Task<FmsValidationResult> IValidateStudentDomainService.ValidateStudent(string studentId)
+    async Task<FmsValidationResult> IValidateStudentDomainService.ValidateUserAccess(string studentId)
     {
         var result = await _fmsDataProxy.GetStudentAsync(studentId);
         return new FmsValidationResult(result.FirstName, result.LastName, result.Email, result.ClassId, result.AppUserId);

@@ -13,8 +13,9 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
         public string Name { get; protected set; }
         public IReadOnlyCollection<Post> Posts => _posts;
 
-        public virtual void ValidatePostCreation(string studentId)
+        public virtual async Task<bool> ValideUserAccessToForum(string userId)
         {
+            return false; // Default: return false. PublicForum doesn't need conditional so, it would return true
         }
 
         //public void AddPost(Post post)
@@ -27,9 +28,9 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
             return new PublicForum(name);
         }
 
-        public static Forum CreateClassForum(string name, int classId)
+        public static Forum CreateClassForum(string name, int classId, IServiceProvider serviceProvider)
         {
-            return new ClassForum(name, classId);
+            return new ClassForum(name, classId, serviceProvider);
         }
 
         public static Forum CreateSubjectForum(string name, int subjectId)

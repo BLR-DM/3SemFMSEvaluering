@@ -10,7 +10,7 @@
             SubjectId = subjectId;
         }
 
-        public override void ValidatePostCreation(string studentData)
+        public override void ValideUserAccessToForum(string studentData)
         {
             // Do something
         }

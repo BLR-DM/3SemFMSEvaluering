@@ -13,17 +13,26 @@ public class PostQuery : IPostQuery
     {
         _db = db;
     }
-    async Task<PostDto> IPostQuery.GetPostAsync(int postId)
+
+    async Task<PostDto> IPostQuery.GetPostAsync(int postId, string appUserId)
     {
         var post = await _db.Posts.AsNoTracking()
+            .Include(p => p.Forum)
             .Include(p => p.History)
             .Include(p => p.Comments)
             .Include(p => p.Votes)
             .SingleAsync(p => p.Id == postId);
 
+        if (post.Forum == null)
+            throw new ArgumentException("Forum not found");
+
+        var hasAccess = await post.Forum.ValideUserAccessToForum(appUserId);
+
+        if (!hasAccess)
+            throw new UnauthorizedAccessException("You do not have access");
+
         return new PostDto
         {
-            Id = post.Id,
             Description = post.Description,
             Solution = post.Solution,
             CreatedDate = post.CreatedDate.ToShortDateString(),
@@ -45,4 +54,3 @@ public class PostQuery : IPostQuery
             }).ToList()
         };
     }
-}

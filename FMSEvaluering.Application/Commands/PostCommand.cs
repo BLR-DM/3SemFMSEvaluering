@@ -34,7 +34,7 @@ public class PostCommand : IPostCommand
             var forum = await _forumRepository.GetForumAsync(forumId);
 
             // Do
-            var post = await Post.Create(postDto.Description, postDto.Solution, appUserId, forum, _serviceProvider);
+            var post = Post.Create(postDto.Description, postDto.Solution, appUserId, forum);
             await _postRepository.AddPostAsync(post);
 
             // Save
