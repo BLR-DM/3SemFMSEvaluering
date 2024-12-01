@@ -1,7 +1,6 @@
 ﻿using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Queries.QueryDto;
 using Microsoft.EntityFrameworkCore;
-using PostHistoryDto = FMSEvaluering.Application.Queries.QueryDto.PostHistoryDto;
 
 namespace FMSEvaluering.Infrastructure.Queries;
 

@@ -20,9 +20,7 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
             var fmsDataService = _serviceProvider.GetRequiredService<IValidateStudentDomainService>();
             var fmsValidationResponse = await fmsDataService.ValidateUserAccess(appUserId);
 
-            if (!ClassId.ToString().Equals(fmsValidationResponse.ClassId))
-                throw new InvalidOperationException("Student is not part of class.");
-            return true;
+            return ClassId.ToString().Equals(fmsValidationResponse.ClassId);
         }
     }
 }
