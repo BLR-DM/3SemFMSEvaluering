@@ -1,11 +1,13 @@
 ﻿@page "/login"
+@using Blazored.LocalStorage
 @using FMSEvalueringUI.ExternalServices
 @using FMSEvalueringUI.ExternalServices.Interfaces
 @inject IDataServerProxy _dataServerProxy
+@inject ILocalStorageService _localStorageService
 
 <h3>Login</h3>
 
-<EditForm Model="LoginDto" OnSubmit="Login12" id="LoginForm" FormName="LoginForm">
+<EditForm Model="LoginDto" OnSubmit="HandleLogin" id="LoginForm" FormName="LoginForm">
     <InputText @bind-Value="LoginDto.Email" type="email" placeholder="Email"></InputText>
     <InputText @bind-Value="LoginDto.Password" type="password" placeholder="Password"></InputText>
     <button type="submit">Login</button>
@@ -22,17 +24,20 @@
 
     private string? Token { get; set; }
 
-    public async Task Login12()
+    public async Task HandleLogin()
     {
         if (LoginDto is not null)
         {
             var tokenResponse = await _dataServerProxy.CheckCredentials(LoginDto);
             Token = tokenResponse?.Value?.Token ?? "Invalid response.";
+
         }
         else
         {
             Token = "Form data is null.";
         }
     }
+
+
 
 }

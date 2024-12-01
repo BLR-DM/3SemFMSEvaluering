@@ -1,4 +1,5 @@
 ﻿using FMSEvalueringUI.ModelDto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FMSEvalueringUI.ExternalServices.Interfaces
 {

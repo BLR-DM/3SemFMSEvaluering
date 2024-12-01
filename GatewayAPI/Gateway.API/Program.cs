@@ -54,7 +54,7 @@ app.MapPost("/login", async (LoginDto loginDto, IFmsProxy fmsproxy) =>
     return Results.Ok(response);
 }).AllowAnonymous();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapReverseProxy();

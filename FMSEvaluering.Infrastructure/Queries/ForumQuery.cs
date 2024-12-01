@@ -61,7 +61,7 @@ public class ForumQuery : IForumQuery
         {
             return new PublicForumDto
             {
-                Id = publicForum.Id,
+                Id = publicForum.Id.ToString(),
                 Name = publicForum.Name,
                 ForumType = nameof(PublicForum)
             };
@@ -70,20 +70,20 @@ public class ForumQuery : IForumQuery
         {
             return new ClassForumDto
             {
-                Id = classForum.Id,
+                Id = classForum.Id.ToString(),
                 Name = classForum.Name,
                 ForumType = nameof(ClassForum),
-                ClassId = classForum.ClassId
+                ClassId = classForum.ClassId.ToString()
             };
         }
         else if (forum is SubjectForum subjectForum)
         {
             return new SubjectForumDto
             {
-                Id = subjectForum.Id,
+                Id = subjectForum.Id.ToString(),
                 Name = subjectForum.Name,
                 ForumType = nameof(SubjectForum),
-                SubjectId = subjectForum.SubjectId
+                SubjectId = subjectForum.SubjectId.ToString()
             };
         }
 

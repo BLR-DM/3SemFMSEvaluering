@@ -8,7 +8,7 @@ namespace FMSEvaluering.Application.Queries.QueryDto
 {
     public record ForumDto
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string ForumType { get; set; }
 
@@ -19,10 +19,10 @@ namespace FMSEvaluering.Application.Queries.QueryDto
     }
     public record ClassForumDto : ForumDto
     {
-        public int ClassId { get; set; }
+        public string ClassId { get; set; }
     }
     public record SubjectForumDto : ForumDto
     {
-        public int SubjectId { get; set; }
+        public string SubjectId { get; set; }
     }
 }

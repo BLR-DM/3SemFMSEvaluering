@@ -1,17 +1,23 @@
 ﻿using System.Net;
+using Blazored.LocalStorage;
 using FMSEvalueringUI.ExternalServices.Interfaces;
 using FMSEvalueringUI.ModelDto;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FMSEvalueringUI.ExternalServices
 {
     public class DataServerProxy : IDataServerProxy
     {
         private readonly HttpClient _httpClient;
+        private readonly ILocalStorageService _localStorageService;
+        public static string JwtToken { get; set; }
 
 
-        public DataServerProxy(HttpClient httpClient)
+        public DataServerProxy(HttpClient httpClient, ILocalStorageService localStorageService)
         {
             _httpClient = httpClient;
+            _localStorageService = localStorageService;
         }
 
         async Task<JwtTokenDto> IDataServerProxy.CheckCredentials(LoginDto loginDto)
@@ -25,6 +31,12 @@ namespace FMSEvalueringUI.ExternalServices
                     //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
                 }
                 var tokenResponse = await response.Content.ReadFromJsonAsync<JwtTokenDto>(); // Adjust type as needed
+                if (tokenResponse != null)
+                {
+                    JwtToken = tokenResponse.Value.Token;
+                }
+
+                //return Results.Ok("Successfully Logged in!");
                 return tokenResponse;
             }
             catch (Exception ex)
