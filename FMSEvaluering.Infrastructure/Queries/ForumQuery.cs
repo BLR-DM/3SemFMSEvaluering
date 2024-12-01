@@ -37,10 +37,9 @@ public class ForumQuery : IForumQuery
                 {
                     Description = p.Description,
                     Solution = p.Solution,
-                    AppUserId = p.AppUserId,
                     CreatedDate = p.CreatedDate.ToShortDateString(),
-                    UpVotes = p.Votes.Count(v => v.VoteType == true),
-                    DownVotes = p.Votes.Count(v => v.VoteType == false),
+                    UpVotes = p.Votes.Count(v => v.VoteType),
+                    DownVotes = p.Votes.Count(v => !v.VoteType),
                 }).ToList()
             })
             .SingleAsync();
@@ -93,22 +92,22 @@ public class ForumQuery : IForumQuery
     {
         var forum = await _db.Forums.AsNoTracking()
             .Where(f => f.Id == id)
-            .Include(f => f.Posts).ThenInclude(p => p.Votes)
+            .Include(f => f.Posts)
+                .ThenInclude(p => p.Votes)
             .Select(f => new ForumWithPostDto
             {
                 Id = f.Id,
                 Name = f.Name,
                 ForumType = f.GetType().Name,
-                Posts = f.Posts.Where(p => p.Votes.Count(v => v.VoteType == true) >= reqUpvotes)
+                Posts = f.Posts.Where(p => p.Votes.Count(v => v.VoteType) >= reqUpvotes)
                     .Select(p => new PostDto
                     {
-                        Id = p.Id,
+                        Id = p.Id.ToString(),
                         Description = p.Description,
                         Solution = p.Solution,
-                        AppUserId = p.AppUserId,
                         CreatedDate = p.CreatedDate.ToShortDateString(),
-                        UpVotes = p.Votes.Count(v => v.VoteType == true),
-                        DownVotes = p.Votes.Count(v => v.VoteType == false),
+                        UpVotes = p.Votes.Count(v => v.VoteType),
+                        DownVotes = p.Votes.Count(v => !v.VoteType),
                     }).ToList()
             })
             .SingleAsync();

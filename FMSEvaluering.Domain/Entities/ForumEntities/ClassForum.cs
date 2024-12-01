@@ -27,13 +27,11 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
                     return ClassId.ToString().Equals(studentDto.ClassId);
 
                 case "teacher":
-                    var teacherDomainService = serviceProvider.GetRequiredService<IValidateTeacherDomainService>();
-                    break;
+                    var teacherDomainService = serviceProvider.GetRequiredService<ITeacherDomainService>();
+                    var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
+                    return teacherDto.TeacherSubjects.Any(ts => ts.ClassId == ClassId.ToString());
             }
-            var sd = serviceProvider.GetRequiredService<IStudentDomainService>();
-            var fmsValidasdationResponse = await fmsDataService.ValidateUserAccess(appUserId, role);
-
-            
+            return false;
         }
     }
 }

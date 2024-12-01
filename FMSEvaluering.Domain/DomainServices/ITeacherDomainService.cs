@@ -5,7 +5,18 @@
         Task<TeacherDto> GetTeacherAsync(string teacherId);
     }
 
-    public record TeacherDto(string FirstName, string LastName, string Email, IEnumerable<TeacherSubjectDto> TeacherSubjects, string AppUserId);
+    public record TeacherDto
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public IEnumerable<TeacherSubjectDto> TeacherSubjects { get; set; }
+        public string AppUserId { get; set; }
+    };
 
-    public record TeacherSubjectDto(string ClassId);
+    public record TeacherSubjectDto
+    {
+        public string ClassId { get; set; }
+        public string SubjectName { get; set; }
+    };
 }

@@ -1,4 +1,6 @@
-﻿namespace FMSEvaluering.Infrastructure.ExternalServices;
+﻿using FMSEvaluering.Domain.DomainServices;
+
+namespace FMSEvaluering.Infrastructure.ExternalServices;
 
 public interface IFmsDataProxy
 {
@@ -9,12 +11,16 @@ public interface IFmsDataProxy
 public record StudentResultDto(string FirstName, string LastName, string Email, string ClassId, string AppUserId);
 public record TeacherResultDto
 {
-    public string Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
-    public List<TeacherSubject> TeacherSubjects { get; set; }
-    public AppUser AppUser { get; set; }
+    public List<TeacherSubjectResultDto> TeacherSubjects { get; set; }
+    public string AppUserId { get; set; }
 }
 
-public record TeacherSubjectResultDto(string Id, )
+public record TeacherSubjectResultDto
+{
+    public string Id { get; set; }
+    public string ClassId { get; set; }
+    public string SubjectName { get; set; }
+}

@@ -16,7 +16,7 @@ public class Post : DomainEntity
     {
     }
 
-    private Post(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider)
+    private Post(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider, string role)
     {
         _serviceProvider = serviceProvider;
         Description = description;
@@ -26,7 +26,7 @@ public class Post : DomainEntity
         CreatedDate = DateTime.Now;
 
         //AssureStudentIsPartOfClass(fmsValidationResponse.ClassId); //async??
-        Forum.ValidateUserAccessToForum(appUserId, _serviceProvider); // async?
+        Forum.ValidateUserAccessToForum(appUserId, _serviceProvider, role); // async?
     }
 
     public string Description { get; protected set; }
@@ -38,9 +38,9 @@ public class Post : DomainEntity
     public IReadOnlyCollection<Vote> Votes => _votes;
     public IReadOnlyCollection<Comment> Comments => _comments;
 
-    public static Post Create(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider)
+    public static Post Create(string description, string solution, string appUserId, Forum forum, IServiceProvider serviceProvider, string role)
     {
-        return new Post(description, solution, appUserId, forum, serviceProvider);
+        return new Post(description, solution, appUserId, forum, serviceProvider, role);
     }
 
 

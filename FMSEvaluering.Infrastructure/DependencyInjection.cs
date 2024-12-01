@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<IForumQuery, ForumQuery>();
         services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
         services.AddScoped<IStudentDomainService, StudentDomainService>();
+        services.AddScoped<ITeacherDomainService, TeacherDomainService>();
 
         // External services
         services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>

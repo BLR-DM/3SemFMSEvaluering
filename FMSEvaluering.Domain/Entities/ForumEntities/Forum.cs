@@ -16,7 +16,7 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
 
         public virtual async Task<bool> ValidateUserAccessToForum(string userId, IServiceProvider serviceProvider, string role)
         {
-            return false; // Default: return false. PublicForum doesn't need conditional so, it would return true
+            return false;
         }
 
         //public void AddPost(Post post)

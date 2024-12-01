@@ -96,7 +96,8 @@ app.MapPost("/forum/{forumId}/post",
         try
         {
             var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            await command.CreatePostAsync(post, appUserId, forumId);
+            var role = user.FindFirst("usertype")?.Value;
+            await command.CreatePostAsync(post, appUserId, forumId, role);
             return Results.Created("testURI", post); // Test return value
         }
         catch (Exception)
@@ -127,16 +128,33 @@ app.MapDelete("/post",
 app.MapGet("/forum/post/{postId}",
     async (int postId, ClaimsPrincipal user, IPostQuery postQuery) =>
     {
-        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        return await postQuery.GetPostAsync(postId, appUserId);
+        try
+        {
+            var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = user.FindFirst("usertype")?.Value;
+            var post = await postQuery.GetPostAsync(postId, appUserId, role);
+            return Results.Ok(post);
+        }
+        catch (Exception)
+        {
+            return Results.Problem("Couldn't get post");
+        }
     });
 
 app.MapGet("/forum/{forumId}/post",
     async (int forumId, ClaimsPrincipal user, IPostQuery postQuery) =>
     {
-        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var role = user.FindFirst("usertype").Value;
-        return await postQuery.GetPostsAsync(forumId, appUserId, role);
+        try
+        {
+            var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var role = user.FindFirst("usertype")?.Value;
+            var posts = await postQuery.GetPostsAsync(forumId, appUserId, role);
+            return Results.Ok(posts);
+        }
+        catch (Exception)
+        {
+            return Results.Problem("Couldn't get posts");
+        }
     });
 
 app.MapGet("/teacher", () => "hej med dig teacher").RequireAuthorization("Teacher");
