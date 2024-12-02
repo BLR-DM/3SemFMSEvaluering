@@ -39,7 +39,7 @@ public class ForumQuery : IForumQuery
                     Solution = p.Solution,
                     CreatedDate = p.CreatedDate.ToShortDateString(),
                     UpVotes = p.Votes.Count(v => v.VoteType),
-                    DownVotes = p.Votes.Count(v => !v.VoteType),
+                    DownVotes = p.Votes.Count(v => !v.VoteType)
                 }).ToList()
             })
             .SingleAsync();

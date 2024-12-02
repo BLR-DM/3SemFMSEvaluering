@@ -66,9 +66,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("CanCreatePost", policy =>
-        policy.RequireClaim("class", "DVME231"));
-
     options.AddPolicy("Student", policy =>
         policy.RequireClaim("usertype", "student"));
 
@@ -87,10 +84,6 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
-//app.MapPost("/post",
-//    async (CreatePostDto post, IPostCommand command) => await command.CreatePostAsync(post))
-//    .RequireAuthorization("CanCreate");
 
 app.MapPost("/forum/{forumId}/post",
     async (int forumId, CreatePostDto post, ClaimsPrincipal user, IForumCommand command) =>
@@ -164,10 +157,6 @@ app.MapGet("/forum/{forumId}/post",
             return Results.Problem("Couldn't get posts");
         }
     });
-
-app.MapGet("/teacher", () => "hej med dig teacher").RequireAuthorization("Teacher");
-
-app.MapGet("/student", () => "hej med dig elev").RequireAuthorization("Student");
 
 //VOTE
 //VOTE
