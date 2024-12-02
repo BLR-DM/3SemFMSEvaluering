@@ -28,7 +28,7 @@ namespace FMSExitSlip.Application.Commands
             _serviceProvider = serviceProvider;
         }
 
-        async Task IExitSlipCommand.AddQuestion(CreateQuestionDto questionDto, string appUserId)
+        async Task IExitSlipCommand.AddQuestionAsync(CreateQuestionDto questionDto, string appUserId)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.PublishExitSlip(int id, string appUserId)
+        async Task IExitSlipCommand.PublishExitSlip(int id, string appUserId, PublishExitSlipDto exitSlipDto)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace FMSExitSlip.Application.Commands
 
                 // Do
                 exitSlip.Publish(appUserId);
-                _exitSlipRepository.PublishExitSlip(exitSlip);
+                _exitSlipRepository.PublishExitSlip(exitSlip, exitSlipDto.RowVersion);
 
                 // Save
                 await _unitOfWork.Commit();
@@ -164,7 +164,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.UpdateQuestion(UpdateQuestionDto questionDto, int exitSlipId)
+        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId)
         {
             try
             {

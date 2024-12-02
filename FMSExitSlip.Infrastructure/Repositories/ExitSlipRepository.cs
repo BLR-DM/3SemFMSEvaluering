@@ -47,8 +47,9 @@ namespace FMSExitSlip.Infrastructure.Repositories
             _db.Responses.Remove(response);
         }
 
-        void IExitSlipRepository.PublishExitSlip(ExitSlip exitSlip)
+        void IExitSlipRepository.PublishExitSlip(ExitSlip exitSlip, byte[] rowVersion)
         {
+            _db.Entry(exitSlip).Property(nameof(exitSlip.RowVersion)).OriginalValue = rowVersion;
             _db.ExitSlips.Update(exitSlip);
         }
 

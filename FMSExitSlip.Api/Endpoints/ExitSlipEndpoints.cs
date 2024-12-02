@@ -24,12 +24,12 @@ namespace FMSExitSlip.Api.Endpoints
                 }
             }).RequireAuthorization("Teacher").WithTags("ExitSlip");
 
-            app.MapPut("/exitslip/{id}/publish", async (int id, HttpContext HttpContext, IExitSlipCommand command) =>
+            app.MapPut("/exitslip/{id}/publish", async (int id, PublishExitSlipDto publishExitSlipDto, HttpContext httpContext, IExitSlipCommand command) =>
             {
-                var appUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var appUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 try
                 {
-                    await command.PublishExitSlip(id, appUserId);
+                    await command.PublishExitSlip(id, appUserId, publishExitSlipDto);
                     return Results.Ok("ExitSlip published");
                 }
                 catch (Exception)
