@@ -26,7 +26,10 @@ public class ForumRepository : IForumRepository
 
     async Task<Forum> IForumRepository.GetForumAsync(int id)
     {
-        return await _db.Forums.SingleAsync(f => f.Id == id);
+        return await _db.Forums
+            .Include(f => f.Posts)
+                .ThenInclude(p => p.History)
+            .SingleAsync(f => f.Id == id);
     }
 
     void IForumRepository.UpdatePost(Post post, byte[] rowVersion)
