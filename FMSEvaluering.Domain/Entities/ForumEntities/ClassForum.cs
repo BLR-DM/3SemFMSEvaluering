@@ -17,7 +17,7 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
             ClassId = classId;
         }
         
-        public override async Task<bool> ValidateUserAccessToForum(string appUserId, IServiceProvider serviceProvider, string role)
+        public override async Task<bool> ValidateUserAccessAsync(string appUserId, IServiceProvider serviceProvider, string role)
         {
             switch (role)
             {

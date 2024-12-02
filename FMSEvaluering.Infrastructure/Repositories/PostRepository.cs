@@ -13,18 +13,6 @@ public class PostRepository : IPostRepository
         _db = db;
     }
 
-    async Task IPostRepository.AddPostAsync(Post post)
-    {
-        try
-        {
-            await _db.Posts.AddAsync(post);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
     async Task<Post> IPostRepository.GetPostAsync(int id)
     {
         try
@@ -41,18 +29,7 @@ public class PostRepository : IPostRepository
         }
     }
 
-    void IPostRepository.UpdatePost(Post post, byte[] rowVersion)
-    {
-        _db.Entry(post).Property(nameof(post.RowVersion)).OriginalValue = rowVersion;
-    }
-
-    void IPostRepository.DeletePost(Post post, byte[] rowVersion)
-    {
-        _db.Entry(post).Property(nameof(post.RowVersion)).OriginalValue = rowVersion;
-        _db.Posts.Remove(post);
-    }
-
-    void IPostRepository.UpdateCommentAsync(Comment comment, byte[] rowVersion)
+    void IPostRepository.UpdateComment(Comment comment, byte[] rowVersion)
     {
         _db.Entry(comment).Property(nameof(comment.RowVersion)).OriginalValue = rowVersion;
     }

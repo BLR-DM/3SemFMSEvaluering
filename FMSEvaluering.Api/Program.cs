@@ -1,3 +1,4 @@
+using System.Data;
 using System.Security.Claims;
 using System.Text;
 using FMSEvaluering.Api.Endpoints;
@@ -7,6 +8,7 @@ using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
+using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Domain.Entities.PostEntities;
 using FMSEvaluering.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -91,13 +93,13 @@ app.UseAuthorization();
 //    .RequireAuthorization("CanCreate");
 
 app.MapPost("/forum/{forumId}/post",
-    async (int forumId, CreatePostDto post, ClaimsPrincipal user, IPostCommand command) =>
+    async (int forumId, CreatePostDto post, ClaimsPrincipal user, IForumCommand command) =>
     {
         try
         {
             var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var role = user.FindFirst("usertype")?.Value;
-            await command.CreatePostAsync(post, appUserId, forumId, role);
+            await command.CreatePostAsync(post, appUserId, role, forumId);
             return Results.Created("testURI", post); // Test return value
         }
         catch (Exception)
@@ -106,23 +108,29 @@ app.MapPost("/forum/{forumId}/post",
         }
     }).RequireAuthorization("Student");
 
-app.MapPut("/post/",
-    async (UpdatePostDto post, ClaimsPrincipal user, IPostCommand command) =>
+app.MapPut("/forum/{forumId}/post",
+    async (int forumId, UpdatePostDto post, ClaimsPrincipal user, IForumCommand command) =>
     {
         try
         {
             var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            await command.UpdatePost(post, appUserId);
+            var role = user.FindFirst("usertype")?.Value;
+            await command.UpdatePostAsync(post, appUserId, role, forumId);
             return Results.Created("testURI", post);
         }
         catch (Exception)
         {
             return Results.Problem("Couldn't update post");
         }
-    });
+    }).RequireAuthorization("Student");
 
-app.MapDelete("/post",
-    async ([FromBody] DeletePostDto post, IPostCommand command) => await command.DeletePostAsync(post));
+app.MapDelete("/forum/{forumId}/post",
+    async (int forumId, [FromBody] DeletePostDto post, ClaimsPrincipal user, IForumCommand command) =>
+    {
+        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var role = user.FindFirst("usertype")?.Value;
+        await command.DeletePostAsync(post, appUserId, role, forumId);
+    });
 //.RequireAuthorization("isAdmin");
 
 app.MapGet("/forum/post/{postId}",
