@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,8 @@ namespace FMSEvaluering.Application.Queries.QueryDto
         public int Id { get; set; }
         public string Name { get; set; }
         public string ForumType { get; set; }
+        public byte[] RowVersion { get; set; }
+        public IEnumerable<PostDto> Posts { get; set; }
 
     }
 

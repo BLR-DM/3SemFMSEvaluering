@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace FMSEvaluering.Application.Commands.CommandDto.VoteDto
 {
-    public record CreateVoteDto
+    public record HandleVoteDto
     {
         public bool VoteType { get; set; }
+        public byte[] RowVersion { get; set; }
     }
 }

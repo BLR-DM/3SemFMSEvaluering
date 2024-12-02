@@ -60,22 +60,32 @@ public class Post : DomainEntity
 
     // Vote
 
-    public void HandleVote(bool voteType, string appUserId)
+    public HandleVoteBehaviour HandleVote(bool voteType, string appUserId)
     {
         var vote = Votes.FirstOrDefault(v => v.AppUserId == appUserId);
 
         if (vote == null)
         {
             CreateVote(voteType, appUserId);
+            return HandleVoteBehaviour.Create;
         }
         else if (vote.VoteType == voteType)
         {
             DeleteVote(appUserId);
+            return HandleVoteBehaviour.Delete;
         }
         else
         {
             UpdateVote(voteType, appUserId);
+            return HandleVoteBehaviour.Update;
         }
+    }
+
+    public enum HandleVoteBehaviour
+    {
+        Create,
+        Update,
+        Delete
     }
 
     public void CreateVote(bool voteType, string appUserId)

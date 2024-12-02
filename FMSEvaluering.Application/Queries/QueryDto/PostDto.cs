@@ -9,11 +9,12 @@ public record PostDto()
     public string CreatedDate { get; set; }
     public int UpVotes { get; set; }
     public int DownVotes { get; set; }
-    public IEnumerable<PostHistoryDto> PostHistoryDto { get; set; }
-    //public IEnumerable<VoteDto> VoteDto { get; set; }
-    public IEnumerable<CommentDto> CommentDto { get; set; }
+    public byte[] RowVersion { get; set; }
+    public IEnumerable<PostHistoryDto> History { get; set; }
+    public IEnumerable<VoteDto> Votes { get; set; }
+    public IEnumerable<CommentDto> Comments { get; set; }
 
-    // IEnumerable VoteDto
-    // IEnumerable CommentDto
+    // IEnumerable Votes
+    // IEnumerable Comments
     // StudentId
 }

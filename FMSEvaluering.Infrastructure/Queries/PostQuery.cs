@@ -41,15 +41,20 @@ public class PostQuery : IPostQuery
             CreatedDate = post.CreatedDate.ToShortDateString(),
             UpVotes = post.Votes.Count(v => v.VoteType),
             DownVotes = post.Votes.Count(v => !v.VoteType),
-            PostHistoryDto = post.History.Select(ph => new PostHistoryDto
+            History = post.History.Select(ph => new PostHistoryDto
             {
                 Content = ph.Description,
                 EditedDate = ph.EditedDate.ToShortDateString()
             }).ToList(),
-            CommentDto = post.Comments.Select(c => new CommentDto
+            Votes = post.Votes.Select(v => new VoteDto
             {
-                Id = c.Id,
-                Text = c.Text
+                VoteType = v.VoteType,
+                RowVersion = v.RowVersion
+            }).ToList(),
+            Comments = post.Comments.Select(c => new CommentDto
+            {
+                Text = c.Text,
+                RowVersion = c.RowVersion
             }).ToList()
         };
     }
@@ -81,12 +86,12 @@ public class PostQuery : IPostQuery
             CreatedDate = post.CreatedDate.ToShortDateString(),
             UpVotes = post.Votes.Count(v => v.VoteType),
             DownVotes = post.Votes.Count(v => !v.VoteType),
-            PostHistoryDto = post.History.Select(ph => new PostHistoryDto
+            History = post.History.Select(ph => new PostHistoryDto
             {
                 Content = ph.Description,
                 EditedDate = ph.EditedDate.ToShortDateString()
             }).ToList(),
-            CommentDto = post.Comments.Select(c => new CommentDto
+            Comments = post.Comments.Select(c => new CommentDto
             {
                 Id = c.Id,
                 Text = c.Text

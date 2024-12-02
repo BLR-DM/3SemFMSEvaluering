@@ -161,7 +161,7 @@ app.MapGet("/forum/{forumId}/post",
 //app.MapVoteEndpoints();
 
 app.MapPost("/post/{postId}/vote",
-    async (int postId, CreateVoteDto voteDto, ClaimsPrincipal user, IPostCommand command) =>
+    async (int postId, HandleVoteDto voteDto, ClaimsPrincipal user, IPostCommand command) =>
     {
         // var id = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
         var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;

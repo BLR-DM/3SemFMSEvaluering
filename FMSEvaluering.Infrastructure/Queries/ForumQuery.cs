@@ -8,10 +8,12 @@ namespace FMSEvaluering.Infrastructure.Queries;
 public class ForumQuery : IForumQuery
 {
     private readonly EvaluationContext _db;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ForumQuery(EvaluationContext db)
+    public ForumQuery(EvaluationContext db, IServiceProvider serviceProvider)
     {
         _db = db;
+        _serviceProvider = serviceProvider;
     }
 
     async Task<ForumDto> IForumQuery.GetForumAsync(int forumId)
@@ -21,10 +23,58 @@ public class ForumQuery : IForumQuery
         return MapToDto(forum);
     }
 
-    async Task<ForumWithPostDto> IForumQuery.GetForumWithPostAsync(int forumId)
+    async Task<ForumWithPostDto> IForumQuery.GetForumWithPostsAsync(int forumId, string appUserId, string role)
     {
-        var forumWithPosts = await _db.Forums
-            .AsNoTracking()
+        var forum = await _db.Forums.AsNoTracking()
+            .Include(f => f.Posts)
+            .ThenInclude(p => p.History)
+            .Include(f => f.Posts)
+            .ThenInclude(p => p.Comments)
+            .Include(f => f.Posts)
+            .ThenInclude(p => p.Votes)
+            .SingleOrDefaultAsync(f => f.Id == forumId);
+
+        if (forum == null)
+            throw new ArgumentException("Forum not found");
+
+        var hasAcceess = await forum.ValidateUserAccessAsync(appUserId, _serviceProvider, role);
+
+        if (!hasAcceess)
+            throw new UnauthorizedAccessException("You do not have access");
+        var forumDto = new ForumDto
+        {
+            Id = forum.Id,
+            Name = forum.Name,
+            ForumType = forum.GetType().Name,
+            Posts = forum.Posts.Select(p => new PostDto
+            {
+                Id = p.Id.ToString(),
+                Description = p.Description,
+                Solution = p.Solution,
+                CreatedDate = p.CreatedDate.ToShortDateString(),
+                UpVotes = p.Votes.Count(v => v.VoteType),
+                DownVotes = p.Votes.Count(v => !v.VoteType),
+                RowVersion = p.RowVersion,
+                History = p.History.Select(ph => new PostHistoryDto
+                {
+                    Content = ph.Content,
+                    EditedDate = ph.EditedDate.ToShortDateString()
+                }).ToList(),
+                Votes = p.Votes.Select(v => new VoteDto
+                {
+                    VoteType = v.VoteType,
+                    RowVersion = v.RowVersion
+                }).ToList(),
+                Comments = p.Comments.Select(c => new CommentDto
+                {
+                    Text = c.Text,
+                    RowVersion = c.RowVersion
+                }).ToList()
+            }).ToList()
+        };
+        
+        
+        var forumWithPosts = await _db.Forums.AsNoTracking()
             .Where(f => f.Id == forumId)
             .Include(f => f.Posts)
             .Select(f => new ForumWithPostDto
@@ -40,6 +90,7 @@ public class ForumQuery : IForumQuery
                     CreatedDate = p.CreatedDate.ToShortDateString(),
                     UpVotes = p.Votes.Count(v => v.VoteType),
                     DownVotes = p.Votes.Count(v => !v.VoteType)
+
                 }).ToList()
             })
             .SingleAsync();

@@ -156,7 +156,7 @@ public class ForumCommand : IForumCommand
             var forum = await _forumRepository.GetForumAsync(forumDto.Id);
 
             // Do
-            _forumRepository.DeleteForum(forum);
+            _forumRepository.DeleteForum(forum, forumDto.RowVersion);
 
             // Save
             await _unitOfWork.Commit();
