@@ -26,12 +26,13 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
             _posts.Add(post); 
         }
 
-        public async Task<Post> UpdatePostAsync(int postId, string content, string appUserId, IServiceProvider serviceProvider, string role)
+        public async Task<Post> UpdatePostAsync(int postId, string description, string solution, string appUserId,
+            IServiceProvider serviceProvider, string role)
         {
             await ValidateAccessAsync(appUserId, serviceProvider, role);
 
             var post = GetPostById(postId);
-            post.Update(content, appUserId);
+            post.Update(description, solution, appUserId);
             return post;
         }
 

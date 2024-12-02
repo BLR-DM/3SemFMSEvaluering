@@ -22,7 +22,4 @@ public class Vote : DomainEntity
     {
         VoteType = voteType;
     }
-
-
-
 }

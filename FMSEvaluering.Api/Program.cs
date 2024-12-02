@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Claims;
 using System.Text;
 using FMSEvaluering.Api.Endpoints;
@@ -8,8 +7,6 @@ using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
-using FMSEvaluering.Domain.Entities.ForumEntities;
-using FMSEvaluering.Domain.Entities.PostEntities;
 using FMSEvaluering.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -113,7 +110,7 @@ app.MapPut("/forum/{forumId}/post",
         }
         catch (Exception)
         {
-            return Results.Problem("Couldn't update post");
+            return Results.Problem("Couldn't update post", statusCode:500); // test
         }
     }).RequireAuthorization("Student");
 

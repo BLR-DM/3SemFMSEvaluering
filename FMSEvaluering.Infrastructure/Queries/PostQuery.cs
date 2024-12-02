@@ -43,7 +43,7 @@ public class PostQuery : IPostQuery
             DownVotes = post.Votes.Count(v => !v.VoteType),
             PostHistoryDto = post.History.Select(ph => new PostHistoryDto
             {
-                Content = ph.Content,
+                Content = ph.Description,
                 EditedDate = ph.EditedDate.ToShortDateString()
             }).ToList(),
             CommentDto = post.Comments.Select(c => new CommentDto
@@ -83,7 +83,7 @@ public class PostQuery : IPostQuery
             DownVotes = post.Votes.Count(v => !v.VoteType),
             PostHistoryDto = post.History.Select(ph => new PostHistoryDto
             {
-                Content = ph.Content,
+                Content = ph.Description,
                 EditedDate = ph.EditedDate.ToShortDateString()
             }).ToList(),
             CommentDto = post.Comments.Select(c => new CommentDto

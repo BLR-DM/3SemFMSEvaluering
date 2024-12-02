@@ -3,11 +3,12 @@ public record PostHistory
 {
     protected PostHistory() {}
 
-    public PostHistory(string content)
+    public PostHistory(string description, string solution)
     {
-        Content = content;
+        Description = description;
         EditedDate = DateTime.Now;
     }
-    public string Content { get; private set; }
+    public string Description { get; private set; }
+    public string Solution { get; private set; }
     public DateTime EditedDate { get; private set; }
 }

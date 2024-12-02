@@ -205,7 +205,7 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                             b1.Property<DateTime>("EditedDate")
                                 .HasColumnType("datetime2");
 
-                            b1.Property<string>("Content")
+                            b1.Property<string>("Description")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 

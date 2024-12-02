@@ -16,7 +16,7 @@ public class EvaluationContext : DbContext
             p => p.History, a =>
             {
                 a.WithOwner().HasForeignKey("PostId");
-                a.Property(h => h.Content).IsRequired();
+                a.Property(h => h.Description).IsRequired();
                 a.Property(h => h.EditedDate).IsRequired();
                 a.HasKey("PostId", "EditedDate");
             });

@@ -50,7 +50,8 @@ public class ForumCommand : IForumCommand
             // Load
             var forum = await _forumRepository.GetForumAsync(forumId);
             // Do
-            var post = await forum.UpdatePostAsync(postDto.PostId, postDto.Content, appUserId, _serviceProvider, role);
+            var post = await forum.UpdatePostAsync(postDto.PostId, postDto.Description, postDto.Solution,
+                appUserId, _serviceProvider, role);
             _forumRepository.UpdatePost(post, postDto.RowVersion);
 
             //Save
