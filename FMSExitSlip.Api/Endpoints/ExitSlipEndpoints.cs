@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
 using FMSExitSlip.Application.Commands.Interfaces;
+using FMSExitSlip.Application.Queries.Interfaces;
 
 namespace FMSExitSlip.Api.Endpoints
 {
@@ -39,6 +40,15 @@ namespace FMSExitSlip.Api.Endpoints
                 }
 
             }).RequireAuthorization("Teacher").WithTags("ExitSlip");
+
+            app.MapGet("/exitslip/{id}", async (int id, IExitSlipQuery query, ClaimsPrincipal user) =>
+            {
+                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = user.FindFirst("usertype")?.Value;
+
+                var result = await query.GetExitSlipAsync(id, appUserId, role);
+                return Results.Ok(result);
+            });
         }
     }
 }
