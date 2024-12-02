@@ -3,6 +3,7 @@ using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Repositories;
+using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Application.Commands;
 
@@ -62,7 +63,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.HandleVote(CreateVoteDto voteDto, string appUserId, int postId)
+    async Task IPostCommand.HandleVote(HandleVoteDto voteDto, string appUserId, int postId)
     {
         try
         {
@@ -72,7 +73,16 @@ public class PostCommand : IPostCommand
             var post = await _postRepository.GetPostAsync(postId);
 
             // Do
-            post.HandleVote(voteDto.VoteType, appUserId);
+            var behaviour = post.HandleVote(voteDto.VoteType, appUserId);
+
+            if (behaviour == Post.HandleVoteBehaviour.Update)
+            {
+                _postRepository.UpdateVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
+            } 
+            else if (behaviour == Post.HandleVoteBehaviour.Delete)
+            {
+                _postRepository.DeleteVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
+            }
 
             // Save
             await _unitOfWork.Commit();

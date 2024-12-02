@@ -19,8 +19,9 @@ public class ForumRepository : IForumRepository
         await _db.Forums.AddAsync(forum);
     }
 
-    void IForumRepository.DeleteForum(Forum forum)
+    void IForumRepository.DeleteForum(Forum forum, byte[] rowVersion)
     {
+        _db.Entry(forum).Property(nameof(forum.RowVersion)).OriginalValue = rowVersion;
         _db.Forums.Remove(forum);
     }
 

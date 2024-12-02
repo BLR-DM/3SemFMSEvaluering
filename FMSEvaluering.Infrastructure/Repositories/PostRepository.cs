@@ -13,6 +13,12 @@ public class PostRepository : IPostRepository
         _db = db;
     }
 
+    void IPostRepository.DeleteVote(Vote vote, byte[] rowVersion)
+    {
+        _db.Entry(vote).Property(nameof(vote.RowVersion)).OriginalValue = rowVersion;
+        _db.Votes.Remove(vote);
+    }
+
     async Task<Post> IPostRepository.GetPostAsync(int id)
     {
         try
@@ -32,5 +38,10 @@ public class PostRepository : IPostRepository
     void IPostRepository.UpdateComment(Comment comment, byte[] rowVersion)
     {
         _db.Entry(comment).Property(nameof(comment.RowVersion)).OriginalValue = rowVersion;
+    }
+
+    void IPostRepository.UpdateVote(Vote vote, byte[] rowVersion)
+    {
+        _db.Entry(vote).Property(nameof(vote.RowVersion)).OriginalValue = rowVersion;
     }
 }

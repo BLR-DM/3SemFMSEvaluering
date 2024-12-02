@@ -42,7 +42,7 @@ namespace FMSEvaluering.Api.Endpoints
             // Oversigt over Posts for given forum (includer ikke history, comments)
             //app.MapGet("/forum/{id}/post", async (int id, IForumQuery query) =>
             //{
-            //    var result = await query.GetForumWithPostAsync(id);
+            //    var result = await query.GetForumWithPostsAsync(id);
             //    return Results.Ok(result);
             //}).WithTags("Forum");
 

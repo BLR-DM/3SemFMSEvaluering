@@ -9,5 +9,5 @@ public interface IPostCommand
 {
     Task CreateCommentAsync(CreateCommentDto commentDto);
     Task UpdateCommentAsync(UpdateCommentDto commentDto);
-    Task HandleVote(CreateVoteDto voteDto, string appUserId, int postId);
+    Task HandleVote(HandleVoteDto voteDto, string appUserId, int postId);
 }
