@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FMSEvaluering.Domain.Entities.ForumEntities;
+﻿using FMSEvaluering.Domain.Entities.ForumEntities;
+using FMSEvaluering.Domain.Entities.PostEntities;
 
-namespace FMSEvaluering.Application.Repositories
+namespace FMSEvaluering.Application.Repositories;
+
+public interface IForumRepository
 {
-    public interface IForumRepository
-    {
-        Task AddForum(Forum forum);
-        Task<Forum> GetForumAsync(int id);
-        void DeleteForum(Forum forum);
-    }
+    Task AddForum(Forum forum);
+    Task<Forum> GetForumAsync(int id);
+    void DeleteForum(Forum forum);
+    void UpdatePost(Post post, byte[] rowVersion);
+    void DeletePost(Post post, byte[] rowVersion);
 }

@@ -1,5 +1,4 @@
-﻿using FMSEvaluering.Domain.DomainServices;
-using FMSEvaluering.Domain.Entities.PostEntities;
+﻿using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
@@ -14,16 +13,36 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
         public string Name { get; protected set; }
         public IReadOnlyCollection<Post> Posts => _posts;
 
-        public virtual async Task<bool> ValidateUserAccessToForum(string userId, IServiceProvider serviceProvider, string role)
+        public virtual async Task<bool> ValidateUserAccessAsync(string userId, IServiceProvider serviceProvider, string role)
         {
             return false;
         }
 
-        //public void AddPost(Post post)
-        //{
-        //    _posts.Add(post);
-        //}
+        public async Task AddPostAsync(string description, string solution, string appUserId, IServiceProvider serviceProvider, string role)
+        {
+            await ValidateAccessAsync(appUserId, serviceProvider, role);
 
+            var post = Post.Create(description, solution, appUserId);
+            _posts.Add(post); 
+        }
+
+        public async Task<Post> UpdatePostAsync(int postId, string content, string appUserId, IServiceProvider serviceProvider, string role)
+        {
+            await ValidateAccessAsync(appUserId, serviceProvider, role);
+
+            var post = GetPostById(postId);
+            post.Update(content, appUserId);
+            return post;
+        }
+
+        public async Task<Post> DeletePostAsync(int postId, string appUserId, IServiceProvider serviceProvider, string role)
+        {
+            await ValidateAccessAsync(appUserId, serviceProvider, role);
+
+            var post = GetPostById(postId);
+            _posts.Remove(post);
+            return post;
+        }
         public static Forum CreatePublicForum(string name)
         {
             return new PublicForum(name);
@@ -39,5 +58,18 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
             return new SubjectForum(name, subjectId);
         }
 
+
+        private async Task ValidateAccessAsync(string appUserId, IServiceProvider serviceProvider, string role)
+        {
+            var hasAccess = await ValidateUserAccessAsync(appUserId, serviceProvider, role);
+            if (!hasAccess) throw new ArgumentException("Not authorized");
+        }
+
+        private Post GetPostById(int postId)
+        {
+            var post = Posts.SingleOrDefault(p => p.Id == postId);
+            if (post is null) throw new ArgumentException("Post not found");
+            return post;
+        }
     }
 }

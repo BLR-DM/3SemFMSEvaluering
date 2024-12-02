@@ -28,7 +28,7 @@ public class PostQuery : IPostQuery
         if (post.Forum == null)
             throw new ArgumentException("Forum not found");
 
-        var hasAccess = await post.Forum.ValidateUserAccessToForum(appUserId, _serviceProvider, role);
+        var hasAccess = await post.Forum.ValidateUserAccessAsync(appUserId, _serviceProvider, role);
 
         if (!hasAccess)
             throw new UnauthorizedAccessException("You do not have access");
@@ -68,7 +68,7 @@ public class PostQuery : IPostQuery
         if (forum == null)
             throw new ArgumentException("Forum not found");
 
-        var hasAcceess = await forum.ValidateUserAccessToForum(appUserId, _serviceProvider, role);
+        var hasAcceess = await forum.ValidateUserAccessAsync(appUserId, _serviceProvider, role);
 
         if (!hasAcceess)
             throw new UnauthorizedAccessException("You do not have access");
