@@ -27,7 +27,6 @@ public class Post : DomainEntity
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public string AppUserId { get; protected set; }
-    public Forum Forum { get; protected set; }
     public DateTime CreatedDate { get; private set; }
     public ICollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;

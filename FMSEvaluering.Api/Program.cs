@@ -110,7 +110,7 @@ app.MapPut("/forum/{forumId}/post",
         }
         catch (Exception)
         {
-            return Results.Problem("Couldn't update post");
+            return Results.Problem("Couldn't update post", statusCode:500); // test
         }
     }).RequireAuthorization("Student");
 
