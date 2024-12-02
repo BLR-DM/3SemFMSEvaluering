@@ -100,6 +100,12 @@ app.MapPost("/exitslip/question",
         }
     }).RequireAuthorization("Teacher").WithTags("Questions");
 
+app.MapPut("/exitslip/{id}/question",
+    async (int id, UpdateQuestionDto questionDto, HttpContext httpContext, IExitSlipCommand command) =>
+    {
+        await command.UpdateQuestion(questionDto, id);
+    }).RequireAuthorization("Teacher").WithTags("Questions");
+
 app.MapPost("/exitslip/{id}/question/response",
     async (int id, CreateResponseDto responseDto, HttpContext httpContext, IExitSlipCommand command) =>
     {

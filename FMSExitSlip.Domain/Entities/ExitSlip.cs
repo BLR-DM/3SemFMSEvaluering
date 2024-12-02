@@ -50,12 +50,23 @@ namespace FMSExitSlip.Domain.Entities
             }
         }
         
-         public void CreateQuestion(string text, string appUserId)
+        public void CreateQuestion(string text, string appUserId)
         {
             EnsureExitSlipDoesntExceedMaxQuestions();
             EnsureExitSlipIsNotPublished();
 
             _questions.Add(Question.Create(text, appUserId));
+        }
+
+        public Question UpdateQuestion(int questionId, string text)
+        {
+            var question = Questions.FirstOrDefault(q => q.Id == questionId);
+            if (question == null)
+            {
+                throw new ArgumentException("Question not found");
+            }
+            question.Update(text);
+            return question;
         }
 
         public void CreateResponse(string text, string appUserId, int questionId)

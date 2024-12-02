@@ -25,6 +25,10 @@ namespace FMSExitSlip.Domain.Entities
             return new Question(text, appUserId);
         }
 
+        public void Update(string text)
+        {
+            Text = text;
+        }
         public void AddResponse(string text, string appUserId)
         {
             var response = Response.Create(text, appUserId, Responses);
