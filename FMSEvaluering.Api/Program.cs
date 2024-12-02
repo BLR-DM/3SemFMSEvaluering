@@ -1,4 +1,3 @@
-using System.Data;
 using System.Security.Claims;
 using System.Text;
 using FMSEvaluering.Api.Endpoints;
@@ -8,8 +7,6 @@ using FMSEvaluering.Application.Commands.CommandDto.PostDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
-using FMSEvaluering.Domain.Entities.ForumEntities;
-using FMSEvaluering.Domain.Entities.PostEntities;
 using FMSEvaluering.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;

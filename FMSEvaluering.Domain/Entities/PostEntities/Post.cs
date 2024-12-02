@@ -39,17 +39,18 @@ public class Post : DomainEntity
     }
 
 
-    public void Update(string newContent, string userId)
+    public void Update(string newDescription, string newSolution,  string userId)
     {
         AssureUserIsSameUser(userId);
 
-        SetHistory(Description);
-        Description = newContent;
+        SetHistory(Description, Solution);
+        Description = newDescription;
+        Solution = newSolution;
     }
 
-    private void SetHistory(string originalContent)
+    private void SetHistory(string orgDescription, string orgSolution)
     {
-        _history.Add(new PostHistory(originalContent));
+        _history.Add(new PostHistory(orgDescription, orgSolution));
     }
 
     private void AssureUserIsSameUser(string userId)
