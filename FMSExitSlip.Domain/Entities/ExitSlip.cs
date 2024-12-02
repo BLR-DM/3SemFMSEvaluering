@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FMSExitSlip.Domain.DomainServices;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FMSExitSlip.Domain.Entities
 {
@@ -29,9 +31,18 @@ namespace FMSExitSlip.Domain.Entities
             AssureOnlyOneExitSlipPrLesson(otherExitSlips);
         }
 
-        public static ExitSlip Create(string title, int maxQuestions, int lectureId, string appUserId, IEnumerable<ExitSlip> otherExitSlips)
+        public static ExitSlip Create(string title, int maxQuestions, int lectureId, string appUserId, IEnumerable<ExitSlip> otherExitSlips, IServiceProvider serviceProvider)
         {
-            return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips);
+            var domainService = serviceProvider.GetRequiredService<ITeacherAuthorizationDomainService>();
+            var validationRespone = domainService.ValidateIfTeacherIsAPartOfLecture(lectureId.ToString());
+
+            if (validationRespone.Result.LectureId == lectureId.ToString() &&
+                validationRespone.Result.TeacherId == appUserId)
+            {
+                return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips);
+            }
+
+            throw new InvalidOperationException("Only the teacher who has the lecture, can create an exitslip");
         }
 
         public void Publish(string appUserId)
@@ -50,7 +61,7 @@ namespace FMSExitSlip.Domain.Entities
             }
         }
         
-        public void CreateQuestion(string text, string appUserId)
+        public async void CreateQuestion(string text, string appUserId)
         {
             EnsureExitSlipDoesntExceedMaxQuestions();
             EnsureExitSlipIsNotPublished();
@@ -127,5 +138,7 @@ namespace FMSExitSlip.Domain.Entities
             var question = _questions.FirstOrDefault(q => q.Id == id);
             return question ?? throw new ArgumentException("Question was not found");
         }
+
+
     }
 }
