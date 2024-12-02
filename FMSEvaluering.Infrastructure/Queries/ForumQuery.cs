@@ -23,7 +23,7 @@ public class ForumQuery : IForumQuery
         return MapToDto(forum);
     }
 
-    async Task<ForumWithPostDto> IForumQuery.GetForumWithPostsAsync(int forumId, string appUserId, string role)
+    async Task<ForumDto> IForumQuery.GetForumWithPostsAsync(int forumId, string appUserId, string role)
     {
         var forum = await _db.Forums.AsNoTracking()
             .Include(f => f.Posts)
@@ -74,29 +74,8 @@ public class ForumQuery : IForumQuery
             }).ToList()
         };
         
-        
-        var forumWithPosts = await _db.Forums.AsNoTracking()
-            .Where(f => f.Id == forumId)
-            .Include(f => f.Posts)
-            .Select(f => new ForumWithPostDto
-            {
-                Id = f.Id,
-                Name = f.Name,
-                ForumType = f.GetType().Name,
-                ClassId = 2, // test
-                Posts = f.Posts.Select(p => new PostDto
-                {
-                    Description = p.Description,
-                    Solution = p.Solution,
-                    CreatedDate = p.CreatedDate.ToShortDateString(),
-                    UpVotes = p.Votes.Count(v => v.VoteType),
-                    DownVotes = p.Votes.Count(v => !v.VoteType)
 
-                }).ToList()
-            })
-            .SingleAsync();
-
-        return forumWithPosts;
+        return forumDto;
     }
 
     async Task<List<ForumDto>> IForumQuery.GetForumsAsync()
