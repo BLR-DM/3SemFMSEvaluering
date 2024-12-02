@@ -19,11 +19,13 @@ namespace FMSExitSlip.Application.Commands
 
         private readonly IUnitOfWork _unitOfWork;
         private readonly IExitSlipRepository _exitSlipRepository;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ExitSlipCommand(IUnitOfWork unitOfWork, IExitSlipRepository exitSlipRepository)
+        public ExitSlipCommand(IUnitOfWork unitOfWork, IExitSlipRepository exitSlipRepository, IServiceProvider serviceProvider)
         {
             _unitOfWork = unitOfWork;
             _exitSlipRepository = exitSlipRepository;
+            _serviceProvider = serviceProvider;
         }
 
         async Task IExitSlipCommand.AddQuestion(CreateQuestionDto questionDto, string appUserId)
@@ -126,7 +128,7 @@ namespace FMSExitSlip.Application.Commands
                 var otherExitSlips = await _exitSlipRepository.GetExitSlipsAsync();
 
                 // Do
-                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, appUserId, otherExitSlips);
+                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, appUserId, otherExitSlips, _serviceProvider);
                 await _exitSlipRepository.AddExitSlipAsync(exitSlip);
 
                 // Save

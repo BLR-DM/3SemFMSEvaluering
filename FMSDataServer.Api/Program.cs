@@ -382,9 +382,32 @@ app.MapGet("/fms/teachersubject", async (FMSDataDbContext dbContext) =>
     return Results.Ok(await dbContext.TeacherSubjects.AsNoTracking().ToListAsync());
 });
 
-app.MapGet("/fms/lecture", async (FMSDataDbContext dbContext) =>
+app.MapGet("/fms/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _context) =>
 {
-    return Results.Ok(await dbContext.Lectures.AsNoTracking().ToListAsync());
+    var lecture = await _context.Lectures
+        .AsNoTracking()
+        .Where(l => l.Id == lectureId)
+        .Include(l => l.TeacherSubject)
+        .ThenInclude(ts => ts.Teacher)
+        .Select(l => new LectureDto
+        {
+            Id = l.Id.ToString(),
+            Title = l.Title,
+            TeacherSubject = new TeacherSubjectWithIdDto
+            {
+                Id = l.TeacherSubject.Id.ToString(),
+                TeacherId = l.TeacherSubject.Teacher.AppUser.Id.ToString(),
+            }
+        })
+        .SingleOrDefaultAsync();
+
+
+    if (lecture == null)
+    {
+        return Results.NotFound("Lecture not found");
+    }
+
+    return Results.Ok(lecture);
 });
 
 
