@@ -7,6 +7,7 @@ namespace FMSExitSlip.Application.Commands.Interfaces;
 public interface IExitSlipCommand
 {
     Task AddQuestion(CreateQuestionDto questionDto, string appUserId);
+    Task UpdateQuestion(UpdateQuestionDto questionDto, int exitSlipId);
     Task CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId);
     Task CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId);
     Task UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId);

@@ -161,5 +161,28 @@ namespace FMSExitSlip.Application.Commands
                 throw;
             }
         }
+
+        async Task IExitSlipCommand.UpdateQuestion(UpdateQuestionDto questionDto, int exitSlipId)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+
+                // Load
+                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Do
+                var response = exitSlip.UpdateQuestion(questionDto.Id, questionDto.Text);
+                _exitSlipRepository.UpdateQuestion(response, questionDto.RowVersion);
+
+                // Save
+                await _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.Rollback();
+                throw;
+            }
+        }
     }
 }
