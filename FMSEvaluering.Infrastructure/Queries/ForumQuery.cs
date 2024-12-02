@@ -57,7 +57,8 @@ public class ForumQuery : IForumQuery
                 RowVersion = p.RowVersion,
                 History = p.History.Select(ph => new PostHistoryDto
                 {
-                    Content = ph.Content,
+                    Description = ph.Description,
+                    Solution = ph.Solution,
                     EditedDate = ph.EditedDate.ToShortDateString()
                 }).ToList(),
                 Votes = p.Votes.Select(v => new VoteDto
