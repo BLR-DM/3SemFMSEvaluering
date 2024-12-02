@@ -61,16 +61,21 @@ namespace FMSExitSlip.Domain.Entities
             }
         }
         
-        public async void CreateQuestion(string text, string appUserId)
+        public void CreateQuestion(string text, string appUserId)
         {
             EnsureExitSlipDoesntExceedMaxQuestions();
             EnsureExitSlipIsNotPublished();
+
+            if (appUserId != this.AppUserId)
+                throw new InvalidOperationException("Only the teacher of the lecture can add questions");
 
             _questions.Add(Question.Create(text, appUserId));
         }
 
         public Question UpdateQuestion(int questionId, string text)
         {
+            EnsureExitSlipIsNotPublished();
+
             var question = Questions.FirstOrDefault(q => q.Id == questionId);
             if (question == null)
             {

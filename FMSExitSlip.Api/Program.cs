@@ -90,7 +90,7 @@ app.MapPost("/exitslip/question",
 
         try
         {
-            await command.AddQuestion(questionDto, appUserId);
+            await command.AddQuestionAsync(questionDto, appUserId);
             return Results.Ok("Question added");
         }
         catch (Exception)
@@ -103,7 +103,7 @@ app.MapPost("/exitslip/question",
 app.MapPut("/exitslip/{id}/question",
     async (int id, UpdateQuestionDto questionDto, HttpContext httpContext, IExitSlipCommand command) =>
     {
-        await command.UpdateQuestion(questionDto, id);
+        await command.UpdateQuestionAsync(questionDto, id);
     }).RequireAuthorization("Teacher").WithTags("Questions");
 
 app.MapPost("/exitslip/{id}/question/response",
