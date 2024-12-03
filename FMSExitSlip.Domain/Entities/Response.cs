@@ -22,16 +22,16 @@ public class Response : DomainEntity
 
     public void Update(string text, string appUserId)
     {
-        AssureUserIsSameUser(appUserId);
+        AssureUserIsCreator(appUserId);
         Text = text;
     }
 
     public void Delete(string appUserId)
     {
-        AssureUserIsSameUser(appUserId);
+        AssureUserIsCreator(appUserId);
     }
 
-    private void AssureUserIsSameUser(string appUserId)
+    private void AssureUserIsCreator(string appUserId)
     {
         if (!AppUserId.Equals(appUserId))
             throw new ArgumentException("Only the creater of the response can edit it");
