@@ -22,8 +22,12 @@ public class TeacherDomainService : ITeacherDomainService
             Email = teacherResultDto.Email,
             TeacherSubjects = teacherResultDto.TeacherSubjects.Select(ts => new TeacherSubjectDto
             {
-                ClassId = ts.ClassId,
-                SubjectName = ts.SubjectName
+                Id = ts.Id,
+                Class = new ModelClassDto
+                {
+                    Id = ts.Class.Id,
+                    Name = ts.Class.Name
+                }
             })
         };
 

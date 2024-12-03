@@ -204,15 +204,6 @@ app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto log
     return Results.Ok(new { Token = token });
 }).AllowAnonymous();
 
-app.MapGet("/fms/helloworld", (HttpContext httpContext) =>
-{
-    if (httpContext.User.Identity.IsAuthenticated)
-    {
-        return Results.Ok();
-    }
-
-    return Results.Unauthorized();
-});
 
 string GenerateJwtToken(AppUser user, IConfiguration configuration, Student student)
 {
@@ -259,86 +250,37 @@ string GenerateJwtTokenTeacher(AppUser user, IConfiguration configuration, Teach
 }
 
 
-app.MapPost("/fms/subject", async (FMSDataDbContext dbContext, Subject subject) =>
-{
-    dbContext.Subjects.Add(subject);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/fms/Subject/{subject.Id}", subject);
-});
-
-app.MapPost("/fms/teacher", async (FMSDataDbContext dbContext, Teacher teacher) =>
-{
-    dbContext.Teachers.Add(teacher);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/fms/teacher/{teacher.Id}", teacher);
-});
-
-
-app.MapPost("/fms/class", async (FMSDataDbContext dbContext, ModelClass modelClass) =>
-{
-    dbContext.Classes.Add(modelClass);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/fms/class/{modelClass.Id}", modelClass);
-});
-
-app.MapPost("/fms/student", async (FMSDataDbContext dbContext, Student student) =>
-{
-    dbContext.Students.Add(student);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/fms/student/{student.Id}", student);
-});
-
-
-app.MapPost("/fms/teachersubject", async (FMSDataDbContext dbContext, TeacherSubject teacherSubject) =>
-{
-    dbContext.TeacherSubjects.Add(teacherSubject);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/fms/teachersubject/{teacherSubject.Id}", teacherSubject);
-});
-
-app.MapPost("/fms/lecture", async (FMSDataDbContext dbContext, Lecture lecture) =>
-{
-    dbContext.Lectures.Add(lecture);
-    await dbContext.SaveChangesAsync();
-    return Results.Created($"/fms/lecture/{lecture.Id}", lecture);
-});
-
-
-app.MapGet("/fms/subject", async (FMSDataDbContext dbContext) =>
-{
-    return Results.Ok(await dbContext.Subjects.AsNoTracking().ToListAsync());
-});
-
-app.MapGet("/fms/teacher", async (FMSDataDbContext dbContext) =>
-{
-    return Results.Ok(await dbContext.Teachers.AsNoTracking().ToListAsync());
-});
-
-app.MapGet("/fms/class", async (FMSDataDbContext dbContext) =>
-{
-    return Results.Ok(await dbContext.Classes.AsNoTracking().ToListAsync());
-});
-
-app.MapGet("/fms/student", async (FMSDataDbContext dbContext) =>
-{
-    return Results.Ok(await dbContext.Students.AsNoTracking().ToListAsync());
-});
-
-app.MapGet("/fms/student/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
+app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
 {
     var student = await _context.Students
         .AsNoTracking()
-        .Where(s => s.AppUser.Id == appUserId)
-        .Select(s => new StudentDto
+        .Include(s => s.Class)
+        .ThenInclude(c => c.TeacherSubjects)
+        .ThenInclude(ts => ts.Lectures)
+        .SingleOrDefaultAsync(s => s.AppUser.Id == appUserId);
+
+    var studentDto = new StudentDto
+    {
+        FirstName = student.FirstName,
+        LastName = student.LastName,
+        Email = student.Email,
+        Class = new ModelClassDto
         {
-            Id = s.Id.ToString(),
-            FirstName = s.FirstName,
-            LastName = s.LastName,
-            Email = s.Email,
-            ClassId = s.Class.Id.ToString(),
-            AppUserId = s.AppUser.Id
-        })
-        .SingleOrDefaultAsync();
+            Id = student.Class.Id,
+            Name = student.Class.Name,
+            TeacherSubjects = student.Class.TeacherSubjects.Select(ts => new TeacherSubjectDto
+            {
+                Id = ts.Id.ToString(),
+                Lectures = ts.Lectures.Select(l => new LectureDto
+                {
+                    Id = l.Id.ToString(),
+                    Title = l.Title,
+                    Date = l.Date
+                }).ToList(),
+            }).ToList()
+        },
+        AppUserId = student.AppUser.Id
+    };
 
     if (student == null)
     {
@@ -348,13 +290,15 @@ app.MapGet("/fms/student/{appUserId}", async (string appUserId, FMSDataDbContext
     return Results.Ok(student);
 });
 
-app.MapGet("/fms/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
+app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
 {
     var teacher = await _context.Teachers
         .AsNoTracking()
         .Where(t => t.AppUser.Id == appUserId)
         .Include(t => t.TeacherSubjects)
         .ThenInclude(ts => ts.Subject)
+        .Include(t => t.TeacherSubjects)
+        .ThenInclude(ts => ts.Class)
         .Select(t => new TeacherDto
         {
             FirstName = t.FirstName,
@@ -363,8 +307,11 @@ app.MapGet("/fms/teacher/{appUserId}", async (string appUserId, FMSDataDbContext
             TeacherSubjects = t.TeacherSubjects.Select(ts => new TeacherSubjectDto
             {
                 Id = ts.Id.ToString(),
-                ClassId = ts.Class.Id.ToString(),
-                SubjectName = ts.Subject.Name
+                Class = new ModelClassDto
+                {
+                    Id = ts.Class.Id,
+                    Name = ts.Class.Name
+                }
             }).ToList(),
             AppUserId = t.AppUser.Id
         })
@@ -377,29 +324,36 @@ app.MapGet("/fms/teacher/{appUserId}", async (string appUserId, FMSDataDbContext
     return Results.Ok(teacher);
 });
 
-app.MapGet("/fms/teachersubject", async (FMSDataDbContext dbContext) =>
-{
-    return Results.Ok(await dbContext.TeacherSubjects.AsNoTracking().ToListAsync());
-});
-
-app.MapGet("/fms/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _context) =>
+app.MapGet("/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _context) =>
 {
     var lecture = await _context.Lectures
         .AsNoTracking()
-        .Where(l => l.Id == lectureId)
         .Include(l => l.TeacherSubject)
         .ThenInclude(ts => ts.Teacher)
+        .Include(l => l.TeacherSubject)
+        .ThenInclude(ts => ts.Class)
+        .ThenInclude(c => c.Students)
         .Select(l => new LectureDto
         {
             Id = l.Id.ToString(),
             Title = l.Title,
-            TeacherSubject = new TeacherSubjectWithIdDto
+            TeacherSubject = new TeacherSubjectDto
             {
                 Id = l.TeacherSubject.Id.ToString(),
-                TeacherId = l.TeacherSubject.Teacher.AppUser.Id.ToString(),
+                Teacher = new TeacherDto
+                {
+                    AppUserId = l.TeacherSubject.Teacher.AppUser.Id
+                },
+                Class = new ModelClassDto
+                {
+                    Students = l.TeacherSubject.Class.Students.Select(s => new StudentDto
+                    {
+                        AppUserId = s.AppUser.Id
+                    }).ToList()
+                }
             }
         })
-        .SingleOrDefaultAsync();
+        .SingleOrDefaultAsync(l => l.Id == lectureId.ToString());
 
 
     if (lecture == null)

@@ -24,7 +24,7 @@ namespace FMSExitSlip.Infrastructure
         {
             services.AddScoped<IUnitOfWork, UnitOfWork<ExitSlipContext>>();
             services.AddScoped<IExitSlipRepository, ExitSlipRepository>();
-            services.AddScoped<ITeacherAuthorizationDomainService, TeacherAuthorizationDomainService>();
+            services.AddScoped<ILectureDomainService, LectureDomainService>();
             services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>
             {
                 client.BaseAddress = new Uri(configuration["FmsDataProxy:BaseAddress"]);

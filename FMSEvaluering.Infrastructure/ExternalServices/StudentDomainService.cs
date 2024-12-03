@@ -14,6 +14,17 @@ public class StudentDomainService : IStudentDomainService
     async Task<StudentDto> IStudentDomainService.GetStudentAsync(string userId)
     {
         var studentResultDto = await _fmsDataProxy.GetStudentAsync(userId);
-        return new StudentDto(studentResultDto.FirstName, studentResultDto.LastName, studentResultDto.Email, studentResultDto.ClassId, studentResultDto.AppUserId);
+        return new StudentDto
+        {
+            FirstName = studentResultDto.FirstName,
+            LastName = studentResultDto.LastName,
+            Email = studentResultDto.Email,
+            Class = new ModelClassDto
+            {
+                Id = studentResultDto.Class.Id,
+                Name = studentResultDto.Class.Name
+            },
+            AppUserId = studentResultDto.AppUserId
+        };
     }
 }

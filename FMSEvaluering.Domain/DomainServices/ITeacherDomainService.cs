@@ -16,7 +16,22 @@
 
     public record TeacherSubjectDto
     {
-        public string ClassId { get; set; }
-        public string SubjectName { get; set; }
+        public string Id { get; set; }
+        public ModelClassDto Class { get; set; }
+        public IEnumerable<LectureDto> Lectures { get; set; }
     };
+
+    public record LectureDto
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public DateTime Date { get; set; }
+    }
+
+    public record ModelClassDto
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public IEnumerable<TeacherSubjectDto> TeacherSubjects { get; set; }
+    }
 }

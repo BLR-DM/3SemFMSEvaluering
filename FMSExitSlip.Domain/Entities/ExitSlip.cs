@@ -33,7 +33,7 @@ namespace FMSExitSlip.Domain.Entities
 
         public static ExitSlip Create(string title, int maxQuestions, int lectureId, string appUserId, IEnumerable<ExitSlip> otherExitSlips, IServiceProvider serviceProvider)
         {
-            var domainService = serviceProvider.GetRequiredService<ITeacherAuthorizationDomainService>();
+            var domainService = serviceProvider.GetRequiredService<ILectureDomainService>();
             var validationRespone = domainService.ValidateIfTeacherIsAPartOfLecture(lectureId.ToString());
 
             if (validationRespone.Result.LectureId == lectureId.ToString() &&
