@@ -16,5 +16,6 @@ namespace FMSExitSlip.Application.Repositories
         void DeleteResponse(Response response, byte[] rowVersion);
         void PublishExitSlip(ExitSlip exitSlip, byte[] rowVersion);
         void UpdateQuestion(Question question, byte[] rowVersion);
+        void DeleteQuestion(Question question, byte[] rowVersion);
     }
 }

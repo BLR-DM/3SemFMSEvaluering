@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FMSExitSlip.Application.Helpers;
+using FMSExitSlip.Application.Queries.Interfaces;
 using FMSExitSlip.Application.Repositories;
 using FMSExitSlip.Domain.DomainServices;
 using FMSExitSlip.Infrastructure.ExternalServices;
 using FMSExitSlip.Infrastructure.ExternalServices.ServerProxyImpl;
 using FMSExitSlip.Infrastructure.Helpers;
+using FMSExitSlip.Infrastructure.Queries;
 using FMSExitSlip.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,7 @@ namespace FMSExitSlip.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork<ExitSlipContext>>();
             services.AddScoped<IExitSlipRepository, ExitSlipRepository>();
             services.AddScoped<ILectureDomainService, LectureDomainService>();
+            services.AddScoped<IExitSlipQuery, ExitSlipQuery>();
             services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>
             {
                 client.BaseAddress = new Uri(configuration["FmsDataProxy:BaseAddress"]);
