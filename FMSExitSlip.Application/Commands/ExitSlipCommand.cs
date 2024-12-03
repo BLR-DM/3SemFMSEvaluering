@@ -39,6 +39,7 @@ namespace FMSExitSlip.Application.Commands
 
                 // Do
                 exitSlip.CreateQuestion(questionDto.Text, appUserId);
+                _exitSlipRepository.AddQuestion(exitSlip);
 
                 // Save
                 await _unitOfWork.Commit();

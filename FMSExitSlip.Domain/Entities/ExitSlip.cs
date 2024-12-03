@@ -60,7 +60,6 @@ public class ExitSlip : DomainEntity
     public void CreateQuestion(string text, string appUserId)
     {
         EnsureTeacherSameAsCreator(appUserId);
-
         EnsureExitSlipDoesntExceedMaxQuestions();
         EnsureExitSlipIsNotPublished();
 
