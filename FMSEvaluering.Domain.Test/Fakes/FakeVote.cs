@@ -14,9 +14,5 @@ namespace FMSEvaluering.Domain.Test.Fakes
             VoteType = voteType;
             AppUserId = appUserId;
         }
-
-        public new void HandleVotes(bool voteType, string AppUserId)
-        {
-        }
     }
 }

@@ -6,7 +6,7 @@ namespace FMSEvaluering.Domain.Entities.PostEntities;
 public class Post : DomainEntity
 {
     private readonly List<Comment> _comments = [];
-    private readonly List<Vote> _votes = [];
+    protected readonly List<Vote> _votes = [];
     private readonly List<PostHistory> _history = [];
 
     protected Post()
