@@ -59,8 +59,7 @@ public class ExitSlip : DomainEntity
 
     public void CreateQuestion(string text, string appUserId)
     {
-        if (appUserId != AppUserId)
-            throw new InvalidOperationException("Only the teacher of the lecture can add questions");
+        AssureUserIsCreator(appUserId);
 
         EnsureExitSlipDoesntExceedMaxQuestions();
         EnsureExitSlipIsNotPublished();
@@ -69,8 +68,9 @@ public class ExitSlip : DomainEntity
         _questions.Add(question);
     }
 
-    public Question UpdateQuestion(int questionId, string text)
+    public Question UpdateQuestion(int questionId, string text, string appUserId)
     {
+        AssureUserIsCreator(appUserId);
         EnsureExitSlipIsNotPublished();
 
         var question = GetQuestionById(questionId);
@@ -78,11 +78,19 @@ public class ExitSlip : DomainEntity
         return question;
     }
 
-    public Question DeleteQuestion(int questionId)
+    public Question DeleteQuestion(int questionId, string appUserId)
     {
+        AssureUserIsCreator(appUserId);
+
         var question = GetQuestionById(questionId);
         _questions.Remove(question);
         return question;
+    }
+
+    private void AssureUserIsCreator(string appUserId)
+    {
+        if (!AppUserId.Equals(appUserId))
+            throw new ArgumentException("Only the creater of the exitslip can edit it");
     }
 
     public void CreateResponse(string text, string appUserId, int questionId)

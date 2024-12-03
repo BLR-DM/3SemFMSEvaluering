@@ -104,14 +104,44 @@ app.MapPost("/exitslip/question",
 app.MapPut("/exitslip/{id}/question",
     async (int id, UpdateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
     {
-        await command.UpdateQuestionAsync(questionDto, id);
+        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (appUserId == null)
+            return Results.Unauthorized();
+
+        try
+        {
+            await command.UpdateQuestionAsync(questionDto, id, appUserId);
+            return Results.Ok("Question updated");
+        }
+        catch (Exception)
+        {
+            return Results.BadRequest("Couldn't update the question");
+        }
+
+
     }).RequireAuthorization("Teacher").WithTags("Questions");
 
 app.MapDelete("/exitslip/{id}/question", 
-    async ([FromBody] DeleteQuestionDto questionDto, IExitSlipCommand command, int id) =>
+    async ([FromBody] DeleteQuestionDto questionDto, IExitSlipCommand command, int id, ClaimsPrincipal user) =>
     {
-        await command.DeleteQuestionAsync(questionDto, id);
-    });
+        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (appUserId == null)
+            return Results.Unauthorized();
+
+        try
+        {
+            await command.DeleteQuestionAsync(questionDto, id, appUserId);
+
+            return Results.Ok("Question deleted");
+        }
+        catch (Exception)
+        {
+            return Results.BadRequest("Couldn't delete the question");
+        }
+
+    }).RequireAuthorization("Teacher").WithTags("Questions");
 
 app.MapPost("/exitslip/{id}/question/response",
     async (int id, CreateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
