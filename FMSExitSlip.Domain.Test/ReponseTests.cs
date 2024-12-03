@@ -5,6 +5,8 @@ namespace FMSExitSlip.Domain.Test;
 
 public class ReponseTests
 {
+    // AssureUserIsCreator
+
     [Theory]
     [InlineData("1", "1")]
     public void Given_User_Is_Same_As_Creator__Then_Dont_Throw(string appUserIdCreator, string appUserId)
@@ -26,6 +28,8 @@ public class ReponseTests
         // Act & Assert
         Assert.Throws<ArgumentException>(() => sut.AssureUserIsCreator(appUserId));
     }
+
+    // AssureOnlyOneResponsePrQuestion
 
     [Theory]
     [MemberData(nameof(ResponseTestWithOnlyOnePrQuestion))]
