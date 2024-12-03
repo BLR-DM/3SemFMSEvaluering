@@ -4,6 +4,7 @@
     {
         public string Id { get; set; }
         public string Title { get; set; }
-        public TeacherSubjectWithIdDto TeacherSubject { get; set; }
+        public DateTime Date { get; set; }
+        public TeacherSubjectDto TeacherSubject { get; set; }
     }
 }

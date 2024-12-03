@@ -21,6 +21,25 @@ namespace FMSExitSlip.Infrastructure.ExternalServices
     public record TeacherSubjectResultDto
     {
         public string Id { get; set; }
-        public string TeacherId { get; set; }
+        public TeacherResultDto Teacher { get; set; }
+        public ClassResultDto Class { get; set; }
+    }
+
+    public record ClassResultDto
+    {
+        public IEnumerable<StudentResultDto> Students { get; set; }
+    }
+
+    public record StudentResultDto
+    {
+        public string AppUserId { get; set; }
+    }
+
+    public record TeacherResultDto
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string AppUserId { get; set; }
     }
 }

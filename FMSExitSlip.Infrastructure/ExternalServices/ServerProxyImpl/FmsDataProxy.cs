@@ -23,7 +23,7 @@ namespace FMSExitSlip.Infrastructure.ExternalServices.ServerProxyImpl
             try
             {
                 var lectureResult =
-                    await _client.GetFromJsonAsync<LectureResultDto>($"/fms/lecture/{lectureId}");
+                    await _client.GetFromJsonAsync<LectureResultDto>($"/lecture/{lectureId}");
 
                 if (lectureResult == null)
                     throw new InvalidOperationException("Lecture not found");
