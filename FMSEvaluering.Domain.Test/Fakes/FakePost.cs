@@ -9,18 +9,24 @@ namespace FMSEvaluering.Domain.Test.Fakes
 {
     public class FakePost : Post
     {
-        List<FakeVote> _fakeVotes = new List<FakeVote>();
-        public FakePost(string description, string solution, string appUserId, List<FakeVote> fakeVotes)
+        public FakePost(string appUserId) : base()
         {
-            Description = description;
-            Solution = solution;
             AppUserId = appUserId;
-            _fakeVotes = fakeVotes;
         }
 
-        public new void HandleVotes(bool voteType, string AppUserId)
+        public new void CreateVote(bool voteType, string appUserId)
         {
-            base.HandleVote(voteType, AppUserId);
+            base.CreateVote(voteType, appUserId);
+        }
+
+        public new HandleVoteBehaviour HandleVote(bool voteType, string appUserId)
+        {
+            return base.HandleVote(voteType, appUserId);
+        }
+
+        public void AddVote(Vote vote)
+        {
+            _votes.Add(vote);
         }
     }
 }
