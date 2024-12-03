@@ -41,6 +41,7 @@ public class ForumQuery : IForumQuery
 
         if (!hasAcceess)
             throw new UnauthorizedAccessException("You do not have access");
+
         var forumDto = new ForumDto
         {
             Id = forum.Id,
@@ -60,20 +61,19 @@ public class ForumQuery : IForumQuery
                     Description = ph.Description,
                     Solution = ph.Solution,
                     EditedDate = ph.EditedDate.ToShortDateString()
-                }).ToList(),
+                }),
                 Votes = p.Votes.Select(v => new VoteDto
                 {
                     VoteType = v.VoteType,
                     RowVersion = v.RowVersion
-                }).ToList(),
+                }),
                 Comments = p.Comments.Select(c => new CommentDto
                 {
                     Text = c.Text,
                     RowVersion = c.RowVersion
-                }).ToList()
-            }).ToList()
+                })
+            })
         };
-        
 
         return forumDto;
     }
@@ -139,9 +139,10 @@ public class ForumQuery : IForumQuery
                         CreatedDate = p.CreatedDate.ToShortDateString(),
                         UpVotes = p.Votes.Count(v => v.VoteType),
                         DownVotes = p.Votes.Count(v => !v.VoteType),
-                    }).ToList()
+                    })
             })
             .SingleAsync();
+
         return forum;
     }
 }
