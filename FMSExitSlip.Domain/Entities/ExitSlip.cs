@@ -51,7 +51,7 @@ public class ExitSlip : DomainEntity
         IsPublished = true;
     }
 
-    private void AssureOnlyOneExitSlipPrLesson(IEnumerable<ExitSlip> otherExitSlips)
+    protected void AssureOnlyOneExitSlipPrLesson(IEnumerable<ExitSlip> otherExitSlips)
     {
         if (otherExitSlips.Any(l => l.LectureId == LectureId))
             throw new Exception("Only one exit slip per lesson is allowed.");
