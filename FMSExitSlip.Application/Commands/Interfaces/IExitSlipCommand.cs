@@ -8,6 +8,7 @@ public interface IExitSlipCommand
 {
     Task AddQuestionAsync(CreateQuestionDto questionDto, string appUserId);
     Task UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId);
+    Task DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId);
     Task CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId);
     Task CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId);
     Task UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId);

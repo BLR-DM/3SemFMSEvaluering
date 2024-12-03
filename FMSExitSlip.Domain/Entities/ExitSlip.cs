@@ -85,6 +85,13 @@ namespace FMSExitSlip.Domain.Entities
             return question;
         }
 
+        public Question DeleteQuestion(int questionId)
+        {
+            var question = _questions.FirstOrDefault(q => q.Id == questionId);
+            _questions.Remove(question);
+            return question;
+        }
+
         public void CreateResponse(string text, string appUserId, int questionId)
         {
             EnsureExitSlipIsPublished();
