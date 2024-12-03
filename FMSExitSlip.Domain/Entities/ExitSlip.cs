@@ -59,7 +59,7 @@ public class ExitSlip : DomainEntity
 
     public void CreateQuestion(string text, string appUserId)
     {
-        AssureUserIsCreator(appUserId);
+        EnsureTeacherSameAsCreator(appUserId);
 
         EnsureExitSlipDoesntExceedMaxQuestions();
         EnsureExitSlipIsNotPublished();
@@ -70,7 +70,7 @@ public class ExitSlip : DomainEntity
 
     public Question UpdateQuestion(int questionId, string text, string appUserId)
     {
-        AssureUserIsCreator(appUserId);
+        EnsureTeacherSameAsCreator(appUserId);
         EnsureExitSlipIsNotPublished();
 
         var question = GetQuestionById(questionId);
@@ -80,17 +80,11 @@ public class ExitSlip : DomainEntity
 
     public Question DeleteQuestion(int questionId, string appUserId)
     {
-        AssureUserIsCreator(appUserId);
+        EnsureTeacherSameAsCreator(appUserId);
 
         var question = GetQuestionById(questionId);
         _questions.Remove(question);
         return question;
-    }
-
-    private void AssureUserIsCreator(string appUserId)
-    {
-        if (!AppUserId.Equals(appUserId))
-            throw new ArgumentException("Only the creater of the exitslip can edit it");
     }
 
     public void CreateResponse(string text, string appUserId, int questionId)
