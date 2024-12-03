@@ -118,6 +118,29 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
+        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransaction();
+
+                // Load
+                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Do
+                var question = exitSlip.DeleteQuestion(questionDto.Id);
+                _exitSlipRepository.DeleteQuestion(question, questionDto.RowVersion);
+
+                // Save
+                await _unitOfWork.Commit();
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.Rollback();
+                throw;
+            }
+        }
+
         async Task IExitSlipCommand.CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId)
         {
             try

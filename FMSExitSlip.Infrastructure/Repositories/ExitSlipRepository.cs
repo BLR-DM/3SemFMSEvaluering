@@ -57,5 +57,11 @@ namespace FMSExitSlip.Infrastructure.Repositories
         {
             _db.Entry(question).Property(nameof(question.RowVersion)).OriginalValue = rowVersion;
         }
+
+        void IExitSlipRepository.DeleteQuestion(Question question, byte[] rowVersion)
+        {
+            _db.Entry(question).Property(nameof(question.RowVersion)).OriginalValue = rowVersion;
+            _db.Questions.Remove(question);
+        }
     }
 }
