@@ -16,6 +16,8 @@ public class HandleVoteTests
         var result = sut.HandleVote(true, "2");
 
         // Assert
+        Assert.Single(sut.Votes);
+        Assert.True(sut.Votes.First().VoteType);
         Assert.Equal(Post.HandleVoteBehaviour.Create, result);
     }
 
@@ -47,6 +49,7 @@ public class HandleVoteTests
 
         // Assert
         Assert.Single(sut.Votes);
+        Assert.False(sut.Votes.First().VoteType); 
         Assert.Equal(Post.HandleVoteBehaviour.Update, result);
     }
 }
