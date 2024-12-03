@@ -2,7 +2,7 @@
 
 public class Vote : DomainEntity
 {
-    public string AppUserId { get; set; }
+    public string AppUserId { get; protected set; }
     public bool VoteType { get; protected set; }
 
     protected Vote() { }

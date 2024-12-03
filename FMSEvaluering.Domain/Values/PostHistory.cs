@@ -6,6 +6,7 @@ public record PostHistory
     public PostHistory(string description, string solution)
     {
         Description = description;
+        Solution = solution;
         EditedDate = DateTime.Now;
     }
     public string Description { get; private set; }
