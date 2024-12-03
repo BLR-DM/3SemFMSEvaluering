@@ -151,6 +151,12 @@ namespace FMSExitSlip.Domain.Entities
             return question ?? throw new ArgumentException("Question was not found");
         }
 
+        public async Task<bool> EnsureUserHasAccess(string appUserId, IServiceProvider serviceProvider, string role)
+        {
+            var lectureDomainService = serviceProvider.GetRequiredService<ILectureDomainService>();
+            var studentsInLecture = await lectureDomainService.GetStudentsForLectureAsync(LectureId.ToString());
+            return studentsInLecture.Any(s => s == appUserId);
+        }
 
     }
 }

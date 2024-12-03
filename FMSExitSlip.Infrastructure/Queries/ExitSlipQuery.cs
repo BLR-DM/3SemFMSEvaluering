@@ -12,10 +12,12 @@ namespace FMSExitSlip.Infrastructure.Queries
     public class ExitSlipQuery : IExitSlipQuery
     {
         private readonly ExitSlipContext _db;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ExitSlipQuery(ExitSlipContext db)
+        public ExitSlipQuery(ExitSlipContext db, IServiceProvider serviceProvider)
         {
             _db = db;
+            _serviceProvider = serviceProvider;
         }
         async Task<ExitSlipDto> IExitSlipQuery.GetExitSlipAsync(int exitSlipId, string appUserId, string role)
         {
@@ -24,9 +26,16 @@ namespace FMSExitSlip.Infrastructure.Queries
                 .Include(e => e.Questions)
                      .ThenInclude(q => q.Responses)
                 .SingleOrDefaultAsync(e => e.Id == exitSlipId);
-           
+
             if (exitSlip == null)
                 throw new InvalidOperationException("Not found");
+
+            var hasAccess = await exitSlip.EnsureUserHasAccess(appUserId, _serviceProvider, role);
+
+            if (!hasAccess)
+            {
+                throw new UnauthorizedAccessException("You do not have access");
+            }
 
             var exitSlipDto = new ExitSlipDto
             {
