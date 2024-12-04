@@ -15,4 +15,5 @@ namespace FMSEvaluering.ArchUnitNet.Test
         protected static readonly Assembly InfrastructureAssembly = typeof(EvaluationContext).Assembly;
         protected static readonly Assembly PresentationAssembly = typeof(Program).Assembly;
     }
+
 }

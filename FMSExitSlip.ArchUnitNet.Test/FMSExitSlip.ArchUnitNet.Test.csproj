@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FMSEvaluering.Api\FMSEvaluering.Api.csproj" />
-    <ProjectReference Include="..\FMSEvaluering.Application\FMSEvaluering.Application.csproj" />
-    <ProjectReference Include="..\FMSEvaluering.Domain\FMSEvaluering.Domain.csproj" />
-    <ProjectReference Include="..\FMSEvaluering.Infrastructure\FMSEvaluering.Infrastructure.csproj" />
+    <ProjectReference Include="..\FMSExitSlip.Api\FMSExitSlip.Api.csproj" />
+    <ProjectReference Include="..\FMSExitSlip.Application\FMSExitSlip.Application.csproj" />
+    <ProjectReference Include="..\FMSExitSlip.Domain\FMSExitSlip.Domain.csproj" />
+    <ProjectReference Include="..\FMSExitSlip.Infrastructure\FMSExitSlip.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMSExitSlip.Domain.Test", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMSEvaluering.ArchUnitNet.Test", "FMSEvaluering.ArchUnitNet.Test\FMSEvaluering.ArchUnitNet.Test.csproj", "{BA859CFC-8954-A867-8896-C87453B96CCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMSExitSlip.ArchUnitNet.Test", "FMSExitSlip.ArchUnitNet.Test\FMSExitSlip.ArchUnitNet.Test.csproj", "{783F2B7F-2318-7A14-93FD-0C0A9ADCD9D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,6 +122,10 @@ Global
 		{BA859CFC-8954-A867-8896-C87453B96CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA859CFC-8954-A867-8896-C87453B96CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA859CFC-8954-A867-8896-C87453B96CCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{783F2B7F-2318-7A14-93FD-0C0A9ADCD9D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{783F2B7F-2318-7A14-93FD-0C0A9ADCD9D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{783F2B7F-2318-7A14-93FD-0C0A9ADCD9D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{783F2B7F-2318-7A14-93FD-0C0A9ADCD9D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -141,6 +147,7 @@ Global
 		{34DE2E70-FD2B-4CFE-C1B6-35CC05110F29} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{4EFFAEF5-080E-86D7-0649-BFE5E0586CCB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{BA859CFC-8954-A867-8896-C87453B96CCE} = {66604DD1-538F-42AC-A556-CD476991F978}
+		{783F2B7F-2318-7A14-93FD-0C0A9ADCD9D2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BF2D27B-1149-4E80-89BE-8DB7BE546943}
