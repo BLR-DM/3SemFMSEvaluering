@@ -1,6 +1,7 @@
-﻿using FMSEvaluering.Domain.DomainServices;
+﻿using FMSEvaluering.Application.Services.ProxyInterface;
+using FMSEvaluering.Domain.DomainServices;
 
-namespace FMSEvaluering.Infrastructure.ExternalServices;
+namespace FMSEvaluering.Application.Services;
 
 public class StudentDomainService : IStudentDomainService
 {

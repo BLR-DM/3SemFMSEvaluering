@@ -1,6 +1,4 @@
-﻿using FMSEvaluering.Domain.DomainServices;
-
-namespace FMSEvaluering.Infrastructure.ExternalServices;
+﻿namespace FMSEvaluering.Application.Services.ProxyInterface;
 
 public interface IFmsDataProxy
 {

@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using FMSEvaluering.Application.Services.ProxyInterface;
 
 namespace FMSEvaluering.Infrastructure.ExternalServices.ServiceProxyImpl;
 

@@ -1,4 +1,5 @@
-﻿using FMSEvaluering.Domain.Entities.PostEntities;
+﻿using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Domain.Entities.ForumEntities;
 
@@ -6,22 +7,34 @@ public abstract class Forum : DomainEntity
 {
     private readonly List<Post> _posts = [];
 
+    protected Forum()
+    {
+    }
+
     public string Name { get; protected set; }
     public IReadOnlyCollection<Post> Posts => _posts;
 
-    public virtual Task<bool> ValidateUserAccessAsync(string userId, IServiceProvider serviceProvider,
-        string role)
+    public virtual async Task<bool> ValidateUserAccessAsync(string userId, IServiceProvider serviceProvider, string role)
     {
         return Task.FromResult(false);
     }
 
-    public async Task AddPostAsync(string description, string solution, string appUserId,
-        IServiceProvider serviceProvider, string role)
+    public virtual bool ValidateStudentAccessAsync(StudentDto studentDto)
+    {
+        return false;
+    }
+
+    public virtual bool ValidateTeacherAccessAsync(TeacherDto teacherDto)
+    {
+        return false;
+    }
+
+    public async Task AddPostAsync(string description, string solution, string appUserId, IServiceProvider serviceProvider, string role)
     {
         await ValidateAccessAsync(appUserId, serviceProvider, role);
 
         var post = Post.Create(description, solution, appUserId);
-        _posts.Add(post);
+        _posts.Add(post); 
     }
 
     public async Task<Post> UpdatePostAsync(int postId, string description, string solution, string appUserId,
@@ -42,7 +55,6 @@ public abstract class Forum : DomainEntity
         _posts.Remove(post);
         return post;
     }
-
     public static Forum CreatePublicForum(string name)
     {
         return new PublicForum(name);
@@ -71,4 +83,5 @@ public abstract class Forum : DomainEntity
         if (post is null) throw new ArgumentException("Post not found");
         return post;
     }
+    
 }
