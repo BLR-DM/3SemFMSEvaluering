@@ -25,12 +25,21 @@ public class ClassForum : Forum
             case "student":
                 var studentDomainService = serviceProvider.GetRequiredService<IStudentDomainService>();
                 var studentDto = await studentDomainService.GetStudentAsync(appUserId);
-                return ClassId.ToString().Equals(studentDto.Class.Id);
+                return ValidateStudentAccessAsync(studentDto);
             case "teacher":
                 var teacherDomainService = serviceProvider.GetRequiredService<ITeacherDomainService>();
                 var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
-                return teacherDto.TeacherSubjects.Any(ts => ts.Class.Id.Equals(ClassId.ToString()));
+                return ValidateTeacherAccessAsync(teacherDto);
         }
         return false;
+    }
+
+    public override bool ValidateStudentAccessAsync(StudentDto studentDto)
+    {
+        return ClassId.ToString().Equals(studentDto.Class.Id);
+    }
+    public override bool ValidateTeacherAccessAsync(TeacherDto teacherDto)
+    {
+        return teacherDto.TeacherSubjects.Any(ts => ts.Class.Id.Equals(ClassId.ToString()));
     }
 }

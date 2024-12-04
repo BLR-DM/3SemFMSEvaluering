@@ -25,25 +25,15 @@ public class ForumAccessHandler : IForumAccessHandler
         {
             var studentDomainService = _serviceProvider.GetRequiredService<IStudentDomainService>();
             var studentDto = await studentDomainService.GetStudentAsync(appUserId);
-            foreach (var forum in forums)
-            {
-                if (forum.ValidateStudentAccessAsync(studentDto))
-                {
-                    validatedForums.Add(forum);
-                }
-            }
+
+            validatedForums.AddRange(forums.Where(forum => forum.ValidateStudentAccessAsync(studentDto)));
         }
         else if (role == "teacher")
         {
             var teacherDomainService = _serviceProvider.GetRequiredService<ITeacherDomainService>();
             var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
-            foreach (var forum in forums)
-            {
-                if (forum.ValidateTeacherAccessAsync(teacherDto))
-                {
-                    validatedForums.Add(forum);
-                }
-            }
+
+            validatedForums.AddRange(forums.Where(forum => forum.ValidateTeacherAccessAsync(teacherDto)));
         }
 
         return validatedForums;
