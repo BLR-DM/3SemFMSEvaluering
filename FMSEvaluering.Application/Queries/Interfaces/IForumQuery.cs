@@ -6,7 +6,7 @@ namespace FMSEvaluering.Application.Queries.Interfaces;
 public interface IForumQuery
 {
     Task<ForumDto> GetForumAsync(int forumId);
-    Task<List<ForumDto>> GetForumsAsync();
+    Task<IEnumerable<ForumDto>> GetForumsAsync(string appUserId, string role);
     Task<ForumDto> GetForumWithPostsAsync(int forumId, string appUserId, string role);
-    Task<ForumWithPostDto> GetForumWithPostsForTeacherAsync(int id, int reqUpvotes);
+    Task<ForumDto> GetForumWithPostsForTeacherAsync(int forumId, string appUserId, string role, int reqUpvotes);
 }

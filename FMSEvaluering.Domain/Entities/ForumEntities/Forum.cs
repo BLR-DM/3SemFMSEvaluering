@@ -1,4 +1,5 @@
-﻿using FMSEvaluering.Domain.Entities.PostEntities;
+﻿using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Domain.Entities.ForumEntities
 {
@@ -14,6 +15,16 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
         public IReadOnlyCollection<Post> Posts => _posts;
 
         public virtual async Task<bool> ValidateUserAccessAsync(string userId, IServiceProvider serviceProvider, string role)
+        {
+            return false;
+        }
+
+        public virtual bool ValidateStudentAccessAsync(StudentDto studentDto)
+        {
+            return false;
+        }
+
+        public virtual bool ValidateTeacherAccessAsync(TeacherDto teacherDto)
         {
             return false;
         }

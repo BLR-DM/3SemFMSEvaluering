@@ -29,7 +29,7 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
                 case "teacher":
                     var teacherDomainService = serviceProvider.GetRequiredService<ITeacherDomainService>();
                     var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
-                    return teacherDto.TeacherSubjects.Any(ts => ts.Class.Id == ClassId.ToString());
+                    return teacherDto.TeacherSubjects.Any(ts => ts.Class.Id.Equals(ClassId.ToString()));
             }
             return false;
         }
