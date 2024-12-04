@@ -1,11 +1,7 @@
 ﻿using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Repositories;
-using FMSEvaluering.Application.Services;
 using FMSEvaluering.Application.Services.ProxyInterface;
-using FMSEvaluering.Domain.DomainServices;
-using FMSEvaluering.Domain.Entities.ForumEntities;
-using FMSEvaluering.Infrastructure.ExternalServices;
 using FMSEvaluering.Infrastructure.ExternalServices.ServiceProxyImpl;
 using FMSEvaluering.Infrastructure.Helpers;
 using FMSEvaluering.Infrastructure.Helpers.Interfaces;
