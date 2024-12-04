@@ -15,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FMSEvaluering.Infrastructure;
+namespace FMSEvaluering.Infrastructure.Configuration;
 
 public static class DependencyInjection
 {

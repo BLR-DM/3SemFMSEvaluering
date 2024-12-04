@@ -17,7 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace FMSExitSlip.Infrastructure
+namespace FMSExitSlip.Infrastructure.Configuration
 {
     public static class DependencyInjection
     {
@@ -41,7 +41,7 @@ namespace FMSExitSlip.Infrastructure
                 options.UseSqlServer(
                     configuration.GetConnectionString
                         ("ExitSlipDbConnection"),
-                    x => 
+                    x =>
                         x.MigrationsAssembly("FMSExitSlip.DatabaseMigration")));
             return services;
         }

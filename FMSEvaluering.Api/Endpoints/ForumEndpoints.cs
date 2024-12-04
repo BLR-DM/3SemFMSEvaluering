@@ -10,25 +10,27 @@ namespace FMSEvaluering.Api.Endpoints
     {
         public static void MapForumEndpoints(this WebApplication app)
         {
+            const string tag = "Forum";
+
             app.MapPost("/forum/public", async (CreatePublicForumDto createPublicForumDto, IForumCommand command) =>
             {
                 await command.CreatePublicForumAsync(createPublicForumDto);
-            }).WithTags("Forum");
+            }).WithTags(tag);
 
             app.MapPost("/forum/class", async (CreateClassForumDto createClassForumDto, IForumCommand command) =>
             {
                 await command.CreateClassForumAsync(createClassForumDto);
-            }).WithTags("Forum");
+            }).WithTags(tag);
 
             app.MapPost("/forum/subject", async (CreateSubjectForumDto createSubjectForumDto, IForumCommand command) =>
             {
                 await command.CreateSubjectForumAsync(createSubjectForumDto);
-            }).WithTags("Forum");
+            }).WithTags(tag);
 
             app.MapDelete("/forum", async ([FromBody]DeleteForumDto deleteForumDto, IForumCommand command) =>
             {
                 await command.DeleteForumAsync(deleteForumDto);
-            }).WithTags("Forum");
+            }).WithTags(tag);
 
             app.MapGet("/forum", async (IForumQuery query, ClaimsPrincipal user) =>
             {
@@ -36,29 +38,29 @@ namespace FMSEvaluering.Api.Endpoints
                 var role = user.FindFirst("usertype")?.Value;
 
                 return await query.GetForumsAsync(appUserId, role);
-            }).WithTags("Forum");
+            }).WithTags(tag);
 
             app.MapGet("/forum/{id}", async (int id, IForumQuery query) =>
             {
                 return await query.GetForumAsync(id);
-            }).WithTags("Forum");
+            }).WithTags(tag);
 
             // Oversigt over Posts for given forum (includer ikke history, comments)
             //app.MapGet("/forum/{id}/post", async (int id, IForumQuery query) =>
             //{
             //    var result = await query.GetForumWithPostsAsync(id);
             //    return Results.Ok(result);
-            //}).WithTags("Forum");
+            //}).WithTags(tag);
 
             // hent forum for en teacher med posts med votes over 2
-            app.MapGet("forum/{id}/posts/teacher", async (int id, ClaimsPrincipal user, IForumQuery query) =>
+            app.MapGet("/forum/{id}/posts/teacher", async (int id, ClaimsPrincipal user, IForumQuery query) =>
             {
                 var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var role = user.FindFirst("usertype")?.Value;
 
                 var result = await query.GetForumWithPostsForTeacherAsync(id, appUserId, role, 2);
                 return Results.Ok(result);
-            }).WithTags("Forum").RequireAuthorization("Teacher");
+            }).WithTags(tag).RequireAuthorization("Teacher");
 
         }
     }
