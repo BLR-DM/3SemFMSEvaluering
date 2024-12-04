@@ -1,4 +1,5 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.ForumDto;
+﻿using System.Security.Claims;
+using FMSEvaluering.Application.Commands.CommandDto.ForumDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Queries.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +30,12 @@ namespace FMSEvaluering.Api.Endpoints
                 await command.DeleteForumAsync(deleteForumDto);
             }).WithTags("Forum");
 
-            app.MapGet("/forum", async (IForumQuery query) =>
+            app.MapGet("/forum", async (IForumQuery query, ClaimsPrincipal user) =>
             {
-                return await query.GetForumsAsync();
+                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = user.FindFirst("usertype")?.Value;
+
+                return await query.GetForumsAsync(appUserId, role);
             }).WithTags("Forum");
 
             app.MapGet("/forum/{id}", async (int id, IForumQuery query) =>
@@ -47,9 +51,12 @@ namespace FMSEvaluering.Api.Endpoints
             //}).WithTags("Forum");
 
             // hent forum for en teacher med posts med votes over 2
-            app.MapGet("forum/{id}/posts/teacher", async (int id, IForumQuery query) =>
+            app.MapGet("forum/{id}/posts/teacher", async (int id, ClaimsPrincipal user, IForumQuery query) =>
             {
-                var result = await query.GetForumWithPostsForTeacherAsync(id, 2);
+                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var role = user.FindFirst("usertype")?.Value;
+
+                var result = await query.GetForumWithPostsForTeacherAsync(id, appUserId, role, 2);
                 return Results.Ok(result);
             }).WithTags("Forum").RequireAuthorization("Teacher");
 

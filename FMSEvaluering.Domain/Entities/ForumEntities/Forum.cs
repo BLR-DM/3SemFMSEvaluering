@@ -16,7 +16,7 @@ public abstract class Forum : DomainEntity
 
     public virtual async Task<bool> ValidateUserAccessAsync(string userId, IServiceProvider serviceProvider, string role)
     {
-        return Task.FromResult(false);
+        return false;
     }
 
     public virtual bool ValidateStudentAccessAsync(StudentDto studentDto)
