@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Security.Claims;
 using System.Text;
 using FMSExitSlip.Api.Endpoints;
@@ -5,7 +6,7 @@ using FMSExitSlip.Application;
 using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
 using FMSExitSlip.Application.Commands.CommandDto.ResponseDto;
 using FMSExitSlip.Application.Commands.Interfaces;
-using FMSExitSlip.Infrastructure;
+using FMSExitSlip.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -46,28 +47,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddHttpClient();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-        };
-    });
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Student", policy =>
-        policy.RequireClaim("usertype", "student"));
-
-    options.AddPolicy("Teacher", policy =>
-        policy.RequireClaim("usertype", "teacher"));
-});
+builder.Services.AddCustomAuthentication(builder.Configuration);
+builder.Services.AddCustomAuthorization(builder.Configuration);
 
 var app = builder.Build();
 
@@ -84,80 +65,9 @@ app.UseAuthorization();
 
 app.MapExitSlipEndpoints();
 
-app.MapPost("/exitslip/question",
-    async (CreateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
-    {
-        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+app.MapQuestionEndpoints();
 
-        try
-        {
-            await command.AddQuestionAsync(questionDto, appUserId);
-            return Results.Ok("Question added");
-        }
-        catch (Exception)
-        {
-            return Results.BadRequest("Failed to add the question");
-            throw;
-        }
-    }).RequireAuthorization("Teacher").WithTags("Questions");
-
-app.MapPut("/exitslip/{id}/question",
-    async (int id, UpdateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
-    {
-        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (appUserId == null)
-            return Results.Unauthorized();
-
-        try
-        {
-            await command.UpdateQuestionAsync(questionDto, id, appUserId);
-            return Results.Ok("Question updated");
-        }
-        catch (Exception)
-        {
-            return Results.BadRequest("Couldn't update the question");
-        }
-
-
-    }).RequireAuthorization("Teacher").WithTags("Questions");
-
-app.MapDelete("/exitslip/{id}/question", 
-    async ([FromBody] DeleteQuestionDto questionDto, IExitSlipCommand command, int id, ClaimsPrincipal user) =>
-    {
-        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (appUserId == null)
-            return Results.Unauthorized();
-
-        try
-        {
-            await command.DeleteQuestionAsync(questionDto, id, appUserId);
-
-            return Results.Ok("Question deleted");
-        }
-        catch (Exception)
-        {
-            return Results.BadRequest("Couldn't delete the question");
-        }
-
-    }).RequireAuthorization("Teacher").WithTags("Questions");
-
-app.MapPost("/exitslip/{id}/question/response",
-    async (int id, CreateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
-    {
-        //var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        await command.CreateResponseAsync(responseDto, id);
-    }).RequireAuthorization("Student").WithTags("Responses");
-
-app.MapPut("/exitslip/{id}/question/response",
-    async (int id, UpdateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
-    {
-        //var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        await command.UpdateResponseAsync(responseDto, id);
-    }).RequireAuthorization("Student").WithTags("Responses");
+app.MapResponseEndpoints();
 
 app.Run();
 
