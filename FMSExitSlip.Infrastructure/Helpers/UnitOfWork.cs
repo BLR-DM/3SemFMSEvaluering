@@ -36,7 +36,6 @@ namespace FMSExitSlip.Infrastructure.Helpers
             {
                 await _transaction.DisposeAsync();
             }
-
         }
 
         async Task IUnitOfWork.Rollback()

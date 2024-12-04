@@ -1,4 +1,4 @@
-﻿using FMSEvaluering.Application.Queries.Interfaces;
+using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Queries.QueryDto;
 using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.ForumEntities;
@@ -59,21 +59,15 @@ public class ForumQuery : IForumQuery
     {
         var forums = await _db.Forums.AsNoTracking().ToListAsync();
 
-        IEnumerable<Forum> validatedForums = await _forumAccessHandler.ValidateAccessMultipleForumsAsync(appUserId, role, forums);
+        var validatedForums = await _forumAccessHandler.ValidateAccessMultipleForumsAsync(appUserId, role, forums);
 
-        List<ForumDto> validatedForumDtos = new List<ForumDto>();
-        foreach (var forum in validatedForums)
-        {
-            validatedForumDtos.Add(_forumMapper.MapToDto(forum));
-        }
-        
-        return validatedForumDtos;
+        return validatedForums.Select(forum => _forumMapper.MapToDto(forum)).ToList();
     }
 
-    async Task<ForumDto> IForumQuery.GetForumWithPostsForTeacherAsync(int forumId, string role, int reqUpvotes)
+    async Task<ForumDto> IForumQuery.GetForumWithPostsForTeacherAsync(int forumId, string appUserId, string role, int reqUpvotes)
     {
         var forum = await _db.Forums.AsNoTracking()
-            .Where(f => f.Id == id)
+            .Where(f => f.Id == forumId)
             .Include(f => f.Posts)
             .ThenInclude(p => p.Votes)
             .Include(f => f.Posts)

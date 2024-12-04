@@ -7,10 +7,10 @@ public class Response : DomainEntity
 
     protected Response() {}
 
-    public Response(string text, string addUserId, IEnumerable<Response> responses)
+    public Response(string text, string appUserId, IEnumerable<Response> responses)
     {
         Text = text;
-        AppUserId = addUserId;
+        AppUserId = appUserId;
 
         AssureOnlyOneResponsePrQuestion(responses);
     }
@@ -22,22 +22,22 @@ public class Response : DomainEntity
 
     public void Update(string text, string appUserId)
     {
-        AssureUserIsSameUser(appUserId);
+        AssureUserIsCreator(appUserId);
         Text = text;
     }
 
     public void Delete(string appUserId)
     {
-        AssureUserIsSameUser(appUserId);
+        AssureUserIsCreator(appUserId);
     }
 
-    private void AssureUserIsSameUser(string appUserId)
+    protected void AssureUserIsCreator(string appUserId)
     {
         if (!AppUserId.Equals(appUserId))
             throw new ArgumentException("Only the creater of the response can edit it");
     }
 
-    private void AssureOnlyOneResponsePrQuestion(IEnumerable<Response> responses)
+    protected void AssureOnlyOneResponsePrQuestion(IEnumerable<Response> responses)
     {
         if (responses.Any(r => r.AppUserId == AppUserId))
             throw new InvalidOperationException("Only one answer to a question is allowed");

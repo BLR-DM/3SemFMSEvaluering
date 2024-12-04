@@ -39,6 +39,7 @@ namespace FMSExitSlip.Application.Commands
 
                 // Do
                 exitSlip.CreateQuestion(questionDto.Text, appUserId);
+                _exitSlipRepository.AddQuestion(exitSlip);
 
                 // Save
                 await _unitOfWork.Commit();
@@ -118,7 +119,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId)
+        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId, string appUserId)
         {
             try
             {
@@ -128,7 +129,7 @@ namespace FMSExitSlip.Application.Commands
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
 
                 // Do
-                var question = exitSlip.DeleteQuestion(questionDto.Id);
+                var question = exitSlip.DeleteQuestion(questionDto.Id, appUserId);
                 _exitSlipRepository.DeleteQuestion(question, questionDto.RowVersion);
 
                 // Save
@@ -187,7 +188,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId)
+        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId, string appUserId)
         {
             try
             {
@@ -197,7 +198,7 @@ namespace FMSExitSlip.Application.Commands
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
 
                 // Do
-                var response = exitSlip.UpdateQuestion(questionDto.Id, questionDto.Text);
+                var response = exitSlip.UpdateQuestion(questionDto.Id, questionDto.Text, appUserId);
                 _exitSlipRepository.UpdateQuestion(response, questionDto.RowVersion);
 
                 // Save

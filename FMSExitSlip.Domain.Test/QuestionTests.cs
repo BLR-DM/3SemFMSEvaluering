@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FMSExitSlip.Domain.Entities;
 using FMSExitSlip.Domain.Test.Fakes;
+using Xunit;
 
 namespace FMSExitSlip.Domain.Test
 {
@@ -17,7 +18,7 @@ namespace FMSExitSlip.Domain.Test
         public void Given_Questions_Dont_Exceed_Maximum__Then_Dont_Throw(int maxQuestions, int currentQuestions)
         {
             // Arrange
-            var sut = new FakeExitSlip(maxQuestions, false);
+            var sut = new FakeExitSlip(maxQuestions, false, "test", 1);
 
             for (int i = 0; i < currentQuestions; i++)
             {
@@ -35,7 +36,7 @@ namespace FMSExitSlip.Domain.Test
         public void Given_Questions_Do_Exceed_Maximum__Then_ThrowsInvalidOperationException(int maxQuestions, int currentQuestions)
         {
             // Arrange
-            var sut = new FakeExitSlip(maxQuestions, false);
+            var sut = new FakeExitSlip(maxQuestions, false,"test", 2);
 
             for (int i = 0; i < currentQuestions; i++)
             {
@@ -52,27 +53,21 @@ namespace FMSExitSlip.Domain.Test
         public void Given_Exitslip_Is_Not_Published__Then_Dont_Throw()
         {
             // Arrange
-            var sut = new FakeExitSlip(5,false); 
+            var sut = new FakeExitSlip(5,false, "test", 3); 
 
             // Act & Assert
             sut.EnsureExitSlipIsNotPublished();
-
-
         }
 
         [Fact]
         public void Given_ExitSlip_Is_Published__Then_ThrowsInvalidOperationException()
         {
             // Arrange
-            var sut = new FakeExitSlip(5,true);
+            var sut = new FakeExitSlip(5,true,"test", 4);
 
             // Act & Assert
             Assert.Throws<InvalidOperationException>(() => sut.EnsureExitSlipIsNotPublished());
-
         }
-
-       
-
 
     }
 }

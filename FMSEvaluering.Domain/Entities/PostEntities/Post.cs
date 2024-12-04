@@ -6,7 +6,7 @@ namespace FMSEvaluering.Domain.Entities.PostEntities;
 public class Post : DomainEntity
 {
     private readonly List<Comment> _comments = [];
-    private readonly List<Vote> _votes = [];
+    protected readonly List<Vote> _votes = [];
     private readonly List<PostHistory> _history = [];
 
     protected Post()
@@ -38,10 +38,9 @@ public class Post : DomainEntity
         return new Post(description, solution, appUserId);
     }
 
-
     public void Update(string newDescription, string newSolution,  string userId)
     {
-        AssureUserIsSameUser(userId);
+        AssureUserIsCreator(userId);
 
         SetHistory(Description, Solution);
         Description = newDescription;
@@ -53,7 +52,7 @@ public class Post : DomainEntity
         _history.Add(new PostHistory(orgDescription, orgSolution));
     }
 
-    private void AssureUserIsSameUser(string userId)
+    private void AssureUserIsCreator(string userId)
     {
         if (!AppUserId.Equals(userId))
             throw new ArgumentException("Only the creater of the post can edit it");
@@ -92,9 +91,7 @@ public class Post : DomainEntity
     public void CreateVote(bool voteType, string appUserId)
     {
         if (Votes.Any(v => v.AppUserId == appUserId))
-        {
             throw new InvalidOperationException("User has already voted");
-        }
 
         var vote = Vote.Create(voteType, appUserId);
         _votes.Add(vote);
@@ -103,15 +100,16 @@ public class Post : DomainEntity
     public Vote UpdateVote(bool voteType, string appUserId)
     {
         var vote = _votes.FirstOrDefault(v => v.AppUserId == appUserId);
+        if (vote is null) throw new ArgumentException("Vote not found");
 
         vote.Update(voteType);
-
         return vote;
     }
 
     public void DeleteVote(string appUserId)
     {
         var vote = _votes.FirstOrDefault(v => v.AppUserId == appUserId);
+        if (vote is null) throw new ArgumentException("Vote not found");
         _votes.Remove(vote);
     }
 
@@ -126,8 +124,7 @@ public class Post : DomainEntity
     public Comment UpdateComment(int commentId, string text)
     {
         var comment = Comments.FirstOrDefault(c => c.Id == commentId);
-        if (comment is null)
-            throw new ArgumentException("Denne kommentar findes ikke");
+        if (comment is null) throw new ArgumentException("Comment not found");
 
         comment.Update(text);
         return comment;

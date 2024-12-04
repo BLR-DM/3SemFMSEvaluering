@@ -63,5 +63,10 @@ namespace FMSExitSlip.Infrastructure.Repositories
             _db.Entry(question).Property(nameof(question.RowVersion)).OriginalValue = rowVersion;
             _db.Questions.Remove(question);
         }
+
+        void IExitSlipRepository.AddQuestion(ExitSlip exitSlip)
+        {
+            _db.Entry(exitSlip).State = EntityState.Modified;
+        }
     }
 }
