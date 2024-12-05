@@ -72,6 +72,8 @@ public class ForumQuery : IForumQuery
             .ThenInclude(p => p.Votes)
             .Include(f => f.Posts)
             .ThenInclude(p => p.Comments)
+            .Include(f => f.Posts)
+            .ThenInclude(p => p.History)
             .SingleOrDefaultAsync();
 
         if (forum == null)
