@@ -77,7 +77,7 @@ public abstract class Forum : DomainEntity
         if (!hasAccess) throw new ArgumentException("Not authorized");
     }
 
-    private Post GetPostById(int postId)
+    public Post GetPostById(int postId)
     {
         var post = Posts.SingleOrDefault(p => p.Id == postId);
         if (post is null) throw new ArgumentException("Post not found");
