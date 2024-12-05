@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMSEvaluering.DatabaseMigration.Migrations
 {
     [DbContext(typeof(EvaluationContext))]
-    [Migration("20241126180957_ChangesToPost")]
-    partial class ChangesToPost
+    [Migration("20241205225606_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,6 +64,21 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
@@ -205,7 +220,11 @@ namespace FMSEvaluering.DatabaseMigration.Migrations
                             b1.Property<DateTime>("EditedDate")
                                 .HasColumnType("datetime2");
 
-                            b1.Property<string>("Content")
+                            b1.Property<string>("Description")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Solution")
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 

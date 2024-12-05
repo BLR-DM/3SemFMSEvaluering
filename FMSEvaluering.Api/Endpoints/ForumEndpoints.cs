@@ -27,9 +27,9 @@ namespace FMSEvaluering.Api.Endpoints
                 await command.CreateSubjectForumAsync(createSubjectForumDto);
             }).WithTags(tag);
 
-            app.MapDelete("/forum", async ([FromBody]DeleteForumDto deleteForumDto, IForumCommand command) =>
+            app.MapDelete("/forum/{forumId}", async (int forumId, [FromBody]DeleteForumDto deleteForumDto, IForumCommand command) =>
             {
-                await command.DeleteForumAsync(deleteForumDto);
+                await command.DeleteForumAsync(deleteForumDto, forumId);
             }).WithTags(tag);
 
             app.MapGet("/forum", async (IForumQuery query, ClaimsPrincipal user) =>
@@ -40,27 +40,20 @@ namespace FMSEvaluering.Api.Endpoints
                 return await query.GetForumsAsync(appUserId, role);
             }).WithTags(tag);
 
-            app.MapGet("/forum/{id}", async (int id, IForumQuery query) =>
+            app.MapGet("/forum/{forumId}", async (int forumId, IForumQuery query) =>
             {
-                return await query.GetForumAsync(id);
+                return await query.GetForumAsync(forumId);
             }).WithTags(tag);
 
-            // Oversigt over Posts for given forum (includer ikke history, comments)
-            //app.MapGet("/forum/{id}/post", async (int id, IForumQuery query) =>
-            //{
-            //    var result = await query.GetForumWithPostsAsync(id);
-            //    return Results.Ok(result);
-            //}).WithTags(tag);
-
             // hent forum for en teacher med posts med votes over 2
-            app.MapGet("/forum/{id}/posts/teacher", async (int id, ClaimsPrincipal user, IForumQuery query) =>
+            app.MapGet("/forum/{forumId}/posts/teacher", async (int forumId, ClaimsPrincipal user, IForumQuery query) => 
             {
                 var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var role = user.FindFirst("usertype")?.Value;
 
-                var result = await query.GetForumWithPostsForTeacherAsync(id, appUserId, role, 2);
+                var result = await query.GetForumWithPostsForTeacherAsync(forumId, appUserId, role, 2);
                 return Results.Ok(result);
-            }).WithTags(tag).RequireAuthorization("Teacher");
+            }).WithTags(tag).RequireAuthorization("Teacher"); //check igennem
 
         }
     }

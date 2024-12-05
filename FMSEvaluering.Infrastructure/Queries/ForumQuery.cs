@@ -1,6 +1,6 @@
+using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Queries.QueryDto;
-using FMSEvaluering.Domain.DomainServices;
 using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Infrastructure.Helpers.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -45,10 +45,9 @@ public class ForumQuery : IForumQuery
         if (forum == null)
             throw new ArgumentException("Forum not found");
 
-        var hasAccess = await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+        // Validate Acccess
+        await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
 
-        if (!hasAccess)
-            throw new UnauthorizedAccessException("You do not have access");
 
         var forumDto = _forumMapper.MapToDtoWithAll(forum);
 
@@ -79,13 +78,35 @@ public class ForumQuery : IForumQuery
         if (forum == null)
             throw new ArgumentException("Forum not found");
 
-        var hasAccess = await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+        // Validate Acccess
+        await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
 
-        if (!hasAccess)
-            throw new UnauthorizedAccessException("You do not have access");
 
         var forumDto = _forumMapper.MapToDtoWithAllTeacher(forum, reqUpvotes);
 
         return forumDto;
+    }
+
+    async Task<ForumDto> IForumQuery.GetForumWithSinglePostAsync(int forumId, string appUserId, string role, int postId)
+    {
+        var forum = await _db.Forums.AsNoTracking()
+            .Where(f => f.Id == forumId)
+            .Include(f => f.Posts.Where(p => p.Id == postId))
+            .ThenInclude(p => p.Votes)
+            .Include(f => f.Posts.Where(p => p.Id == postId))
+            .ThenInclude(p => p.Comments)
+            .Include(f => f.Posts.Where(p => p.Id == postId))
+            .ThenInclude(p => p.History)
+            .SingleOrDefaultAsync();
+
+        if (forum == null)
+            throw new ArgumentException("Forum not found");
+
+        // Validate Access
+        await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
+        var forumDto = _forumMapper.MapToDtoWithAll(forum);
+        return forumDto;
+
     }
 }

@@ -12,15 +12,16 @@ namespace FMSEvaluering.Api.Endpoints
         {
             const string tag = "Vote";
 
-            app.MapPost("/forum/{id}/post/{postId}/vote",
-                async (int postId, HandleVoteDto voteDto, ClaimsPrincipal user, IPostCommand command) =>
+            app.MapPost("/forum/{forumId}/post/{postId}/vote",
+                async (int forumId, int postId, HandleVoteDto voteDto, ClaimsPrincipal user, IPostCommand command) =>
                 {
                     // var id = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
                     var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var role = user.FindFirst("usertype")?.Value;
 
                     try
                     {
-                        await command.HandleVote(voteDto, appUserId, postId);
+                        await command.HandleVote(voteDto, appUserId, role, forumId, postId);
                         return Results.Ok("Vote registered");
                     }
                     catch (Exception)

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace FMSEvaluering.Application.Commands.CommandDto.CommentDto
 {
-    public record CreateCommentDto(int PostId, string Text);
+    public record CreateCommentDto(string firstName, string lastName, string Text);
 }

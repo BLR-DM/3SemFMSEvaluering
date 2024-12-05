@@ -1,7 +1,6 @@
 ﻿using FMSEvaluering.Application.Commands;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Services;
-using FMSEvaluering.Domain.DomainServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FMSEvaluering.Application;
@@ -12,8 +11,8 @@ public static class DependencyInjection
     {
         services.AddScoped<IPostCommand, PostCommand>();
         services.AddScoped<IForumCommand, ForumCommand>();
-        services.AddScoped<IStudentDomainService, StudentDomainService>();
-        services.AddScoped<ITeacherDomainService, TeacherDomainService>();
+        services.AddScoped<IStudentApplicationService, StudentApplicationService>();
+        services.AddScoped<ITeacherApplicationService, TeacherApplicationService>();
 
         return services;
     }

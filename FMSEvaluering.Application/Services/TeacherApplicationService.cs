@@ -1,30 +1,30 @@
 ﻿using FMSEvaluering.Application.Services.ProxyInterface;
-using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Values.DataServer;
 
 namespace FMSEvaluering.Application.Services;
 
-public class TeacherDomainService : ITeacherDomainService
+public class TeacherApplicationService : ITeacherApplicationService
 {
     private readonly IFmsDataProxy _fmsDataProxy;
 
-    public TeacherDomainService(IFmsDataProxy fmsDataProxy)
+    public TeacherApplicationService(IFmsDataProxy fmsDataProxy)
     {
         _fmsDataProxy = fmsDataProxy;
     }
 
-    async Task<TeacherDto> ITeacherDomainService.GetTeacherAsync(string userId)
+    async Task<TeacherValue> ITeacherApplicationService.GetTeacherAsync(string userId)
     {
         var teacherResultDto = await _fmsDataProxy.GetTeacherAsync(userId);
-        var teacherDto = new TeacherDto
+        var teacherValue = new TeacherValue
         {
             AppUserId = teacherResultDto.AppUserId,
             FirstName = teacherResultDto.FirstName,
             LastName = teacherResultDto.LastName,
             Email = teacherResultDto.Email,
-            TeacherSubjects = teacherResultDto.TeacherSubjects.Select(ts => new TeacherSubjectDto
+            TeacherSubjects = teacherResultDto.TeacherSubjects.Select(ts => new TeacherSubjectValue
             {
                 Id = ts.Id,
-                Class = new ModelClassDto
+                Class = new ModelClassValue
                 {
                     Id = ts.Class.Id,
                     Name = ts.Class.Name
@@ -32,6 +32,6 @@ public class TeacherDomainService : ITeacherDomainService
             })
         };
 
-        return teacherDto;
+        return teacherValue;
     }
 }

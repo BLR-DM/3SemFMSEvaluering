@@ -8,7 +8,11 @@ public interface IForumRepository
 {
     Task AddForum(Forum forum);
     Task<Forum> GetForumAsync(int id);
+    Task<Forum> GetForumWithSinglePostAsync(int forumId, int postId);
     void DeleteForum(Forum forum, byte[] rowVersion);
     void UpdatePost(Post post, byte[] rowVersion);
     void DeletePost(Post post, byte[] rowVersion);
+    void UpdateComment(Comment comment, byte[] rowVersion);
+    void UpdateVote(Vote vote, byte[] rowVersion);
+    void DeleteVote(Vote vote, byte[] rowVersion);
 }

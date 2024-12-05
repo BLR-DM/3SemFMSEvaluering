@@ -1,3 +1,3 @@
 ﻿namespace FMSEvaluering.Application.Commands.CommandDto.PostDto;
 
-public record DeletePostDto(int Id, byte[] RowVersion);
+public record DeletePostDto(byte[] RowVersion);

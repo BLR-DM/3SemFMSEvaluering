@@ -10,14 +10,14 @@ namespace FMSEvaluering.Application.Commands;
 public class ForumCommand : IForumCommand
 {
     private readonly IForumRepository _forumRepository;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IForumAccessHandler _forumAccessHandler;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ForumCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IServiceProvider serviceProvider)
+    public ForumCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IForumAccessHandler forumAccessHandler)
     {
         _unitOfWork = unitOfWork;
         _forumRepository = forumRepository;
-        _serviceProvider = serviceProvider;
+        _forumAccessHandler = forumAccessHandler;
     }
 
     async Task IForumCommand.CreatePostAsync(CreatePostDto postDto, string appUserId, string role, int forumId)
@@ -28,8 +28,12 @@ public class ForumCommand : IForumCommand
 
             // Load
             var forum = await _forumRepository.GetForumAsync(forumId);
+
+            // Validate Access
+            await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+            
             // Do
-            await forum.AddPostAsync(postDto.Description, postDto.Solution, appUserId, _serviceProvider, role);
+            await forum.AddPostAsync(postDto.Description, postDto.Solution, appUserId);
 
             //Save
             await _unitOfWork.Commit();
@@ -41,7 +45,7 @@ public class ForumCommand : IForumCommand
         }
     }
 
-    async Task IForumCommand.UpdatePostAsync(UpdatePostDto postDto, string appUserId, string role, int forumId)
+    async Task IForumCommand.UpdatePostAsync(UpdatePostDto postDto, string appUserId, string role, int postId, int forumId)
     {
         try
         {
@@ -49,9 +53,13 @@ public class ForumCommand : IForumCommand
 
             // Load
             var forum = await _forumRepository.GetForumAsync(forumId);
+
+            // Validate Access
+            await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
             // Do
-            var post = await forum.UpdatePostAsync(postDto.PostId, postDto.Description, postDto.Solution,
-                appUserId, _serviceProvider, role);
+            var post = await forum.UpdatePostAsync(postId, postDto.Description, postDto.Solution,
+                appUserId);
             _forumRepository.UpdatePost(post, postDto.RowVersion);
 
             //Save
@@ -64,7 +72,7 @@ public class ForumCommand : IForumCommand
         }
     }
 
-    async Task IForumCommand.DeletePostAsync(DeletePostDto postDto, string appUserId, string role, int forumId)
+    async Task IForumCommand.DeletePostAsync(DeletePostDto postDto, string appUserId, string role, int postId, int forumId)
     {
         try
         {
@@ -72,8 +80,12 @@ public class ForumCommand : IForumCommand
 
             // Load
             var forum = await _forumRepository.GetForumAsync(forumId);
+
+            // Validate Access
+            await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
             // Do
-            var post = await forum.DeletePostAsync(postDto.Id, appUserId, _serviceProvider, role);
+            var post = await forum.DeletePostAsync(postId, appUserId);
             _forumRepository.DeletePost(post, postDto.RowVersion);
 
             //Save
@@ -146,14 +158,14 @@ public class ForumCommand : IForumCommand
         }
     }
 
-    async Task IForumCommand.DeleteForumAsync(DeleteForumDto forumDto)
+    async Task IForumCommand.DeleteForumAsync(DeleteForumDto forumDto, int forumId)
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var forum = await _forumRepository.GetForumAsync(forumDto.Id);
+            var forum = await _forumRepository.GetForumAsync(forumId);
 
             // Do
             _forumRepository.DeleteForum(forum, forumDto.RowVersion);

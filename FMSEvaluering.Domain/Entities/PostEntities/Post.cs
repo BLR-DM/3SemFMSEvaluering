@@ -115,9 +115,9 @@ public class Post : DomainEntity
 
     // Comment
 
-    public void CreateComment(string text)
+    public void CreateComment(string firstName, string lastName, string text, string appUserId)
     {
-        var comment = Comment.Create(text);
+        var comment = Comment.Create(firstName, lastName, text, appUserId);
         _comments.Add(comment);
     }
 

@@ -211,6 +211,8 @@ string GenerateJwtToken(AppUser user, IConfiguration configuration, Student stud
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.GivenName, student.FirstName),
+        new Claim(JwtRegisteredClaimNames.FamilyName, student.LastName),
         new Claim("usertype", "student"),
     };
 
@@ -233,6 +235,8 @@ string GenerateJwtTokenTeacher(AppUser user, IConfiguration configuration, Teach
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.GivenName, teacher.FirstName),
+        new Claim(JwtRegisteredClaimNames.FamilyName, teacher.LastName),
         new Claim("usertype", "teacher"),
     };
 

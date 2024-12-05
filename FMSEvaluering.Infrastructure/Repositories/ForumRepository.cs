@@ -33,6 +33,18 @@ public class ForumRepository : IForumRepository
             .SingleAsync(f => f.Id == id);
     }
 
+    async Task<Forum> IForumRepository.GetForumWithSinglePostAsync(int forumId, int postId)
+    {
+        return await _db.Forums
+            .Include(f => f.Posts/*.Where(p => p.Id == postId)*/)
+                .ThenInclude(p => p.History)
+            .Include(f => f.Posts/*.Where(p => p.Id == postId)*/)
+                .ThenInclude(p => p.Comments)
+            .Include(f => f.Posts/*.Where(p => p.Id == postId)*/)
+                .ThenInclude(p => p.Votes)
+            .SingleAsync(f => f.Id == forumId);
+    }
+
     void IForumRepository.UpdatePost(Post post, byte[] rowVersion)
     {
         _db.Entry(post).Property(nameof(post.RowVersion)).OriginalValue = rowVersion;
@@ -42,5 +54,21 @@ public class ForumRepository : IForumRepository
     {
         _db.Entry(post).Property(nameof(post.RowVersion)).OriginalValue = rowVersion;
         _db.Posts.Remove(post);
+    }
+
+    void IForumRepository.UpdateComment(Comment comment, byte[] rowVersion)
+    {
+        _db.Entry(comment).Property(nameof(comment.RowVersion)).OriginalValue = rowVersion;
+    }
+
+    void IForumRepository.UpdateVote(Vote vote, byte[] rowVersion)
+    {
+        _db.Entry(vote).Property(nameof(vote.RowVersion)).OriginalValue = rowVersion;
+    }
+
+    void IForumRepository.DeleteVote(Vote vote, byte[] rowVersion)
+    {
+        _db.Entry(vote).Property(nameof(vote.RowVersion)).OriginalValue = rowVersion;
+        _db.Votes.Remove(vote);
     }
 }
