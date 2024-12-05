@@ -36,11 +36,11 @@ public class ForumRepository : IForumRepository
     async Task<Forum> IForumRepository.GetForumWithSinglePostAsync(int forumId, int postId)
     {
         return await _db.Forums
-            .Include(f => f.Posts.Where(p => p.Id == postId))
+            .Include(f => f.Posts/*.Where(p => p.Id == postId)*/)
                 .ThenInclude(p => p.History)
-            .Include(f => f.Posts.Where(p => p.Id == postId))
+            .Include(f => f.Posts/*.Where(p => p.Id == postId)*/)
                 .ThenInclude(p => p.Comments)
-            .Include(f => f.Posts.Where(p => p.Id == postId))
+            .Include(f => f.Posts/*.Where(p => p.Id == postId)*/)
                 .ThenInclude(p => p.Votes)
             .SingleAsync(f => f.Id == forumId);
     }
