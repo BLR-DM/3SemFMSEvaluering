@@ -1,26 +1,26 @@
 ﻿using FMSEvaluering.Application.Services.ProxyInterface;
-using FMSEvaluering.Domain.DomainServices;
+using FMSEvaluering.Domain.Values.DataServer;
 
 namespace FMSEvaluering.Application.Services;
 
-public class StudentDomainService : IStudentDomainService
+public class StudentApplicationService : IStudentApplicationService
 {
     private readonly IFmsDataProxy _fmsDataProxy;
 
-    public StudentDomainService(IFmsDataProxy fmsDataProxy)
+    public StudentApplicationService(IFmsDataProxy fmsDataProxy)
     {
         _fmsDataProxy = fmsDataProxy;
     }
 
-    async Task<StudentDto> IStudentDomainService.GetStudentAsync(string userId)
+    async Task<StudentValue> IStudentApplicationService.GetStudentAsync(string userId)
     {
         var studentResultDto = await _fmsDataProxy.GetStudentAsync(userId);
-        return new StudentDto
+        return new StudentValue
         {
             FirstName = studentResultDto.FirstName,
             LastName = studentResultDto.LastName,
             Email = studentResultDto.Email,
-            Class = new ModelClassDto
+            Class = new ModelClassValue
             {
                 Id = studentResultDto.Class.Id,
                 Name = studentResultDto.Class.Name

@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace FMSEvaluering.Application.Commands.CommandDto.ForumDto
 {
-    public record DeleteForumDto(int Id, byte[] RowVersion);
+    public record DeleteForumDto(byte[] RowVersion);
 }

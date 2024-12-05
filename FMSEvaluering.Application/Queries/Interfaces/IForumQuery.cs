@@ -9,4 +9,5 @@ public interface IForumQuery
     Task<IEnumerable<ForumDto>> GetForumsAsync(string appUserId, string role);
     Task<ForumDto> GetForumWithPostsAsync(int forumId, string appUserId, string role);
     Task<ForumDto> GetForumWithPostsForTeacherAsync(int forumId, string appUserId, string role, int reqUpvotes);
+    Task<ForumDto> GetForumWithSinglePostAsync(int forumId, string appUserId, string role, int postId);
 }

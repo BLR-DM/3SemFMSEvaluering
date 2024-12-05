@@ -10,27 +10,33 @@ namespace FMSEvaluering.Application.Commands;
 public class PostCommand : IPostCommand
 {
     private readonly IForumRepository _forumRepository;
+    private readonly IForumAccessHandler _forumAccessHandler;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository)
+    public PostCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IForumAccessHandler forumAccessHandler)
     {
         _unitOfWork = unitOfWork;
         _forumRepository = forumRepository;
+        _forumAccessHandler = forumAccessHandler;
     }
 
-    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto, int forumId) // int postId?
+    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto, string firstName, string lastName, int postId, string appUserId, string role, int forumId) // int postId?
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, commentDto.PostId);
-            // Check / Validation <- AccessHandler
-            var post = forum.GetPostById(commentDto.PostId);
+            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, postId);
+
+            // Validate Access
+            await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
+            // Load
+            var post = forum.GetPostById(postId);
 
             // Do
-            post.CreateComment(commentDto.Text); // string appUserId? + Navn?
+            post.CreateComment(firstName, lastName, commentDto.Text, appUserId); // string appUserId? + Navn?
 
             // Save 
             await _unitOfWork.Commit();
@@ -42,7 +48,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto, int forumId)
+    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto, string appUserId, string role, int forumId)
     {
         try
         {
@@ -50,7 +56,11 @@ public class PostCommand : IPostCommand
 
             // Load
             var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, commentDto.PostId);
-            // Check / Validation <- AccessHandler
+
+            // Validate Access
+            await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
+            // Load
             var post = forum.GetPostById(commentDto.PostId);
 
             // Do
@@ -67,7 +77,7 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.HandleVote(HandleVoteDto voteDto, string appUserId, int forumId, int postId)
+    async Task IPostCommand.HandleVote(HandleVoteDto voteDto, string appUserId, string role, int forumId, int postId)
     {
         try
         {
@@ -75,7 +85,11 @@ public class PostCommand : IPostCommand
 
             // Load
             var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, postId);
-            // Check / Validation <- AccessHandler
+
+            // Validate Access
+            await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
+            // Load
             var post = forum.GetPostById(postId);
 
             // Do

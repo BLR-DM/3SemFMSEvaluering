@@ -6,18 +6,24 @@ public class Comment : DomainEntity
     {
     }
 
-    private Comment(string text)
+    private Comment(string firstName, string lastName, string text, string appUserId)
     {
+        FirstName = firstName;
+        LastName = lastName;
         Text = text;
         CreatedDate = DateTime.Now;
+        AppUserId = appUserId;
     }
 
+    public string FirstName { get; protected set; }
+    public string LastName { get; protected set; }
     public string Text { get; protected set; }
     public DateTime CreatedDate { get; protected set; }
+    public string AppUserId { get; protected set; }
 
-    public static Comment Create(string text)
+    public static Comment Create(string firstName, string lastName, string text, string appUserId)
     {
-        return new Comment(text);
+        return new Comment(firstName, lastName, text, appUserId);
     }
 
     public void Update(string text)

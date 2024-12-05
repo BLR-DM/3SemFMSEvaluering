@@ -28,14 +28,14 @@ namespace FMSEvaluering.Api.Endpoints
                     }
                 }).RequireAuthorization("Student").WithTags(tag);
 
-            app.MapPut("/forum/{forumId}/post",
-                async (int forumId, UpdatePostDto post, ClaimsPrincipal user, IForumCommand command) =>
+            app.MapPut("/forum/{forumId}/post/{postId}",
+                async (int forumId, int postId, UpdatePostDto post, ClaimsPrincipal user, IForumCommand command) =>
                 {
                     try
                     {
                         var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                         var role = user.FindFirst("usertype")?.Value;
-                        await command.UpdatePostAsync(post, appUserId, role, forumId);
+                        await command.UpdatePostAsync(post, appUserId, role, postId, forumId);
                         return Results.Created("testURI", post);
                     }
                     catch (Exception)
@@ -44,23 +44,23 @@ namespace FMSEvaluering.Api.Endpoints
                     }
                 }).RequireAuthorization("Student").WithTags(tag);
 
-            app.MapDelete("/forum/{forumId}/post",
-                async (int forumId, [FromBody] DeletePostDto post, ClaimsPrincipal user, IForumCommand command) =>
+            app.MapDelete("/forum/{forumId}/post/{postId}",
+                async (int forumId, int postId, [FromBody] DeletePostDto post, ClaimsPrincipal user, IForumCommand command) =>
                 {
                     var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     var role = user.FindFirst("usertype")?.Value;
-                    await command.DeletePostAsync(post, appUserId, role, forumId);
+                    await command.DeletePostAsync(post, appUserId, role, postId, forumId);
                     return Results.Ok("Post deleted");
                 }).WithTags(tag); //admin?
 
-            app.MapGet("/forum/{id}/post/{postId}",
-                async (int postId, ClaimsPrincipal user, IPostQuery postQuery) =>
+            app.MapGet("/forum/{forumId}/post/{postId}",
+                async (int forumId, int postId, ClaimsPrincipal user, IForumQuery query) =>
                 {
                     try
                     {
                         var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                         var role = user.FindFirst("usertype")?.Value;
-                        var post = await postQuery.GetPostAsync(postId, appUserId, role);
+                        var post = await query.GetForumWithSinglePostAsync(forumId, appUserId, role, postId);
                         return Results.Ok(post);
                     }
                     catch (Exception)
@@ -70,13 +70,13 @@ namespace FMSEvaluering.Api.Endpoints
                 }).WithTags(tag);
 
             app.MapGet("/forum/{forumId}/post",
-                async (int forumId, ClaimsPrincipal user, IPostQuery postQuery) =>
+                async (int forumId, ClaimsPrincipal user, IForumQuery query) =>
                 {
                     try
                     {
                         var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                         var role = user.FindFirst("usertype")?.Value;
-                        var posts = await postQuery.GetPostsAsync(forumId, appUserId, role);
+                        var posts = await query.GetForumWithPostsAsync(forumId, appUserId, role);
                         return Results.Ok(posts);
                     }
                     catch (Exception)

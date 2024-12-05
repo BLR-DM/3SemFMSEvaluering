@@ -1,4 +1,4 @@
-﻿using FMSEvaluering.Domain.DomainServices;
+﻿using FMSEvaluering.Domain.Values.DataServer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FMSEvaluering.Domain.Entities.ForumEntities
@@ -13,29 +13,13 @@ namespace FMSEvaluering.Domain.Entities.ForumEntities
             SubjectId = subjectId;
         }
 
-        public override async Task<bool> ValidateUserAccessAsync(string appUserId, IServiceProvider serviceProvider, string role)
-        {
-            switch (role)
-            {
-                case "student":
-                    var studentDomainService = serviceProvider.GetRequiredService<IStudentDomainService>();
-                    var studentDto = await studentDomainService.GetStudentAsync(appUserId);
-                    return ValidateStudentAccessAsync(studentDto);
-                case "teacher":
-                    var teacherDomainService = serviceProvider.GetRequiredService<ITeacherDomainService>();
-                    var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
-                    return ValidateTeacherAccessAsync(teacherDto);
-            }
-            return false;
-        }
-
-        public override bool ValidateStudentAccessAsync(StudentDto studentDto)
+        public override bool ValidateStudentAccessAsync(StudentValue student)
         { 
-            return studentDto.Class.TeacherSubjects.Any(ts => ts.Id.Equals(SubjectId.ToString()));
+            return student.Class.TeacherSubjects.Any(ts => ts.Id.Equals(SubjectId.ToString()));
         }
-        public override bool ValidateTeacherAccessAsync(TeacherDto teacherDto)
+        public override bool ValidateTeacherAccessAsync(TeacherValue teacher)
         {
-            return teacherDto.TeacherSubjects.Any(ts => ts.Id.Equals(SubjectId.ToString()));
+            return teacher.TeacherSubjects.Any(ts => ts.Id.Equals(SubjectId.ToString()));
         }
     }
 }

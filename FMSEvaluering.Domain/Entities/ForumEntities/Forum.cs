@@ -1,5 +1,5 @@
-﻿using FMSEvaluering.Domain.DomainServices;
-using FMSEvaluering.Domain.Entities.PostEntities;
+﻿using FMSEvaluering.Domain.Entities.PostEntities;
+using FMSEvaluering.Domain.Values.DataServer;
 
 namespace FMSEvaluering.Domain.Entities.ForumEntities;
 
@@ -14,43 +14,31 @@ public abstract class Forum : DomainEntity
     public string Name { get; protected set; }
     public IReadOnlyCollection<Post> Posts => _posts;
 
-    public virtual async Task<bool> ValidateUserAccessAsync(string userId, IServiceProvider serviceProvider, string role)
+    public virtual bool ValidateStudentAccessAsync(StudentValue student)
     {
         return false;
     }
 
-    public virtual bool ValidateStudentAccessAsync(StudentDto studentDto)
+    public virtual bool ValidateTeacherAccessAsync(TeacherValue teacher)
     {
         return false;
     }
 
-    public virtual bool ValidateTeacherAccessAsync(TeacherDto teacherDto)
+    public async Task AddPostAsync(string description, string solution, string appUserId)
     {
-        return false;
-    }
-
-    public async Task AddPostAsync(string description, string solution, string appUserId, IServiceProvider serviceProvider, string role)
-    {
-        await ValidateAccessAsync(appUserId, serviceProvider, role);
-
         var post = Post.Create(description, solution, appUserId);
         _posts.Add(post); 
     }
 
-    public async Task<Post> UpdatePostAsync(int postId, string description, string solution, string appUserId,
-        IServiceProvider serviceProvider, string role)
+    public async Task<Post> UpdatePostAsync(int postId, string description, string solution, string appUserId)
     {
-        await ValidateAccessAsync(appUserId, serviceProvider, role);
-
         var post = GetPostById(postId);
         post.Update(description, solution, appUserId);
         return post;
     }
 
-    public async Task<Post> DeletePostAsync(int postId, string appUserId, IServiceProvider serviceProvider, string role)
+    public async Task<Post> DeletePostAsync(int postId, string appUserId) //maaske slet? //admin ??
     {
-        await ValidateAccessAsync(appUserId, serviceProvider, role);
-
         var post = GetPostById(postId);
         _posts.Remove(post);
         return post;
@@ -68,13 +56,6 @@ public abstract class Forum : DomainEntity
     public static Forum CreateSubjectForum(string name, int subjectId)
     {
         return new SubjectForum(name, subjectId);
-    }
-
-
-    private async Task ValidateAccessAsync(string appUserId, IServiceProvider serviceProvider, string role)
-    {
-        var hasAccess = await ValidateUserAccessAsync(appUserId, serviceProvider, role);
-        if (!hasAccess) throw new ArgumentException("Not authorized");
     }
 
     public Post GetPostById(int postId)
