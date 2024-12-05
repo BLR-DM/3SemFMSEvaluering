@@ -10,11 +10,11 @@ namespace FMSEvaluering.Api.Endpoints
             const string tag = "Comment";
 
 
-            app.MapPost("/forum/{id}/post/{id}/comment",
+            app.MapPost("/forum/{forumId}/post/{postId}/comment",
                 async (CreateCommentDto dto, IPostCommand command) =>
                     await command.CreateCommentAsync(dto)).WithTags(tag);
 
-            app.MapPut("/forum/{id}/post/{id}/comment",
+            app.MapPut("/forum/{forumId}/post/{postId}/comment",
                 async (UpdateCommentDto dto, IPostCommand command) =>
                     await command.UpdateCommentAsync(dto)).WithTags(tag);
         }
