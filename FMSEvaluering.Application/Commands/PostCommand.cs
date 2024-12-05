@@ -9,26 +9,28 @@ namespace FMSEvaluering.Application.Commands;
 
 public class PostCommand : IPostCommand
 {
-    private readonly IPostRepository _postRepository;
+    private readonly IForumRepository _forumRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IPostRepository postRepository)
+    public PostCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository)
     {
         _unitOfWork = unitOfWork;
-        _postRepository = postRepository;
+        _forumRepository = forumRepository;
     }
 
-    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto)
+    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto, int forumId) // int postId?
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(commentDto.PostId);
+            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, commentDto.PostId);
+            // Check / Validation <- AccessHandler
+            var post = forum.GetPostById(commentDto.PostId);
 
             // Do
-            post.CreateComment(commentDto.Text);
+            post.CreateComment(commentDto.Text); // string appUserId? + Navn?
 
             // Save 
             await _unitOfWork.Commit();
@@ -40,20 +42,22 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto)
+    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto, int forumId)
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(commentDto.PostId);
+            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, commentDto.PostId);
+            // Check / Validation <- AccessHandler
+            var post = forum.GetPostById(commentDto.PostId);
 
             // Do
             var comment = post.UpdateComment(commentDto.CommentId, commentDto.Text);
 
             // Save
-            _postRepository.UpdateComment(comment, commentDto.RowVersion);
+            _forumRepository.UpdateComment(comment, commentDto.RowVersion);
             await _unitOfWork.Commit();
         }
         catch (Exception)
@@ -63,26 +67,24 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.HandleVote(HandleVoteDto voteDto, string appUserId, int postId)
+    async Task IPostCommand.HandleVote(HandleVoteDto voteDto, string appUserId, int forumId, int postId)
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var post = await _postRepository.GetPostAsync(postId);
+            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, postId);
+            // Check / Validation <- AccessHandler
+            var post = forum.GetPostById(postId);
 
             // Do
             var behaviour = post.HandleVote(voteDto.VoteType, appUserId);
 
             if (behaviour == Post.HandleVoteBehaviour.Update)
-            {
-                _postRepository.UpdateVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
-            } 
+                _forumRepository.UpdateVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
             else if (behaviour == Post.HandleVoteBehaviour.Delete)
-            {
-                _postRepository.DeleteVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
-            }
+                _forumRepository.DeleteVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
 
             // Save
             await _unitOfWork.Commit();
