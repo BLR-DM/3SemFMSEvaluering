@@ -125,7 +125,7 @@ if (app.Environment.IsDevelopment())
 
 
 
-app.MapPost("/fms/register",
+app.MapPost("/register",
     async (UserManager<AppUser> _userManager, RegisterDto registerDto, FMSDataDbContext _context) =>
     {
         var user = new AppUser
@@ -170,7 +170,7 @@ app.MapPost("/fms/register",
         return Results.Ok(new { Message = "User registered" });
     });
 
-app.MapPost("/fms/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration, FMSDataDbContext _context) =>
+app.MapPost("/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration, FMSDataDbContext _context) =>
 {
     var user = await _userManager.FindByEmailAsync(loginDto.Email);
 

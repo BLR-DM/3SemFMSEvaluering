@@ -1,7 +1,6 @@
 using System.Text;
-using Gateway.API.ExternalServices;
-using Gateway.API.Interfaces;
-using Gateway.API.ModelDto;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,7 +33,6 @@ builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 builder.Services.AddHttpClient();
-builder.Services.AddHttpClient<IFmsProxy, FmsProxy>();
 
 var app = builder.Build();
 
@@ -47,12 +45,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/login", async (LoginDto loginDto, IFmsProxy fmsproxy) =>
+app.Use(async (context, next) =>
 {
-    var response = await fmsproxy.CheckCredentials(loginDto.Email, loginDto.Password);
+    var path = context.Request.Path.Value;
 
-    return Results.Ok(response);
-}).AllowAnonymous();
+    // Tillad anonym adgang til login endpoint
+    if (path != null && path.StartsWith("/fmsdataserver/login", StringComparison.OrdinalIgnoreCase))
+    {
+        await next.Invoke();
+    }
+    else
+    {
+        // Tving autentifikation for alle andre proxied ruter
+        var authResult = await context.RequestServices.GetRequiredService<IAuthenticationService>()
+            .AuthenticateAsync(context, JwtBearerDefaults.AuthenticationScheme);
+
+        if (!authResult.Succeeded)
+        {
+            context.Response.StatusCode = 401; // Unauthorized
+            await context.Response.WriteAsync("Unauthorized");
+            return;
+        }
+
+        await next.Invoke();
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
