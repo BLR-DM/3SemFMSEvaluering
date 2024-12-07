@@ -1,5 +1,4 @@
-﻿using FMSExitSlip.Domain.DomainServices;
-using Microsoft.Extensions.DependencyInjection;
+﻿using FMSExitSlip.Domain.Values.DataServer;
 
 namespace FMSExitSlip.Domain.Entities;
 
@@ -12,13 +11,14 @@ public class ExitSlip : DomainEntity
     }
 
     private ExitSlip(string title, int maxQuestions, string appUserId, int lectureId,
-        IEnumerable<ExitSlip> otherExitSlips)
+        IEnumerable<ExitSlip> otherExitSlips, TeacherValue teacher)
     {
         Title = title;
         MaxQuestions = maxQuestions;
         AppUserId = appUserId;
         LectureId = lectureId;
 
+        ValidateTeacherAccess(teacher);
         AssureOnlyOneExitSlipPrLesson(otherExitSlips);
     }
 
@@ -31,17 +31,11 @@ public class ExitSlip : DomainEntity
     public ICollection<Question> Questions => _questions;
 
     public static ExitSlip Create(string title, int maxQuestions, int lectureId, string appUserId,
-        IEnumerable<ExitSlip> otherExitSlips, IServiceProvider serviceProvider)
+        IEnumerable<ExitSlip> otherExitSlips, TeacherValue teacher)
     {
-        var domainService = serviceProvider.GetRequiredService<ILectureDomainService>();
-        var validationRespone = domainService.ValidateIfTeacherIsAPartOfLecture(lectureId.ToString());
-
-        if (validationRespone.Result.LectureId == lectureId.ToString() &&
-            validationRespone.Result.TeacherId == appUserId)
-            return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips);
-
-        throw new InvalidOperationException("Only the teacher who has the lecture, can create an exitslip");
+        return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips, teacher);
     }
+
 
     public void Publish(string appUserId)
     {
@@ -145,10 +139,18 @@ public class ExitSlip : DomainEntity
         return question ?? throw new ArgumentException("Question not found");
     }
 
-    public async Task<bool> EnsureUserHasAccess(string appUserId, IServiceProvider serviceProvider, string role)
+    public void ValidateStudentAccess(StudentValue student)
     {
-        var lectureDomainService = serviceProvider.GetRequiredService<ILectureDomainService>();
-        var studentsInLecture = await lectureDomainService.GetStudentsForLectureAsync(LectureId.ToString());
-        return studentsInLecture.Any(s => s == appUserId);
+        var hasAccess =
+            student.Class.TeacherSubjects.Any(ts => ts.Lectures.Any(l => l.Id.Equals(LectureId.ToString())));
+        if (!hasAccess)
+            throw new InvalidOperationException("Only students in the lecture can access the exit slip");
+    }
+
+    public void ValidateTeacherAccess(TeacherValue teacher)
+    {
+        var hasAccess = teacher.TeacherSubjects.Any(ts => ts.Lectures.Any(l => l.Id.Equals(LectureId.ToString())));
+        if (!hasAccess)
+            throw new InvalidOperationException("Only the teacher who has the lecture, can create an exitslip");
     }
 }
