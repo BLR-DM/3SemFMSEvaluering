@@ -6,33 +6,50 @@ using System.Net.Http.Json;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
+using FMSExitSlip.Application.Services.ProxyInterface;
 
 namespace FMSExitSlip.Infrastructure.ExternalServices.ServerProxyImpl
 {
     public class FmsDataProxy : IFmsDataProxy
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _httpClient;
 
-        public FmsDataProxy(HttpClient client)
+        public FmsDataProxy(HttpClient httpClient)
         {
-            _client = client;
+            _httpClient = httpClient;
         }
 
-        async Task<LectureResultDto> IFmsDataProxy.GetLectureAsync(string lectureId)
+        async Task<StudentResultDto> IFmsDataProxy.GetStudentAsync(string appUserId)
         {
             try
             {
-                var lectureResult =
-                    await _client.GetFromJsonAsync<LectureResultDto>($"/lecture/{lectureId}");
+                var studentResult = await _httpClient.GetFromJsonAsync<StudentResultDto>($"/student/{appUserId}");
 
-                if (lectureResult == null)
-                    throw new InvalidOperationException("Lecture not found");
+                if (studentResult is null)
+                    throw new InvalidOperationException("Student not found");
 
-                return lectureResult;
+                return studentResult;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw;
+                throw new InvalidOperationException("Something went wrong with FmsDataProxy");
+            }
+        }
+
+        async Task<TeacherResultDto> IFmsDataProxy.GetTeacherAsync(string appUserId)
+        {
+            try
+            {
+                var teacherResult = await _httpClient.GetFromJsonAsync<TeacherResultDto>($"/teacher/{appUserId}");
+
+                if (teacherResult is null)
+                    throw new InvalidOperationException("Teacher not found");
+
+                return teacherResult;
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("Something went wrong with FmsDataProxy");
             }
         }
     }

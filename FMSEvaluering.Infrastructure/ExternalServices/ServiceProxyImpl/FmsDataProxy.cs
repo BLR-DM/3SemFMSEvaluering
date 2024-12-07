@@ -16,7 +16,7 @@ public class FmsDataProxy : IFmsDataProxy
     {
         try
         {
-            var studentResult = await _httpClient.GetFromJsonAsync<StudentResultDto>($"/fms/student/{appUserId}");
+            var studentResult = await _httpClient.GetFromJsonAsync<StudentResultDto>($"/student/{appUserId}");
 
             if (studentResult is null)
                 throw new InvalidOperationException("Student not found");
@@ -33,7 +33,7 @@ public class FmsDataProxy : IFmsDataProxy
     {
         try
         {
-            var teacherResult = await _httpClient.GetFromJsonAsync<TeacherResultDto>($"/fms/teacher/{appUserId}");
+            var teacherResult = await _httpClient.GetFromJsonAsync<TeacherResultDto>($"/teacher/{appUserId}");
 
             if (teacherResult is null)
                 throw new InvalidOperationException("Teacher not found");

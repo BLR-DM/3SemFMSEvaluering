@@ -24,17 +24,17 @@ public class ForumAccessHandler : IForumAccessHandler
 
         if (role == "student")
         {
-            var studentDomainService = _serviceProvider.GetRequiredService<IStudentApplicationService>();
-            var studentDto = await studentDomainService.GetStudentAsync(appUserId);
+            var studentApplicationService = _serviceProvider.GetRequiredService<IStudentApplicationService>();
+            var student = await studentApplicationService.GetStudentAsync(appUserId);
 
-            validatedForums.AddRange(forums.Where(forum => forum.ValidateStudentAccessAsync(studentDto)));
+            validatedForums.AddRange(forums.Where(forum => forum.ValidateStudentAccessAsync(student)));
         }
         else if (role == "teacher")
         {
-            var teacherDomainService = _serviceProvider.GetRequiredService<ITeacherApplicationService>();
-            var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
+            var teacherApplicationService = _serviceProvider.GetRequiredService<ITeacherApplicationService>();
+            var teacher = await teacherApplicationService.GetTeacherAsync(appUserId);
 
-            validatedForums.AddRange(forums.Where(forum => forum.ValidateTeacherAccessAsync(teacherDto)));
+            validatedForums.AddRange(forums.Where(forum => forum.ValidateTeacherAccessAsync(teacher)));
         }
 
         if (validatedForums.Count <= 0)
@@ -51,17 +51,17 @@ public class ForumAccessHandler : IForumAccessHandler
 
         if (role == "student")
         {
-            var studentDomainService = _serviceProvider.GetRequiredService<IStudentApplicationService>();
-            var studentDto = await studentDomainService.GetStudentAsync(appUserId);
+            var studentApplicationService = _serviceProvider.GetRequiredService<IStudentApplicationService>();
+            var student = await studentApplicationService.GetStudentAsync(appUserId);
 
-            hasAccess = forum.ValidateStudentAccessAsync(studentDto);
+            hasAccess = forum.ValidateStudentAccessAsync(student);
         }
         else if (role == "teacher")
         {
-            var teacherDomainService = _serviceProvider.GetRequiredService<ITeacherApplicationService>();
-            var teacherDto = await teacherDomainService.GetTeacherAsync(appUserId);
+            var teacherApplicationService = _serviceProvider.GetRequiredService<ITeacherApplicationService>();
+            var teacher = await teacherApplicationService.GetTeacherAsync(appUserId);
 
-            hasAccess = forum.ValidateTeacherAccessAsync(teacherDto);
+            hasAccess = forum.ValidateTeacherAccessAsync(teacher);
         }
 
         if (!hasAccess)

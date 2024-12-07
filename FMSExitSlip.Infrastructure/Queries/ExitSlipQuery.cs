@@ -1,4 +1,5 @@
-﻿using FMSExitSlip.Application.Queries.Interfaces;
+﻿using FMSExitSlip.Application.Helpers;
+using FMSExitSlip.Application.Queries.Interfaces;
 using FMSExitSlip.Application.Queries.QueryDto;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,11 +9,13 @@ public class ExitSlipQuery : IExitSlipQuery
 {
     private readonly ExitSlipContext _db;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IExitSlipAccessHandler _exitSlipAccessHandler;
 
-    public ExitSlipQuery(ExitSlipContext db, IServiceProvider serviceProvider)
+    public ExitSlipQuery(ExitSlipContext db, IServiceProvider serviceProvider, IExitSlipAccessHandler exitSlipAccessHandler)
     {
         _db = db;
         _serviceProvider = serviceProvider;
+        _exitSlipAccessHandler = exitSlipAccessHandler;
     }
 
     async Task<ExitSlipDto> IExitSlipQuery.GetExitSlipAsync(int exitSlipId, string appUserId, string role)
@@ -26,10 +29,9 @@ public class ExitSlipQuery : IExitSlipQuery
         if (exitSlip == null)
             throw new InvalidOperationException("Not found");
 
-        var hasAccess = await exitSlip.EnsureUserHasAccess(appUserId, _serviceProvider, role);
+        // Validate Access
+        await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
-        if (!hasAccess)
-            throw new UnauthorizedAccessException("You do not have access");
 
         var exitSlipDto = new ExitSlipDto
         {

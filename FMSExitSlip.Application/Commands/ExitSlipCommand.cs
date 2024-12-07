@@ -20,15 +20,17 @@ namespace FMSExitSlip.Application.Commands
         private readonly IUnitOfWork _unitOfWork;
         private readonly IExitSlipRepository _exitSlipRepository;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IExitSlipAccessHandler _exitSlipAccessHandler;
 
-        public ExitSlipCommand(IUnitOfWork unitOfWork, IExitSlipRepository exitSlipRepository, IServiceProvider serviceProvider)
+        public ExitSlipCommand(IUnitOfWork unitOfWork, IExitSlipRepository exitSlipRepository, IServiceProvider serviceProvider, IExitSlipAccessHandler exitSlipAccessHandler)
         {
             _unitOfWork = unitOfWork;
             _exitSlipRepository = exitSlipRepository;
             _serviceProvider = serviceProvider;
+            _exitSlipAccessHandler = exitSlipAccessHandler;
         }
 
-        async Task IExitSlipCommand.AddQuestionAsync(CreateQuestionDto questionDto, string appUserId)
+        async Task IExitSlipCommand.AddQuestionAsync(CreateQuestionDto questionDto, string appUserId, string role)
         {
             try
             {
@@ -36,6 +38,9 @@ namespace FMSExitSlip.Application.Commands
 
                 // Load
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(questionDto.exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
                 exitSlip.CreateQuestion(questionDto.Text, appUserId);
@@ -51,7 +56,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId)
+        async Task IExitSlipCommand.CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId, string role)
         {
             try
             {
@@ -59,6 +64,9 @@ namespace FMSExitSlip.Application.Commands
 
                 // Load
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(responseDto.AppUserId, role, exitSlip);
 
                 // Do
                 exitSlip.CreateResponse(responseDto.Text, responseDto.AppUserId, responseDto.QuestionId);
@@ -73,7 +81,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId)
+        async Task IExitSlipCommand.UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId, string role)
         {
             try
             {
@@ -81,6 +89,9 @@ namespace FMSExitSlip.Application.Commands
 
                 // Load
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(responseDto.AppUserId, role, exitSlip);
 
                 // Do
                 var response = exitSlip.UpdateResponse(responseDto.ResponseId, responseDto.Text, responseDto.AppUserId, responseDto.QuestionId);
@@ -96,7 +107,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.DeleteResponseAsync(DeleteResponseDto responseDto, int exitSlipId)
+        async Task IExitSlipCommand.DeleteResponseAsync(DeleteResponseDto responseDto, int exitSlipId, string role)
         {
             try
             {
@@ -104,6 +115,9 @@ namespace FMSExitSlip.Application.Commands
 
                 // Load
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(responseDto.AppUserId, role, exitSlip);
 
                 // Do
                 var response = exitSlip.DeleteResponse(responseDto.ResponseId, responseDto.AppUserId, responseDto.QuestionId);
@@ -119,7 +133,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId, string appUserId)
+        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId, string appUserId, string role)
         {
             try
             {
@@ -127,6 +141,9 @@ namespace FMSExitSlip.Application.Commands
 
                 // Load
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
                 var question = exitSlip.DeleteQuestion(questionDto.Id, appUserId);
@@ -165,14 +182,17 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.PublishExitSlip(int id, string appUserId, PublishExitSlipDto exitSlipDto)
+        async Task IExitSlipCommand.PublishExitSlip(int exitSlipId, string appUserId, PublishExitSlipDto exitSlipDto, string role)
         {
             try
             {
                 await _unitOfWork.BeginTransaction();
 
                 // Load
-                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(id);
+                var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
                 exitSlip.Publish(appUserId);
@@ -188,7 +208,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId, string appUserId)
+        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId, string appUserId, string role)
         {
             try
             {
@@ -196,6 +216,9 @@ namespace FMSExitSlip.Application.Commands
 
                 // Load
                 var exitSlip = await _exitSlipRepository.GetExitSlipAsync(exitSlipId);
+
+                // Validate Access
+                await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
                 var response = exitSlip.UpdateQuestion(questionDto.Id, questionDto.Text, appUserId);
