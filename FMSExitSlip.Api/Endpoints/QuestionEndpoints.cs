@@ -14,10 +14,10 @@ namespace FMSExitSlip.Api.Endpoints
                 async (CreateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
                 {
                     var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+                    var role = user.FindFirst("usertype")?.Value;
                     try
                     {
-                        await command.AddQuestionAsync(questionDto, appUserId);
+                        await command.AddQuestionAsync(questionDto, appUserId, role);
                         return Results.Ok("Question added");
                     }
                     catch (Exception)
@@ -35,9 +35,11 @@ namespace FMSExitSlip.Api.Endpoints
                     if (appUserId == null)
                         return Results.Unauthorized();
 
+                    var role = user.FindFirst("usertype")?.Value;
+
                     try
                     {
-                        await command.UpdateQuestionAsync(questionDto, id, appUserId);
+                        await command.UpdateQuestionAsync(questionDto, id, appUserId, role);
                         return Results.Ok("Question updated");
                     }
                     catch (Exception)

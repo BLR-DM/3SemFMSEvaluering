@@ -14,16 +14,16 @@ namespace FMSExitSlip.Api.Endpoints
                 async (int id, CreateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
                 {
                     //var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-                    await command.CreateResponseAsync(responseDto, id);
+                    var role = user.FindFirst("usertype")?.Value;
+                    await command.CreateResponseAsync(responseDto, id, role);
                 }).RequireAuthorization("Student").WithTags(tag);
 
             app.MapPut("/exitslip/{id}/question/response",
                 async (int id, UpdateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
                 {
                     //var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-                    await command.UpdateResponseAsync(responseDto, id);
+                    var role = user.FindFirst("usertype")?.Value;
+                    await command.UpdateResponseAsync(responseDto, id, role);
                 }).RequireAuthorization("Student").WithTags(tag);
         }
     }

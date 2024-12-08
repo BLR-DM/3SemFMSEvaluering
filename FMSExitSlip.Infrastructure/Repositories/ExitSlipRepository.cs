@@ -31,9 +31,17 @@ namespace FMSExitSlip.Infrastructure.Repositories
                 .SingleAsync(e => e.Id == id);
         }
 
-        async Task<IEnumerable<ExitSlip>> IExitSlipRepository.GetExitSlipsAsync()
+        async Task<List<ExitSlip>> IExitSlipRepository.GetExitSlipsAsync()
         {
-            return await _db.ExitSlips.ToListAsync();
+            try
+            {
+                var result = await _db.ExitSlips.ToListAsync();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("Couldn't connect to server");
+            }
         }
 
         void IExitSlipRepository.UpdateResponse(Response response, byte[] rowVersion)
