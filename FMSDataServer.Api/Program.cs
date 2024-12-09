@@ -428,6 +428,25 @@ app.MapGet("/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _conte
     return Results.Ok(lecture);
 });
 
+app.MapGet("/lectures", async (FMSDataDbContext _context) =>
+{
+    var lectures = await _context.Lectures
+        .AsNoTracking()
+        .Select(l => new LectureDto
+        {
+            Id = l.Id.ToString(),
+            Title = l.Title,
+            Date = l.Date,
+        })
+        .ToListAsync();
+
+    if (lectures == null)
+    {
+        return Results.NotFound($"No teachers found.");
+    }
+    return Results.Ok(lectures);
+});
+
 
 
 

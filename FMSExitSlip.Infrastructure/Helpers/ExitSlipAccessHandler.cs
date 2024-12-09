@@ -1,5 +1,5 @@
 ﻿using FMSExitSlip.Application.Helpers;
-using FMSExitSlip.Application.Services;
+using FMSExitSlip.Application.Services.ApplicationServiceInterface;
 using FMSExitSlip.Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 

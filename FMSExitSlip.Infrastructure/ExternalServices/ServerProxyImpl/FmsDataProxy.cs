@@ -12,6 +12,23 @@ namespace FMSExitSlip.Infrastructure.ExternalServices.ServerProxyImpl
             _httpClient = httpClient;
         }
 
+        async Task<IEnumerable<LectureResultDto>> IFmsDataProxy.GetLecturesAsync()
+        {
+            try
+            {
+                var lectureResults = await _httpClient.GetFromJsonAsync<IEnumerable<LectureResultDto>>("/lectures");
+
+                if (lectureResults is null)
+                    throw new InvalidOperationException("No lectures found");
+
+                return lectureResults;
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("Something went wrong with FmsDataProxy");
+            }
+        }
+
         async Task<StudentResultDto> IFmsDataProxy.GetStudentAsync(string appUserId)
         {
             try

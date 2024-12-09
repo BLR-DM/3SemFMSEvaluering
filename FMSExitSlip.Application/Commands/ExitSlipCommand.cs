@@ -5,6 +5,7 @@ using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Application.Helpers;
 using FMSExitSlip.Application.Repositories;
 using FMSExitSlip.Application.Services;
+using FMSExitSlip.Application.Services.ApplicationServiceInterface;
 using FMSExitSlip.Domain.Entities;
 
 
@@ -158,7 +159,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.CreateExitSlipAsync(CreateExitSlipDto exitSlipDto, string appUserId)
+        async Task IExitSlipCommand.CreateExitSlipAsync(CreateExitSlipDto exitSlipDto) // BLIVER IKKE BRUGT
         {
             try
             {
@@ -167,10 +168,9 @@ namespace FMSExitSlip.Application.Commands
                 // Load
                 var otherExitSlips = await _exitSlipRepository.GetExitSlipsAsync();
 
-                var teacher = await _teacherApplicationService.GetTeacherAsync(appUserId); // test
 
                 // Do
-                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, appUserId, otherExitSlips, teacher);
+                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, otherExitSlips);
                 await _exitSlipRepository.AddExitSlipAsync(exitSlip);
 
                 // Save
