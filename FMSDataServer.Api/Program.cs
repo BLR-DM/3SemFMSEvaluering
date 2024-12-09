@@ -258,6 +258,7 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
 {
     var student = await _context.Students
         .AsNoTracking()
+        .Include(s => s.AppUser)
         .Include(s => s.Class)
         .ThenInclude(c => c.TeacherSubjects)
         .ThenInclude(ts => ts.Lectures)
@@ -348,7 +349,7 @@ app.MapGet("/teachersubject/{teacherSubjectId}/teacher", async (string teacherSu
     return Results.Ok(teacher);
 });
 
-app.MapGet("/class/{classId}/teacher", async (string classId, FMSDataDbContext _context) =>
+app.MapGet("/class/{classId}/teachers", async (string classId, FMSDataDbContext _context) =>
 {
     var teachers = await _context.Teachers
         .AsNoTracking()

@@ -45,4 +45,55 @@ public class FmsDataProxy : IFmsDataProxy
             throw new InvalidOperationException("Something went wrong with FmsDataProxy");
         }
     }
+
+    async Task<TeacherResultDto> IFmsDataProxy.GetTeacherForSubjectAsync(string teacherSubjectId)
+    {
+        try
+        {
+            var teacherResult = await _httpClient.GetFromJsonAsync<TeacherResultDto>($"/teachersubject/{teacherSubjectId}/teacher");
+
+            if (teacherResult is null)
+                throw new InvalidOperationException("Teacher not found");
+
+            return teacherResult;
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException("Something went wrong with FmsDataProxy");
+        }
+    }
+
+    async Task<IEnumerable<TeacherResultDto>> IFmsDataProxy.GetTeachersAsync()
+    {
+        try
+        {
+            var teacherResult = await _httpClient.GetFromJsonAsync<IEnumerable<TeacherResultDto>>($"/teachers");
+
+            if (teacherResult is null)
+                throw new InvalidOperationException("No teachers found");
+
+            return teacherResult;
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException("Something went wrong with FmsDataProxy");
+        }
+    }
+
+    async Task<IEnumerable<TeacherResultDto>> IFmsDataProxy.GetTeachersForClassAsync(string classId)
+    {
+        try
+        {
+            var teacherResult = await _httpClient.GetFromJsonAsync<IEnumerable<TeacherResultDto>>($"/class/{classId}/teachers");
+
+            if (teacherResult is null)
+                throw new InvalidOperationException("No teachers found");
+
+            return teacherResult;
+        }
+        catch (Exception)
+        {
+            throw new InvalidOperationException("Something went wrong with FmsDataProxy");
+        }
+    }
 }

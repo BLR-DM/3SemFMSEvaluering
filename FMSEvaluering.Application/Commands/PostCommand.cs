@@ -111,7 +111,7 @@ public class PostCommand : IPostCommand
 
             var upvotesCount = post.Votes.Count(v => v.VoteType);
 
-            if (upvotesCount == 5)
+            if (upvotesCount == 2)
             {
                 _notificationService.NotifyTeacherOnPostDesiredLikes(forum, upvotesCount);
             }

@@ -21,18 +21,18 @@ namespace FMSEvaluering.Application.Services
             _mail = mail;
             _teacherApplicationService = teacherApplicationService;
         }
-        void INotificationService.NotifyTeacherOnPostDesiredLikes(Forum forum, int upvotes)
+        async Task INotificationService.NotifyTeacherOnPostDesiredLikes(Forum forum, int upvotes)
         {
             if (forum is SubjectForum subjectForum)
             {
-                var teacher = _teacherApplicationService.GetTeacherForTeacherSubjectAsync(subjectForum.SubjectId);
+                var teacher = await _teacherApplicationService.GetTeacherForSubjectAsync(subjectForum.SubjectId.ToString());
 
                 generateAndSendEmail(teacher, upvotes, forum);
             }
 
             if (forum is ClassForum classForum)
             {
-                var teachers = _teacherApplicationService.GetTeachersForClassAsync(classForum.ClassId);
+                var teachers = await _teacherApplicationService.GetTeachersForClassAsync(classForum.ClassId.ToString());
                 foreach(var teacher in teachers)
                 {
                     generateAndSendEmail(teacher, upvotes, forum);
@@ -41,7 +41,7 @@ namespace FMSEvaluering.Application.Services
 
             if (forum is PublicForum)
             {
-                var teachers = _teacherApplicationService.GetTeachers();
+                var teachers = await _teacherApplicationService.GetTeachersAsync();
                 foreach (var teacher in teachers)
                 {
                     generateAndSendEmail(teacher, upvotes, forum);
