@@ -66,7 +66,7 @@ public class ExitSlipQuery : IExitSlipQuery
 
     async Task<IEnumerable<ExitSlipDto>> IExitSlipQuery.GetExitSlipsAsync(RequestLectureDto requestDto, string role)
     {
-        // GET teacher 
+        // GET teacher  
         var teacher = await _teacherApplicationService.GetTeacherAsync(requestDto.TeacherAppUserId);
 
         var lectures = teacher.TeacherSubjects
