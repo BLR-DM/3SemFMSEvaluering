@@ -71,3 +71,11 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  
+  fakemailservice:
+    environment:
+      - SMTP_PORT=1025
+      - SMTP_HOST=1080
+    ports:
+      - "2525:1025"
+      - "5080:1080"
