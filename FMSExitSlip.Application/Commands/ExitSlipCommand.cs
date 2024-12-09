@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
+﻿using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
 using FMSExitSlip.Application.Commands.CommandDto.QuestionDto;
 using FMSExitSlip.Application.Commands.CommandDto.ResponseDto;
 using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Application.Helpers;
 using FMSExitSlip.Application.Repositories;
+using FMSExitSlip.Application.Services;
 using FMSExitSlip.Domain.Entities;
 
 
@@ -21,13 +17,16 @@ namespace FMSExitSlip.Application.Commands
         private readonly IExitSlipRepository _exitSlipRepository;
         private readonly IServiceProvider _serviceProvider;
         private readonly IExitSlipAccessHandler _exitSlipAccessHandler;
+        private readonly ITeacherApplicationService _teacherApplicationService;
 
-        public ExitSlipCommand(IUnitOfWork unitOfWork, IExitSlipRepository exitSlipRepository, IServiceProvider serviceProvider, IExitSlipAccessHandler exitSlipAccessHandler)
+        public ExitSlipCommand(IUnitOfWork unitOfWork, IExitSlipRepository exitSlipRepository, IServiceProvider serviceProvider, 
+            IExitSlipAccessHandler exitSlipAccessHandler, ITeacherApplicationService teacherApplicationService)
         {
             _unitOfWork = unitOfWork;
             _exitSlipRepository = exitSlipRepository;
             _serviceProvider = serviceProvider;
             _exitSlipAccessHandler = exitSlipAccessHandler;
+            _teacherApplicationService = teacherApplicationService;
         }
 
         async Task IExitSlipCommand.AddQuestionAsync(CreateQuestionDto questionDto, string appUserId, string role)
@@ -168,8 +167,10 @@ namespace FMSExitSlip.Application.Commands
                 // Load
                 var otherExitSlips = await _exitSlipRepository.GetExitSlipsAsync();
 
+                var teacher = await _teacherApplicationService.GetTeacherAsync(appUserId); // test
+
                 // Do
-                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, appUserId, otherExitSlips, _serviceProvider);
+                var exitSlip = ExitSlip.Create(exitSlipDto.Title, exitSlipDto.MaxQuestions, exitSlipDto.LectureId, appUserId, otherExitSlips, teacher);
                 await _exitSlipRepository.AddExitSlipAsync(exitSlip);
 
                 // Save

@@ -27,8 +27,23 @@ public class TeacherApplicationService : ITeacherApplicationService
                 Class = new ModelClassValue
                 {
                     Id = ts.Class.Id,
-                    Name = ts.Class.Name
-                }
+                    Name = ts.Class.Name,
+                    Students = ts.Class.Students.Select(s => new StudentValue
+                    {
+                        AppUserId = s.AppUserId
+                    })
+                },
+                Subject = new SubjectValue
+                {
+                    Id = ts.Subject.Id,
+                    Name = ts.Subject.Name
+                },
+                Lectures = ts.Lectures.Select(l => new LectureValue
+                {
+                    Id = l.Id,
+                    Title = l.Title,
+                    Date = l.Date
+                })
             })
         };
 

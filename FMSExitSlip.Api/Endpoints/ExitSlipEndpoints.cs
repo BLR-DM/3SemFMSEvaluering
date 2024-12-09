@@ -1,7 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Data;
+using System.Security.Claims;
 using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
 using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Application.Queries.Interfaces;
+using FMSExitSlip.Application.Queries.QueryDto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FMSExitSlip.Api.Endpoints
 {
@@ -25,12 +28,15 @@ namespace FMSExitSlip.Api.Endpoints
                 }
             }).RequireAuthorization("Teacher").WithTags("ExitSlip");
 
-            app.MapPut("/exitslip/{id}/publish", async (int id, PublishExitSlipDto publishExitSlipDto, HttpContext httpContext, IExitSlipCommand command) =>
+            app.MapPut("/exitslip/{id}/publish", async (int id, PublishExitSlipDto publishExitSlipDto, 
+                ClaimsPrincipal user, IExitSlipCommand command) =>
             {
-                var appUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 try
                 {
-                    await command.PublishExitSlip(id, appUserId, publishExitSlipDto);
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var role = user.FindFirst("usertype")?.Value;
+
+                    await command.PublishExitSlip(id, appUserId!, publishExitSlipDto, role!);
                     return Results.Ok("ExitSlip published");
                 }
                 catch (Exception)
@@ -49,6 +55,28 @@ namespace FMSExitSlip.Api.Endpoints
                 var result = await query.GetExitSlipAsync(id, appUserId, role);
                 return Results.Ok(result);
             });
+
+            app.MapGet("/teacher/exitslip",
+                async ([FromBody] RequestLectureDto requestDto, IExitSlipQuery query, ClaimsPrincipal user) =>
+                {
+                    try
+                    {
+                        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        var role = user.FindFirst("usertype")?.Value;
+
+                        //requestDto.TeacherAppUserId = appUserId!;
+                        //requestDto.StartDate = new DateTime(2024, 11, 01);
+                        //requestDto.EndDate = new DateTime(2024, 12, 08);
+
+                        var result = await query.GetExitSlipsAsync(requestDto, role!);
+                        return Results.Ok(result);
+                    }
+                    catch (Exception)
+                    {
+                        return Results.BadRequest("Failed to fetch exitslips");
+                        throw;
+                    }
+                });
         }
     }
 }

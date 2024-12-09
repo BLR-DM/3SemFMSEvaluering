@@ -11,4 +11,6 @@ public record ExitSlipDto
     public int LectureId { get; set; }
     public IEnumerable<QuestionDto> Questions { get; set; }
 
+    public int StudentCount { get; set; }
+    public int ParticipationCount { get; set; }
 }

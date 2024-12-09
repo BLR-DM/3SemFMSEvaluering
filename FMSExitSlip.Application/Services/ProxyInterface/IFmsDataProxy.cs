@@ -1,4 +1,6 @@
-﻿namespace FMSExitSlip.Application.Services.ProxyInterface
+﻿using FMSExitSlip.Domain.Values.DataServer;
+
+namespace FMSExitSlip.Application.Services.ProxyInterface
 {
     public interface IFmsDataProxy
     {
@@ -19,6 +21,7 @@
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public List<StudentResultDto> Students { get; set; }
         public List<TeacherSubjectResultDto> TeacherSubjectResults { get; set; }
     }
 
@@ -34,10 +37,16 @@
     public record TeacherSubjectResultDto
     {
         public string Id { get; set; }
-
+        public SubjectResultDto Subject { get; set; }
         public ClassResultDto Class { get; set; }
-        List<LectureResultDto> Lectures { get; set; }
+        public List<LectureResultDto> Lectures { get; set; }
+    }
 
+    public record SubjectResultDto()
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<TeacherSubjectResultDto> TeacherSubjects { get; set; }
     }
 
     public record LectureResultDto
