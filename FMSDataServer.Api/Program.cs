@@ -264,6 +264,11 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
         .ThenInclude(ts => ts.Lectures)
         .SingleOrDefaultAsync(s => s.AppUser.Id == appUserId);
 
+    if (student == null)
+    {
+        return Results.NotFound($"Student with AppUserId {appUserId} not found.");
+    }
+
     var studentDto = new StudentDto
     {
         FirstName = student.FirstName,
@@ -271,7 +276,7 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
         Email = student.Email,
         Class = new ModelClassDto
         {
-            Id = student.Class.Id,
+            Id = student.Class.Id.ToString(),
             Name = student.Class.Name,
             TeacherSubjects = student.Class.TeacherSubjects.Select(ts => new TeacherSubjectDto
             {
@@ -287,12 +292,7 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
         AppUserId = student.AppUser.Id
     };
 
-    if (student == null)
-    {
-        return Results.NotFound($"Student with AppUserId {appUserId} not found.");
-    }
-
-    return Results.Ok(student);
+    return Results.Ok(studentDto);
 });
 
 app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
@@ -314,7 +314,7 @@ app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _co
                 Id = ts.Id.ToString(),
                 Class = new ModelClassDto
                 {
-                    Id = ts.Class.Id,
+                    Id = ts.Class.Id.ToString(),
                     Name = ts.Class.Name
                 }
             }).ToList(),

@@ -104,10 +104,13 @@ public class PostCommand : IPostCommand
             if (behaviour == Post.HandleVoteBehaviour.Update)
                 _forumRepository.UpdateVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
             else if (behaviour == Post.HandleVoteBehaviour.Delete)
+            {
                 _forumRepository.DeleteVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
-
+                post.DeleteVote(appUserId);
+            }
+            
             // Save
-            await _unitOfWork.Commit();
+                await _unitOfWork.Commit();
 
             var upvotesCount = post.Votes.Count(v => v.VoteType);
 

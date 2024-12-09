@@ -23,7 +23,7 @@ public class FmsDataProxy : IFmsDataProxy
 
             return studentResult;
         }
-        catch (Exception)
+        catch (Exception e)
         {
             throw new InvalidOperationException("Something went wrong with FmsDataProxy");
         }
