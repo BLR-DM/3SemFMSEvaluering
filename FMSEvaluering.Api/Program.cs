@@ -1,6 +1,7 @@
 using FMSEvaluering.Api.Endpoints;
 using FMSEvaluering.Application;
 using FMSEvaluering.Infrastructure.Configuration;
+using FMSEvaluering.Infrastructure.MailService;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapPost("Test", () =>
+{
+    return Results.Ok("Test");
+}).AllowAnonymous();
 
 app.MapForumEndpoints();
 

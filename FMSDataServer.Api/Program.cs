@@ -258,10 +258,16 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
 {
     var student = await _context.Students
         .AsNoTracking()
+        .Include(s => s.AppUser)
         .Include(s => s.Class)
         .ThenInclude(c => c.TeacherSubjects)
         .ThenInclude(ts => ts.Lectures)
         .SingleOrDefaultAsync(s => s.AppUser.Id == appUserId);
+
+    if (student == null)
+    {
+        return Results.NotFound($"Student with AppUserId {appUserId} not found.");
+    }
 
     var studentDto = new StudentDto
     {
@@ -270,7 +276,7 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
         Email = student.Email,
         Class = new ModelClassDto
         {
-            Id = student.Class.Id,
+            Id = student.Class.Id.ToString(),
             Name = student.Class.Name,
             TeacherSubjects = student.Class.TeacherSubjects.Select(ts => new TeacherSubjectDto
             {
@@ -286,12 +292,7 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
         AppUserId = student.AppUser.Id
     };
 
-    if (student == null)
-    {
-        return Results.NotFound($"Student with AppUserId {appUserId} not found.");
-    }
-
-    return Results.Ok(student);
+    return Results.Ok(studentDto);
 });
 
 app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
@@ -313,7 +314,7 @@ app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _co
                 Id = ts.Id.ToString(),
                 Class = new ModelClassDto
                 {
-                    Id = ts.Class.Id,
+                    Id = ts.Class.Id.ToString(),
                     Name = ts.Class.Name
                 }
             }).ToList(),
@@ -326,6 +327,65 @@ app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _co
         return Results.NotFound($"Teacher with AppUserId {appUserId} not found.");
     }
     return Results.Ok(teacher);
+});
+
+app.MapGet("/teachersubject/{teacherSubjectId}/teacher", async (string teacherSubjectId, FMSDataDbContext _context) =>
+{
+    var teacher = await _context.Teachers
+        .AsNoTracking()
+        .Where(t => t.TeacherSubjects.Any(ts => ts.Id.ToString().Equals(teacherSubjectId)))
+        .Select(t => new TeacherDto
+        {
+            FirstName = t.FirstName,
+            LastName = t.LastName,
+            Email = t.Email,
+        })
+        .SingleOrDefaultAsync();
+
+    if (teacher == null)
+    {
+        return Results.NotFound($"Teacher for teachersubject {teacherSubjectId} not found.");
+    }
+    return Results.Ok(teacher);
+});
+
+app.MapGet("/class/{classId}/teachers", async (string classId, FMSDataDbContext _context) =>
+{
+    var teachers = await _context.Teachers
+        .AsNoTracking()
+        .Where(t => t.TeacherSubjects.Any(ts => ts.Class.Id.ToString().Equals(classId)))
+        .Select(t => new TeacherDto
+        {
+            FirstName = t.FirstName,
+            LastName = t.LastName,
+            Email = t.Email,
+        })
+        .ToListAsync();
+
+    if (teachers == null)
+    {
+        return Results.NotFound($"No teachers for class {classId} not found.");
+    }
+    return Results.Ok(teachers);
+});
+
+app.MapGet("/teachers", async (FMSDataDbContext _context) =>
+{
+    var teachers = await _context.Teachers
+        .AsNoTracking()
+        .Select(t => new TeacherDto
+        {
+            FirstName = t.FirstName,
+            LastName = t.LastName,
+            Email = t.Email,
+        })
+        .ToListAsync();
+
+    if (teachers == null)
+    {
+        return Results.NotFound($"No teachers found.");
+    }
+    return Results.Ok(teachers);
 });
 
 app.MapGet("/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _context) =>

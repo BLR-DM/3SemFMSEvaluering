@@ -1,10 +1,12 @@
 ﻿using FMSEvaluering.Application.Helpers;
+using FMSEvaluering.Application.MailService;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Application.Services.ProxyInterface;
 using FMSEvaluering.Infrastructure.ExternalServices.ServiceProxyImpl;
 using FMSEvaluering.Infrastructure.Helpers;
 using FMSEvaluering.Infrastructure.Helpers.Interfaces;
+using FMSEvaluering.Infrastructure.MailService;
 using FMSEvaluering.Infrastructure.Queries;
 using FMSEvaluering.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,8 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork<EvaluationContext>>();
         services.AddScoped<IForumMapper, ForumMapper>();
         services.AddScoped<IForumAccessHandler, ForumAccessHandler>();
+        services.AddScoped<IEmailSender, EmailSender>();
+        services.AddScoped<IMail, Mail>();
 
         // External services
         services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>

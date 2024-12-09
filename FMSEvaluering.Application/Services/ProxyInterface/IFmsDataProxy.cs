@@ -4,6 +4,9 @@ public interface IFmsDataProxy
 {
     Task<StudentResultDto> GetStudentAsync(string appUserId);
     Task<TeacherResultDto> GetTeacherAsync(string appUserId);
+    Task<TeacherResultDto> GetTeacherForSubjectAsync(string teacherSubjectId);
+    Task<IEnumerable<TeacherResultDto>> GetTeachersAsync();
+    Task<IEnumerable<TeacherResultDto>> GetTeachersForClassAsync(string classId);
 }
 
 public record StudentResultDto

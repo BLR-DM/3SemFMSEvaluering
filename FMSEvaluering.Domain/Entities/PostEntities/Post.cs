@@ -71,7 +71,6 @@ public class Post : DomainEntity
         }
         else if (vote.VoteType == voteType)
         {
-            DeleteVote(appUserId);
             return HandleVoteBehaviour.Delete;
         }
         else

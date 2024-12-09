@@ -1,8 +1,11 @@
-﻿using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
+﻿using System.Net.Mail;
+using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
+using FMSEvaluering.Application.MailService;
 using FMSEvaluering.Application.Repositories;
+using FMSEvaluering.Application.Services;
 using FMSEvaluering.Domain.Entities.PostEntities;
 
 namespace FMSEvaluering.Application.Commands;
@@ -11,13 +14,16 @@ public class PostCommand : IPostCommand
 {
     private readonly IForumRepository _forumRepository;
     private readonly IForumAccessHandler _forumAccessHandler;
+    private readonly INotificationService _notificationService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PostCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IForumAccessHandler forumAccessHandler)
+    public PostCommand(IUnitOfWork unitOfWork, IForumRepository forumRepository, IForumAccessHandler forumAccessHandler,
+        INotificationService notificationService)
     {
         _unitOfWork = unitOfWork;
         _forumRepository = forumRepository;
         _forumAccessHandler = forumAccessHandler;
+        _notificationService = notificationService;
     }
 
     async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto, string firstName, string lastName, int postId, string appUserId, string role, int forumId) // int postId?
@@ -98,10 +104,21 @@ public class PostCommand : IPostCommand
             if (behaviour == Post.HandleVoteBehaviour.Update)
                 _forumRepository.UpdateVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
             else if (behaviour == Post.HandleVoteBehaviour.Delete)
+            {
                 _forumRepository.DeleteVote(post.Votes.First(v => v.AppUserId == appUserId), voteDto.RowVersion);
-
+                post.DeleteVote(appUserId);
+            }
+            
             // Save
-            await _unitOfWork.Commit();
+                await _unitOfWork.Commit();
+
+            var upvotesCount = post.Votes.Count(v => v.VoteType);
+
+            if (upvotesCount == 2)
+            {
+                _notificationService.NotifyTeacherOnPostDesiredLikes(forum, upvotesCount);
+            }
+
         }
         catch (Exception e)
         {

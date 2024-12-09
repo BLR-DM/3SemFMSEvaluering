@@ -32,3 +32,5 @@ services:
       context: .
       dockerfile: FMSExitSlip.Api/Dockerfile
 
+  fakemailservice:
+    image: "haravich/fake-smtp-server"
