@@ -51,9 +51,9 @@ public class ExitSlip : DomainEntity
             throw new Exception("Only one exit slip per lesson is allowed.");
     }
 
-    public void GetAmmountOfUniqueResponses()
+    public int GetAmmountOfUniqueResponses()
     {
-        var uniqueReponses = _questions.SelectMany(q => q.Responses).Select(r => r.AppUserId).Distinct().Count();
+        return _questions.SelectMany(q => q.Responses).Select(r => r.AppUserId).Distinct().Count();
     }
     public void CreateQuestion(string text, string appUserId)
     {

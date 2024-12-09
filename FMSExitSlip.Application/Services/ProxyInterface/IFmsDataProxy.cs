@@ -6,6 +6,7 @@ namespace FMSExitSlip.Application.Services.ProxyInterface
     {
         Task<StudentResultDto> GetStudentAsync(string studentId);
         Task<TeacherResultDto> GetTeacherAsync(string teacherId);
+        Task<IEnumerable<StudentResultDto>> GetStudentsForLecture(string lectureId);
     }
 
     public record StudentResultDto

@@ -36,6 +36,12 @@ public class ExitSlipQuery : IExitSlipQuery
         await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
 
+        //Evt check her hvor mange students der har svaret
+        //var uniqueResponses = exitSlip.GetAmmountOfUniqueResponses();
+        //var students = _studentApplicationService.GetStudentsForLecture(exitSlip.LectureId.ToString());
+        //var ammountAnswered = $"{uniqueResponses}/{students.Count}";
+
+
         var exitSlipDto = new ExitSlipDto
         {
             Id = exitSlip.Id,

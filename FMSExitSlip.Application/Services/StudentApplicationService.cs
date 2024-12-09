@@ -28,4 +28,15 @@ public class StudentApplicationService : IStudentApplicationService
             AppUserId = studentResultDto.AppUserId
         };
     }
+
+    async Task<IEnumerable<StudentValue>> IStudentApplicationService.GetStudentsForLecture(string lectureId)
+    {
+        var studentResultDtos = await _fmsDataProxy.GetStudentsForLecture(lectureId);
+
+        return studentResultDtos.Select(s => new StudentValue
+        {
+            AppUserId = s.AppUserId
+        });
+
+    }
 }
