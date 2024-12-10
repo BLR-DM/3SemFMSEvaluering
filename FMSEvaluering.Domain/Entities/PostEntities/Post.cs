@@ -120,8 +120,11 @@ public class Post : DomainEntity
         _comments.Add(comment);
     }
 
-    public Comment UpdateComment(int commentId, string text)
+    public Comment UpdateComment(int commentId, string text, string appUserId)
     {
+        if (!AppUserId.Equals(appUserId))
+            throw new ArgumentException("Only the creater of the post can edit it");
+
         var comment = Comments.FirstOrDefault(c => c.Id == commentId);
         if (comment is null) throw new ArgumentException("Comment not found");
 
