@@ -22,7 +22,6 @@ namespace FMSExitSlip.Infrastructure.Configuration
             services.AddScoped<IUnitOfWork, UnitOfWork<ExitSlipContext>>();
             services.AddScoped<IExitSlipRepository, ExitSlipRepository>();
             services.AddScoped<IExitSlipQuery, ExitSlipQuery>();
-            services.AddScoped<ITeacherApplicationService, TeacherApplicationService>(); // Test
             services.AddScoped<IExitSlipAccessHandler, ExitSlipAccessHandler>();
             services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>
             {
