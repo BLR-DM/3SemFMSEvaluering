@@ -30,10 +30,6 @@ namespace FMSExitSlip.DatabaseMigration.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsPublished")
                         .HasColumnType("bit");
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMSDataServer.Api.Migrations
 {
     [DbContext(typeof(FMSDataDbContext))]
-    [Migration("20241201182331_init")]
-    partial class init
+    [Migration("20241210220857_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

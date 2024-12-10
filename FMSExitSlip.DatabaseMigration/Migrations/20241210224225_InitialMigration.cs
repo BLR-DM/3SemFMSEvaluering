@@ -19,7 +19,6 @@ namespace FMSExitSlip.DatabaseMigration.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MaxQuestions = table.Column<int>(type: "int", nullable: false),
                     IsPublished = table.Column<bool>(type: "bit", nullable: false),
-                    AppUserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LectureId = table.Column<int>(type: "int", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
