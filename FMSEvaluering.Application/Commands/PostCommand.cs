@@ -70,7 +70,7 @@ public class PostCommand : IPostCommand
             var post = forum.GetPostById(commentDto.PostId);
 
             // Do
-            var comment = post.UpdateComment(commentDto.CommentId, commentDto.Text);
+            var comment = post.UpdateComment(commentDto.CommentId, commentDto.Text, appUserId);
 
             // Save
             _forumRepository.UpdateComment(comment, commentDto.RowVersion);
