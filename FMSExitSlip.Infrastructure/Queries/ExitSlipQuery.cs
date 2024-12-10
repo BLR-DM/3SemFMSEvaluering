@@ -13,12 +13,14 @@ public class ExitSlipQuery : IExitSlipQuery
     private readonly ExitSlipContext _db;
     private readonly IExitSlipAccessHandler _exitSlipAccessHandler;
     private readonly ITeacherApplicationService _teacherApplicationService;
+    private readonly IStudentApplicationService _studentApplicationService;
 
-    public ExitSlipQuery(ExitSlipContext db, IExitSlipAccessHandler exitSlipAccessHandler, ITeacherApplicationService teacherApplicationService)
+    public ExitSlipQuery(ExitSlipContext db, IExitSlipAccessHandler exitSlipAccessHandler, ITeacherApplicationService teacherApplicationService, IStudentApplicationService studentApplicationService)
     {
         _db = db;
         _exitSlipAccessHandler = exitSlipAccessHandler;
         _teacherApplicationService = teacherApplicationService;
+        _studentApplicationService = studentApplicationService;
     }
 
     async Task<ExitSlipDto> IExitSlipQuery.GetExitSlipAsync(int exitSlipId, string appUserId, string role)
@@ -37,9 +39,8 @@ public class ExitSlipQuery : IExitSlipQuery
 
 
         //Evt check her hvor mange students der har svaret
-        //var uniqueResponses = exitSlip.GetAmmountOfUniqueResponses();
-        //var students = _studentApplicationService.GetStudentsForLecture(exitSlip.LectureId.ToString());
-        //var ammountAnswered = $"{uniqueResponses}/{students.Count}";
+        var uniqueResponses = exitSlip.GetAmmountOfUniqueResponses();
+        var students = await _studentApplicationService.GetStudentsForLecture(exitSlip.LectureId.ToString());
 
 
         var exitSlipDto = new ExitSlipDto
@@ -51,6 +52,8 @@ public class ExitSlipQuery : IExitSlipQuery
             MaxQuestions = exitSlip.MaxQuestions,
             RowVersion = exitSlip.RowVersion,
             Title = exitSlip.Title,
+            StudentCount = students.Count(),
+            ParticipationCount = uniqueResponses,
             Questions = exitSlip.Questions.Select(q => new QuestionDto
             {
                 Id = q.Id,
@@ -89,9 +92,6 @@ public class ExitSlipQuery : IExitSlipQuery
 
         if (exitSlips is null || !exitSlips.Any())
             throw new InvalidOperationException("Exitslips not found");
-
-        // Validate Access
-        //await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlips.First()); // test
 
 
         var exitSlipsDto = exitSlips.Select(exitSlip => new ExitSlipDto
