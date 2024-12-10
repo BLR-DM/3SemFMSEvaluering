@@ -437,16 +437,18 @@ app.MapGet("/lecture/{lectureId}/students", async (int lectureId, FMSDataDbConte
         {
             AppUserId = s.AppUser.Id
         }).ToListAsync();
-        
+
 
     if (students == null)
     {
         return Results.NotFound($"No students for lecture {lectureId} was found.");
     }
+
     return Results.Ok(students);
 
 
-    return Results.Ok(students);
+});
+
 app.MapGet("/lectures", async (FMSDataDbContext _context) =>
 {
     var lectures = await _context.Lectures
