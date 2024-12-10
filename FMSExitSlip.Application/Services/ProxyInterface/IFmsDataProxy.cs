@@ -1,4 +1,4 @@
-﻿using FMSExitSlip.Domain.Values.DataServer;
+using FMSExitSlip.Domain.Values.DataServer;
 
 namespace FMSExitSlip.Application.Services.ProxyInterface
 {
@@ -7,6 +7,7 @@ namespace FMSExitSlip.Application.Services.ProxyInterface
         Task<StudentResultDto> GetStudentAsync(string studentId);
         Task<TeacherResultDto> GetTeacherAsync(string teacherId);
         Task<IEnumerable<StudentResultDto>> GetStudentsForLecture(string lectureId);
+        Task<IEnumerable<LectureResultDto>> GetLecturesAsync();
     }
 
     public record StudentResultDto

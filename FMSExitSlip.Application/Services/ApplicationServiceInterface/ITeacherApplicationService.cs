@@ -1,6 +1,6 @@
 ﻿using FMSExitSlip.Domain.Values.DataServer;
 
-namespace FMSExitSlip.Application.Services
+namespace FMSExitSlip.Application.Services.ApplicationServiceInterface
 {
     public interface ITeacherApplicationService
     {

@@ -2,6 +2,7 @@
 using FMSExitSlip.Application.Queries.Interfaces;
 using FMSExitSlip.Application.Repositories;
 using FMSExitSlip.Application.Services;
+using FMSExitSlip.Application.Services.ApplicationServiceInterface;
 using FMSExitSlip.Application.Services.ProxyInterface;
 using FMSExitSlip.Infrastructure.ExternalServices.ServerProxyImpl;
 using FMSExitSlip.Infrastructure.Helpers;

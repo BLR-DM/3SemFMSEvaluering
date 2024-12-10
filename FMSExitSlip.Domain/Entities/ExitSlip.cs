@@ -10,30 +10,27 @@ public class ExitSlip : DomainEntity
     {
     }
 
-    private ExitSlip(string title, int maxQuestions, string appUserId, int lectureId,
-        IEnumerable<ExitSlip> otherExitSlips, TeacherValue teacher)
+    private ExitSlip(string title, int maxQuestions, int lectureId,
+        IEnumerable<ExitSlip> otherExitSlips)
     {
         Title = title;
         MaxQuestions = maxQuestions;
-        AppUserId = appUserId;
         LectureId = lectureId;
 
-        ValidateTeacherAccess(teacher);
         AssureOnlyOneExitSlipPrLesson(otherExitSlips);
     }
 
     public string Title { get; protected set; }
     public int MaxQuestions { get; protected set; }
     public bool IsPublished { get; protected set; }
-    public string AppUserId { get; protected set; }
     public int LectureId { get; protected set; }
 
     public ICollection<Question> Questions => _questions;
 
-    public static ExitSlip Create(string title, int maxQuestions, int lectureId, string appUserId,
-        IEnumerable<ExitSlip> otherExitSlips, TeacherValue teacher)
+    public static ExitSlip Create(string title, int maxQuestions, int lectureId,
+        IEnumerable<ExitSlip> otherExitSlips)
     {
-        return new ExitSlip(title, maxQuestions, appUserId, lectureId, otherExitSlips, teacher);
+        return new ExitSlip(title, maxQuestions, lectureId, otherExitSlips);
     }
 
 
@@ -41,7 +38,6 @@ public class ExitSlip : DomainEntity
     {
         EnsureExitSlipIsNotPublished();
         EnsureQuestionsBeforePublish();
-        EnsureTeacherSameAsCreator(appUserId);
         IsPublished = true;
     }
 
@@ -57,7 +53,6 @@ public class ExitSlip : DomainEntity
     }
     public void CreateQuestion(string text, string appUserId)
     {
-        EnsureTeacherSameAsCreator(appUserId);
         EnsureExitSlipDoesntExceedMaxQuestions();
         EnsureExitSlipIsNotPublished();
 
@@ -67,7 +62,6 @@ public class ExitSlip : DomainEntity
 
     public Question UpdateQuestion(int questionId, string text, string appUserId)
     {
-        EnsureTeacherSameAsCreator(appUserId);
         EnsureExitSlipIsNotPublished();
 
         var question = GetQuestionById(questionId);
@@ -77,8 +71,6 @@ public class ExitSlip : DomainEntity
 
     public Question DeleteQuestion(int questionId, string appUserId)
     {
-        EnsureTeacherSameAsCreator(appUserId);
-
         var question = GetQuestionById(questionId);
         _questions.Remove(question);
         return question;
@@ -129,12 +121,6 @@ public class ExitSlip : DomainEntity
     {
         if (Questions.Count >= MaxQuestions)
             throw new InvalidOperationException($"Cannot add more than {MaxQuestions} questions");
-    }
-
-    public void EnsureTeacherSameAsCreator(string appUserId)
-    {
-        if (!AppUserId.Equals(appUserId))
-            throw new InvalidOperationException("Only the creator of the exit slip can modify it");
     }
 
     private Question GetQuestionById(int id)

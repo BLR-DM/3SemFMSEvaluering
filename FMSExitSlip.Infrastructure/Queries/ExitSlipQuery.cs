@@ -2,6 +2,7 @@
 using FMSExitSlip.Application.Queries.Interfaces;
 using FMSExitSlip.Application.Queries.QueryDto;
 using FMSExitSlip.Application.Services;
+using FMSExitSlip.Application.Services.ApplicationServiceInterface;
 using FMSExitSlip.Application.Services.ProxyInterface;
 using FMSExitSlip.Domain.Values.DataServer;
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +47,6 @@ public class ExitSlipQuery : IExitSlipQuery
         var exitSlipDto = new ExitSlipDto
         {
             Id = exitSlip.Id,
-            AppUserId = exitSlip.AppUserId,
             IsPublished = exitSlip.IsPublished,
             LectureId = exitSlip.LectureId,
             MaxQuestions = exitSlip.MaxQuestions,
@@ -97,7 +97,6 @@ public class ExitSlipQuery : IExitSlipQuery
         var exitSlipsDto = exitSlips.Select(exitSlip => new ExitSlipDto
         {
             Id = exitSlip.Id,
-            AppUserId = exitSlip.AppUserId,
             IsPublished = exitSlip.IsPublished,
             LectureId = exitSlip.LectureId,
             MaxQuestions = exitSlip.MaxQuestions,

@@ -4,6 +4,7 @@ using FMSExitSlip.Application.Commands.CommandDto.ExitSlipDto;
 using FMSExitSlip.Application.Commands.Interfaces;
 using FMSExitSlip.Application.Queries.Interfaces;
 using FMSExitSlip.Application.Queries.QueryDto;
+using FMSExitSlip.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FMSExitSlip.Api.Endpoints
@@ -12,13 +13,11 @@ namespace FMSExitSlip.Api.Endpoints
     {
         public static void MapExitSlipEndpoints(this WebApplication app)
         {
-            app.MapPost("/exitslip", async (CreateExitSlipDto exitslipDto, HttpContext httpContext, IExitSlipCommand command) =>
+            app.MapPost("/exitslip", async (HttpContext httpContext, IExitSlipGenerator exitSlipGenerator, IExitSlipCommand command) =>
             {
-                var appUserId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
                 try
                 {
-                    await command.CreateExitSlipAsync(exitslipDto, appUserId);
+                    await exitSlipGenerator.GenerateExitslipsForLectures();
                     return Results.Ok("Exitslip created");
                 }
                 catch (Exception)

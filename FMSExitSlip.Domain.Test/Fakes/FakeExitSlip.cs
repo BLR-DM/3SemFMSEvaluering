@@ -9,11 +9,10 @@ namespace FMSExitSlip.Domain.Test.Fakes
 {
     public class FakeExitSlip : ExitSlip
     {
-        public FakeExitSlip(int maxQuestions, bool isPublished, string appUserId, int lectureId) : base()
+        public FakeExitSlip(int maxQuestions, bool isPublished, int lectureId) : base()
         {
             MaxQuestions = maxQuestions;
             IsPublished = isPublished;
-            AppUserId = appUserId;
             LectureId = lectureId;
         }
 
@@ -25,11 +24,6 @@ namespace FMSExitSlip.Domain.Test.Fakes
         public new void EnsureExitSlipIsNotPublished()
         {
             base.EnsureExitSlipIsNotPublished();
-        }
-
-        public new void EnsureTeacherSameAsCreator(string appUserId)
-        {
-            base.EnsureTeacherSameAsCreator(appUserId);
         }
 
         public new void AssureOnlyOneExitSlipPrLesson(IEnumerable<ExitSlip> otherExitSlips)
