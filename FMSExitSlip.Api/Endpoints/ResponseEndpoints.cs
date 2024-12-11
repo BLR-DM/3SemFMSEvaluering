@@ -10,21 +10,22 @@ namespace FMSExitSlip.Api.Endpoints
         {
             const string tag = "Response";
 
-            app.MapPost("/exitslip/{id}/question/response",
-                async (int id, CreateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
+            app.MapPost("/exitslip/{exitSlipId}/question/response",
+                async (int exitSlipId, CreateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
                 {
-                    //var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
                     var role = user.FindFirst("usertype")?.Value;
-                    await command.CreateResponseAsync(responseDto, id, role);
-                }).RequireAuthorization("Student").WithTags(tag);
+                    await command.CreateResponseAsync(responseDto, exitSlipId, appUserId, role);
+                    
+                }).RequireAuthorization("student").WithTags(tag);
 
-            app.MapPut("/exitslip/{id}/question/response",
-                async (int id, UpdateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
+            app.MapPut("/exitslip/{exitSlipId}/question/response",
+                async (int exitSlipId, UpdateResponseDto responseDto, ClaimsPrincipal user, IExitSlipCommand command) =>
                 {
-                    //var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
                     var role = user.FindFirst("usertype")?.Value;
-                    await command.UpdateResponseAsync(responseDto, id, role);
-                }).RequireAuthorization("Student").WithTags(tag);
+                    await command.UpdateResponseAsync(responseDto, exitSlipId, appUserId, role);
+                }).RequireAuthorization("student").WithTags(tag);
         }
     }
 }

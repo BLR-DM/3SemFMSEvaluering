@@ -28,7 +28,7 @@ namespace FMSEvaluering.Api.Endpoints
                     {
                         return Results.BadRequest("Failed to register the vote");
                     }
-                }).WithTags(tag);
+                }).RequireAuthorization("student").WithTags(tag);
         }
     }
 }
