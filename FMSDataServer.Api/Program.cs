@@ -304,6 +304,8 @@ app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _co
         .ThenInclude(ts => ts.Subject)
         .Include(t => t.TeacherSubjects)
         .ThenInclude(ts => ts.Class)
+        .Include(t => t.TeacherSubjects)
+        .ThenInclude(ts => ts.Lectures)
         .Select(t => new TeacherDto
         {
             FirstName = t.FirstName,
@@ -316,7 +318,13 @@ app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _co
                 {
                     Id = ts.Class.Id.ToString(),
                     Name = ts.Class.Name
-                }
+                },
+                Lectures = ts.Lectures.Select(l => new LectureDto
+                {
+                    Id = l.Id.ToString(),
+                    Date = l.Date,
+                    Title = l.Title
+                }).ToList()
             }).ToList(),
             AppUserId = t.AppUser.Id
         })

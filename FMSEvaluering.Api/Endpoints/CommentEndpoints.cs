@@ -30,7 +30,7 @@ namespace FMSEvaluering.Api.Endpoints
 
                     return Results.Problem("Couldn't create comment");
                 }
-            }).WithTags(tag);
+            }).RequireAuthorization("student").WithTags(tag);
                 
 
             app.MapPut("/forum/{forumId}/post/{postId}/comment", async (UpdateCommentDto dto, int forumId, int postId, ClaimsPrincipal user, IPostCommand command) =>
@@ -48,7 +48,7 @@ namespace FMSEvaluering.Api.Endpoints
 
                     return Results.Problem("Couldn't update comment");
                 }
-            }).WithTags(tag);
+            }).RequireAuthorization("student").WithTags(tag);
         }
     }
 }

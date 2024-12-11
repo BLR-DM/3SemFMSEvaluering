@@ -24,7 +24,17 @@ public class StudentApplicationService : IStudentApplicationService
             Class = new ModelClassValue
             {
                 Id = studentResultDto.Class.Id,
-                Name = studentResultDto.Class.Name
+                Name = studentResultDto.Class.Name,
+                TeacherSubjects = studentResultDto.Class.TeacherSubjects.Select(ts => new TeacherSubjectValue
+                {
+                    Id = ts.Id,
+                    Lectures = ts.Lectures.Select(l => new LectureValue
+                    {
+                        Id = l.Id,
+                        Title = l.Title,
+                        Date = l.Date
+                    }).ToList()
+                }).ToList()
             },
             AppUserId = studentResultDto.AppUserId
         };

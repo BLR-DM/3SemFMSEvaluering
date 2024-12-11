@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FMSExitSlip.Application.Services.ApplicationServiceInterface;
+﻿using FMSExitSlip.Application.Services.ApplicationServiceInterface;
 using FMSExitSlip.Application.Services.ProxyInterface;
 using FMSExitSlip.Domain.Values.DataServer;
 
@@ -23,6 +18,7 @@ namespace FMSExitSlip.Application.Services
             return lectureResultDto.Select(lecture => new LectureValue
             {
                 Id = lecture.Id,
+                Title = lecture.Title,
                 Date = lecture.Date
             });
         }

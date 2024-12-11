@@ -26,7 +26,7 @@ namespace FMSEvaluering.Api.Endpoints
                     {
                         return Results.Problem("Couldn't create post");
                     }
-                }).RequireAuthorization("Student").WithTags(tag);
+                }).RequireAuthorization("student").WithTags(tag);
 
             app.MapPut("/forum/{forumId}/post/{postId}",
                 async (int forumId, int postId, UpdatePostDto post, ClaimsPrincipal user, IForumCommand command) =>
@@ -42,7 +42,7 @@ namespace FMSEvaluering.Api.Endpoints
                     {
                         return Results.Problem("Couldn't update post", statusCode: 500); // test
                     }
-                }).RequireAuthorization("Student").WithTags(tag);
+                }).RequireAuthorization("student").WithTags(tag);
 
             app.MapDelete("/forum/{forumId}/post/{postId}",
                 async (int forumId, int postId, [FromBody] DeletePostDto post, ClaimsPrincipal user, IForumCommand command) =>
@@ -66,22 +66,6 @@ namespace FMSEvaluering.Api.Endpoints
                     catch (Exception)
                     {
                         return Results.Problem("Couldn't get post");
-                    }
-                }).WithTags(tag);
-
-            app.MapGet("/forum/{forumId}/post",
-                async (int forumId, ClaimsPrincipal user, IForumQuery query) =>
-                {
-                    try
-                    {
-                        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                        var role = user.FindFirst("usertype")?.Value;
-                        var posts = await query.GetForumWithPostsAsync(forumId, appUserId, role);
-                        return Results.Ok(posts);
-                    }
-                    catch (Exception)
-                    {
-                        return Results.Problem("Couldn't get posts");
                     }
                 }).WithTags(tag);
         }

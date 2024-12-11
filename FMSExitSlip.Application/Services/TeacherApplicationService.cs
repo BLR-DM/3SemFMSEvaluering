@@ -29,7 +29,13 @@ public class TeacherApplicationService : ITeacherApplicationService
                 {
                     Id = ts.Class.Id,
                     Name = ts.Class.Name
-                }
+                },
+                Lectures = ts.Lectures.Select(l => new LectureValue
+                {
+                    Id = l.Id,
+                    Date = l.Date,
+                    Title = l.Title
+                })
             })
         };
 

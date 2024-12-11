@@ -13,6 +13,8 @@ namespace FMSExitSlip.Api.Endpoints
     {
         public static void MapExitSlipEndpoints(this WebApplication app)
         {
+            const string tag = "Exitslip";
+
             app.MapPost("/exitslip", async (HttpContext httpContext, IExitSlipGenerator exitSlipGenerator, IExitSlipCommand command) =>
             {
                 try
@@ -25,7 +27,7 @@ namespace FMSExitSlip.Api.Endpoints
 
                     return Results.BadRequest("Failed to create ExitSlip");
                 }
-            }).RequireAuthorization("Teacher").WithTags("ExitSlip");
+            }).RequireAuthorization("teacher").WithTags(tag);
 
             app.MapPut("/exitslip/{id}/publish", async (int id, PublishExitSlipDto publishExitSlipDto, 
                 ClaimsPrincipal user, IExitSlipCommand command) =>
@@ -44,7 +46,7 @@ namespace FMSExitSlip.Api.Endpoints
                     return Results.BadRequest("Failed to publish ExitSlip");
                 }
 
-            }).RequireAuthorization("Teacher").WithTags("ExitSlip");
+            }).RequireAuthorization("teacher").WithTags(tag);
 
             app.MapGet("/exitslip/{id}", async (int id, IExitSlipQuery query, ClaimsPrincipal user) =>
             {
@@ -53,9 +55,9 @@ namespace FMSExitSlip.Api.Endpoints
 
                 var result = await query.GetExitSlipAsync(id, appUserId, role);
                 return Results.Ok(result);
-            });
+            }).WithTags(tag);
 
-            app.MapGet("/teacher/exitslip",
+            app.MapGet("/teacher/exitslip", // Slet??
                 async ([FromBody] RequestLectureDto requestDto, IExitSlipQuery query, ClaimsPrincipal user) =>
                 {
                     try

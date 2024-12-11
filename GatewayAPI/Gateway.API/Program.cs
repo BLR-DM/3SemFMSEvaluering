@@ -62,7 +62,7 @@ app.Use(async (context, next) =>
 
         if (!authResult.Succeeded)
         {
-            context.Response.StatusCode = 401; // Unauthorized
+            context.Response.StatusCode = 401;
             await context.Response.WriteAsync("Unauthorized");
             return;
         }
@@ -70,6 +70,7 @@ app.Use(async (context, next) =>
         await next.Invoke();
     }
 });
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

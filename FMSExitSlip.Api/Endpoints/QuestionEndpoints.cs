@@ -10,22 +10,21 @@ namespace FMSExitSlip.Api.Endpoints
         {
             const string tag = "Questions";
 
-            app.MapPost("/exitslip/{id}/question",
-                async (CreateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
+            app.MapPost("/exitslip/{exitSlipId}/question",
+                async (int exitSlipId, CreateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
                 {
                     var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     var role = user.FindFirst("usertype")?.Value;
                     try
                     {
-                        await command.AddQuestionAsync(questionDto, appUserId, role);
+                        await command.AddQuestionAsync(questionDto, exitSlipId, appUserId, role);
                         return Results.Ok("Question added");
                     }
                     catch (Exception)
                     {
                         return Results.BadRequest("Failed to add the question");
-                        throw;
                     }
-                }).RequireAuthorization("Teacher").WithTags(tag);
+                }).RequireAuthorization("teacher").WithTags(tag);
 
             app.MapPut("/exitslip/{id}/question",
                 async (int id, UpdateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
@@ -46,9 +45,7 @@ namespace FMSExitSlip.Api.Endpoints
                     {
                         return Results.BadRequest("Couldn't update the question");
                     }
-
-
-                }).RequireAuthorization("Teacher").WithTags(tag);
+                }).RequireAuthorization("teacher").WithTags(tag);
         }
     }
 }

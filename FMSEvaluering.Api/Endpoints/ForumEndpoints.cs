@@ -40,10 +40,10 @@ namespace FMSEvaluering.Api.Endpoints
                 return await query.GetForumsAsync(appUserId, role);
             }).WithTags(tag);
 
-            app.MapGet("/forum/{forumId}", async (int forumId, IForumQuery query) =>
+            app.MapGet("/forum/{forumId}", async (int forumId, IForumQuery query) => // <- Skal slettes?
             {
                 return await query.GetForumAsync(forumId);
-            }).WithTags(tag);
+            }).RequireAuthorization("student").WithTags(tag);
 
             // hent forum for en teacher med posts med votes over 2
             app.MapGet("/forum/{forumId}/posts/teacher", async (int forumId, ClaimsPrincipal user, IForumQuery query) => 
@@ -53,7 +53,23 @@ namespace FMSEvaluering.Api.Endpoints
 
                 var result = await query.GetForumWithPostsForTeacherAsync(forumId, appUserId, role, 2);
                 return Results.Ok(result);
-            }).WithTags(tag).RequireAuthorization("Teacher"); //check igennem
+            }).RequireAuthorization("teacher").WithTags(tag); //check igennem
+
+            app.MapGet("/forum/{forumId}/posts",
+                async (int forumId, ClaimsPrincipal user, IForumQuery query) =>
+                {
+                    try
+                    {
+                        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                        var role = user.FindFirst("usertype")?.Value;
+                        var posts = await query.GetForumWithPostsAsync(forumId, appUserId, role);
+                        return Results.Ok(posts);
+                    }
+                    catch (Exception)
+                    {
+                        return Results.Problem("Couldn't get posts");
+                    }
+                }).RequireAuthorization("student").WithTags(tag);
 
         }
     }
