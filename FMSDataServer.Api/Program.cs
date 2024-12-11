@@ -126,7 +126,7 @@ if (app.Environment.IsDevelopment())
 
 
 app.MapPost("/register",
-    async (UserManager<AppUser> _userManager, RegisterDto registerDto, FMSDataDbContext _context) =>
+    async (UserManager<AppUser> _userManager, RegisterDto registerDto, FMSDataDbContext context) =>
     {
         var user = new AppUser
         {
@@ -134,38 +134,30 @@ app.MapPost("/register",
             Email = registerDto.Email
         };
 
-        var student = await _context.Students.SingleOrDefaultAsync(e => e.Email == registerDto.Email);
+        var student = await context.Students.SingleOrDefaultAsync(e => e.Email == registerDto.Email);
         if (student != null)
         {
             student.AppUser = user;
         }
         else
         {
-            var teacher = await _context.Teachers.SingleOrDefaultAsync(t => t.Email == registerDto.Email);
+            var teacher = await context.Teachers.SingleOrDefaultAsync(t => t.Email == registerDto.Email);
+
             if (teacher != null)
-            {
                 teacher.AppUser = user;
-            }
             else
-            {
                 return Results.BadRequest("No user with this email exist");
-            }
         }
 
         if (registerDto.Password != registerDto.ConfirmPassword)
-        {
             return Results.BadRequest("Password and confirmation password doesnt match");
-        }
-
 
         var result = await _userManager.CreateAsync(user, registerDto.Password);
 
         if (!result.Succeeded)
-        {
             return Results.BadRequest(result.Errors);
-        }
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         return Results.Ok(new { Message = "User registered" });
     });
@@ -175,33 +167,26 @@ app.MapPost("/login", async (UserManager<AppUser> _userManager, LoginDto loginDt
     var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
     if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
-    {
         return Results.Unauthorized();
-    }
 
     var token = "";
 
     var student = await _context.Students
         .Include(s => s.Class)
         .SingleOrDefaultAsync(s => s.AppUser.Id == user.Id);
+
     if (student != null)
-    {
         token = GenerateJwtToken(user, _configuration, student);
-    }
     else
     {
         var teacher = await _context.Teachers.SingleOrDefaultAsync(t => t.AppUser.Id == user.Id);
-        if (teacher != null)
-        {
-            token = GenerateJwtTokenTeacher(user, _configuration, teacher);
-        }
-        else
-        {
-            return Results.Unauthorized();
-        }
-    }
 
-    return Results.Ok(new { Token = token });
+        if (teacher != null)
+            token = GenerateJwtTokenTeacher(user, _configuration, teacher);
+        else
+            return Results.Unauthorized();
+    }
+    return Results.Ok(token);
 }).AllowAnonymous();
 
 
@@ -210,13 +195,13 @@ string GenerateJwtToken(AppUser user, IConfiguration configuration, Student stud
     var claims = new[]
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email!),
         new Claim(JwtRegisteredClaimNames.GivenName, student.FirstName),
         new Claim(JwtRegisteredClaimNames.FamilyName, student.LastName),
         new Claim("usertype", "student"),
     };
 
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
     var token = new JwtSecurityToken(
@@ -234,13 +219,13 @@ string GenerateJwtTokenTeacher(AppUser user, IConfiguration configuration, Teach
     var claims = new[]
     {
         new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email!),
         new Claim(JwtRegisteredClaimNames.GivenName, teacher.FirstName),
         new Claim(JwtRegisteredClaimNames.FamilyName, teacher.LastName),
         new Claim("usertype", "teacher"),
     };
 
-    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
     var token = new JwtSecurityToken(
@@ -254,9 +239,9 @@ string GenerateJwtTokenTeacher(AppUser user, IConfiguration configuration, Teach
 }
 
 
-app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
+app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext context) =>
 {
-    var student = await _context.Students
+    var student = await context.Students
         .AsNoTracking()
         .Include(s => s.AppUser)
         .Include(s => s.Class)
@@ -265,9 +250,7 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
         .SingleOrDefaultAsync(s => s.AppUser.Id == appUserId);
 
     if (student == null)
-    {
         return Results.NotFound($"Student with AppUserId {appUserId} not found.");
-    }
 
     var studentDto = new StudentDto
     {
@@ -295,9 +278,9 @@ app.MapGet("/student/{appUserId}", async (string appUserId, FMSDataDbContext _co
     return Results.Ok(studentDto);
 });
 
-app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _context) =>
+app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext context) =>
 {
-    var teacher = await _context.Teachers
+    var teacher = await context.Teachers
         .AsNoTracking()
         .Where(t => t.AppUser.Id == appUserId)
         .Include(t => t.TeacherSubjects)
@@ -330,16 +313,12 @@ app.MapGet("/teacher/{appUserId}", async (string appUserId, FMSDataDbContext _co
         })
         .SingleOrDefaultAsync();
 
-    if (teacher == null)
-    {
-        return Results.NotFound($"Teacher with AppUserId {appUserId} not found.");
-    }
-    return Results.Ok(teacher);
+    return teacher == null ? Results.NotFound($"Teacher with AppUserId {appUserId} not found.") : Results.Ok(teacher);
 });
 
-app.MapGet("/teachersubject/{teacherSubjectId}/teacher", async (string teacherSubjectId, FMSDataDbContext _context) =>
+app.MapGet("/teachersubject/{teacherSubjectId}/teacher", async (string teacherSubjectId, FMSDataDbContext context) =>
 {
-    var teacher = await _context.Teachers
+    var teacher = await context.Teachers
         .AsNoTracking()
         .Where(t => t.TeacherSubjects.Any(ts => ts.Id.ToString().Equals(teacherSubjectId)))
         .Select(t => new TeacherDto
@@ -350,16 +329,12 @@ app.MapGet("/teachersubject/{teacherSubjectId}/teacher", async (string teacherSu
         })
         .SingleOrDefaultAsync();
 
-    if (teacher == null)
-    {
-        return Results.NotFound($"Teacher for teachersubject {teacherSubjectId} not found.");
-    }
-    return Results.Ok(teacher);
+    return teacher == null ? Results.NotFound($"Teacher for teachersubject {teacherSubjectId} not found.") : Results.Ok(teacher);
 });
 
-app.MapGet("/class/{classId}/teachers", async (string classId, FMSDataDbContext _context) =>
+app.MapGet("/class/{classId}/teachers", async (string classId, FMSDataDbContext context) =>
 {
-    var teachers = await _context.Teachers
+    var teachers = await context.Teachers
         .AsNoTracking()
         .Where(t => t.TeacherSubjects.Any(ts => ts.Class.Id.ToString().Equals(classId)))
         .Select(t => new TeacherDto
@@ -370,16 +345,12 @@ app.MapGet("/class/{classId}/teachers", async (string classId, FMSDataDbContext 
         })
         .ToListAsync();
 
-    if (teachers == null)
-    {
-        return Results.NotFound($"No teachers for class {classId} not found.");
-    }
-    return Results.Ok(teachers);
+    return teachers.Count == 0 ? Results.NotFound($"No teachers for class {classId} not found.") : Results.Ok(teachers);
 });
 
-app.MapGet("/teachers", async (FMSDataDbContext _context) =>
+app.MapGet("/teachers", async (FMSDataDbContext context) =>
 {
-    var teachers = await _context.Teachers
+    var teachers = await context.Teachers
         .AsNoTracking()
         .Select(t => new TeacherDto
         {
@@ -389,16 +360,12 @@ app.MapGet("/teachers", async (FMSDataDbContext _context) =>
         })
         .ToListAsync();
 
-    if (teachers == null)
-    {
-        return Results.NotFound($"No teachers found.");
-    }
-    return Results.Ok(teachers);
+    return teachers.Count == 0 ? Results.NotFound($"No teachers found.") : Results.Ok(teachers);
 });
 
-app.MapGet("/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _context) =>
+app.MapGet("/lecture/{lectureId}", async (int lectureId, FMSDataDbContext context) =>
 {
-    var lecture = await _context.Lectures
+    var lecture = await context.Lectures
         .AsNoTracking()
         .Include(l => l.TeacherSubject)
         .ThenInclude(ts => ts.Teacher)
@@ -428,17 +395,12 @@ app.MapGet("/lecture/{lectureId}", async (int lectureId, FMSDataDbContext _conte
         .SingleOrDefaultAsync(l => l.Id == lectureId.ToString());
 
 
-    if (lecture == null)
-    {
-        return Results.NotFound("Lecture not found");
-    }
-
-    return Results.Ok(lecture);
+    return lecture == null ? Results.NotFound("Lecture not found") : Results.Ok(lecture);
 });
 
-app.MapGet("/lecture/{lectureId}/students", async (int lectureId, FMSDataDbContext _context) =>
+app.MapGet("/lecture/{lectureId}/students", async (int lectureId, FMSDataDbContext context) =>
 {
-    var students = await _context.Students
+    var students = await context.Students
         .AsNoTracking()
         .Where(s => s.Class.TeacherSubjects.Any(ts => ts.Lectures.Any(l => l.Id == lectureId)))
         .Select(s => new StudentDto
@@ -446,20 +408,12 @@ app.MapGet("/lecture/{lectureId}/students", async (int lectureId, FMSDataDbConte
             AppUserId = s.AppUser.Id
         }).ToListAsync();
 
-
-    if (students == null)
-    {
-        return Results.NotFound($"No students for lecture {lectureId} was found.");
-    }
-
-    return Results.Ok(students);
-
-
+    return students.Count == 0 ? Results.NotFound($"No students for lecture {lectureId} was found.") : Results.Ok(students);
 });
 
-app.MapGet("/lectures", async (FMSDataDbContext _context) =>
+app.MapGet("/lectures", async (FMSDataDbContext context) =>
 {
-    var lectures = await _context.Lectures
+    var lectures = await context.Lectures
         .AsNoTracking()
         .Select(l => new LectureDto
         {
@@ -469,16 +423,8 @@ app.MapGet("/lectures", async (FMSDataDbContext _context) =>
         })
         .ToListAsync();
 
-    if (lectures == null)
-    {
-        return Results.NotFound($"No teachers found.");
-    }
-    return Results.Ok(lectures);
+    return lectures.Count == 0 ? Results.NotFound($"No teachers found.") : Results.Ok(lectures);
 });
-
-
-
-
 
 app.Run();
 

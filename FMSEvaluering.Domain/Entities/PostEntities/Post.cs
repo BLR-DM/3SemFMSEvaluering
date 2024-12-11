@@ -1,5 +1,4 @@
-﻿using FMSEvaluering.Domain.Entities.ForumEntities;
-using FMSEvaluering.Domain.Values;
+﻿using FMSEvaluering.Domain.Values;
 
 namespace FMSEvaluering.Domain.Entities.PostEntities;
 
@@ -19,15 +18,11 @@ public class Post : DomainEntity
         Solution = solution;
         AppUserId = appUserId;
         CreatedDate = DateTime.Now;
-
-        //AssureStudentIsPartOfClass(fmsValidationResponse.ClassId); //async??
-        //Forum.ValidateUserAccessAsync(appUserId, _serviceProvider, role); // async?
     }
 
     public string Description { get; protected set; }
     public string Solution { get; protected set; }
     public string AppUserId { get; protected set; }
-    public Forum Forum { get; protected set; }
     public DateTime CreatedDate { get; private set; }
     public ICollection<PostHistory> History => _history;
     public IReadOnlyCollection<Vote> Votes => _votes;
@@ -131,15 +126,4 @@ public class Post : DomainEntity
         comment.Update(text);
         return comment;
     }
-
-    //public void AssureStudentIsPartOfClass(string studentClassId)
-    //{
-    //    if (Forum is ClassForum classForum)
-    //    {
-    //        if (!studentClassId.Equals(classForum.ClassId.ToString()))
-    //        {
-    //            throw new InvalidOperationException("You is not part of this class.");
-    //        }
-    //    }
-    //}
 }

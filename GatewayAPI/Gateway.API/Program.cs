@@ -35,7 +35,8 @@ app.Use(async (context, next) =>
     var path = context.Request.Path.Value;
 
     // Tillad anonym adgang til login endpoint
-    if (path != null && path.StartsWith("/fmsdataserver/login", StringComparison.OrdinalIgnoreCase) || path != null && path.StartsWith("/fmsdataserver/register", StringComparison.OrdinalIgnoreCase))
+    if (path != null && path.StartsWith("/fmsdataserver/login", StringComparison.OrdinalIgnoreCase) 
+        || path != null && path.StartsWith("/fmsdataserver/register", StringComparison.OrdinalIgnoreCase))
     {
         await next.Invoke();
     }
@@ -51,7 +52,6 @@ app.Use(async (context, next) =>
             await context.Response.WriteAsync("Unauthorized");
             return;
         }
-
         await next.Invoke();
     }
 });
