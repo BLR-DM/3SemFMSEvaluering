@@ -23,11 +23,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedOrigins", builder =>
+    {
+        builder.WithOrigins("http://fmsevalueringui:8080");
+    });
+});
+
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 var app = builder.Build();
 
+app.UseCors("AllowedOrigins");
 app.UseAuthentication();
 
 app.Use(async (context, next) =>
