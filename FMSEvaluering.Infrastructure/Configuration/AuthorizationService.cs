@@ -12,11 +12,9 @@ public static class AuthorizationService
         {
             options.AddPolicy("Student", policy =>
                 policy.RequireClaim("usertype", "student"));
-
             options.AddPolicy("Teacher", policy =>
                 policy.RequireClaim("usertype", "teacher"));
         });
-
         return services;
     }
 }
