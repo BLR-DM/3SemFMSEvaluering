@@ -26,7 +26,7 @@ public static class PostEndpoints
                 }
                 catch (Exception)
                 {
-                    return Results.Problem("Couldn't create post");
+                    return Results.BadRequest("Couldn't create post");
                 }
             }).RequireAuthorization("student").WithTags(tag);
 
@@ -38,11 +38,11 @@ public static class PostEndpoints
                     var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     var role = user.FindFirst("usertype")?.Value;
                     await command.UpdatePostAsync(post, appUserId, role, postId, forumId);
-                    return Results.Created("testURI", post);
+                    return Results.Ok(post);
                 }
                 catch (Exception)
                 {
-                    return Results.Problem("Couldn't update post", statusCode: 500); // test
+                    return Results.BadRequest("Couldn't update post"); // test
                 }
             }).RequireAuthorization("student").WithTags(tag);
 
@@ -50,10 +50,17 @@ public static class PostEndpoints
             async (int forumId, int postId, [FromBody] DeletePostDto post, ClaimsPrincipal user,
                 IForumCommand command) =>
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
-                await command.DeletePostAsync(post, appUserId, role, postId, forumId);
-                return Results.Ok("Post deleted");
+                try
+                {
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var role = user.FindFirst("usertype")?.Value;
+                    await command.DeletePostAsync(post, appUserId, role, postId, forumId);
+                    return Results.Ok("Post deleted");
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).WithTags(tag); //admin?
 
         app.MapGet("/forum/{forumId}/post/{postId}",
@@ -68,7 +75,7 @@ public static class PostEndpoints
                 }
                 catch (Exception)
                 {
-                    return Results.Problem("Couldn't get post");
+                    return Results.BadRequest("Couldn't get post");
                 }
             }).WithTags(tag);
 
@@ -107,10 +114,16 @@ public static class PostEndpoints
                 return Results.BadRequest();
             }
 
-            var forum = await query.GetForumWithPostsByDateRange(forumId, appUserId, role, fromDateParsed,
-                toDateParsed, 2);
-
-            return Results.Ok();
+            try
+            {
+                var forum = await query.GetForumWithPostsByDateRange(forumId, appUserId, role, fromDateParsed,
+                        toDateParsed, 2);
+                return Results.Ok(forum);
+            }
+            catch (Exception)
+            {
+                return Results.BadRequest();
+            }
         });
     }
 }

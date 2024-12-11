@@ -159,7 +159,7 @@ app.MapPost("/register",
 
         await context.SaveChangesAsync();
 
-        return Results.Ok(new { Message = "User registered" });
+        return Results.Created();
     });
 
 app.MapPost("/login", async (UserManager<AppUser> _userManager, LoginDto loginDto, IConfiguration _configuration, FMSDataDbContext _context) =>
@@ -186,7 +186,7 @@ app.MapPost("/login", async (UserManager<AppUser> _userManager, LoginDto loginDt
         else
             return Results.Unauthorized();
     }
-    return Results.Ok(token);
+    return Results.Ok(new { Token = token });
 }).AllowAnonymous();
 
 
@@ -422,7 +422,6 @@ app.MapGet("/lectures", async (FMSDataDbContext context) =>
             Date = l.Date,
         })
         .ToListAsync();
-
     return lectures.Count == 0 ? Results.NotFound($"No teachers found.") : Results.Ok(lectures);
 });
 

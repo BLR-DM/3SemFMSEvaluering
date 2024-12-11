@@ -14,45 +14,98 @@ namespace FMSEvaluering.Api.Endpoints
 
             app.MapPost("/forum/public", async (CreatePublicForumDto createPublicForumDto, IForumCommand command) =>
             {
-                await command.CreatePublicForumAsync(createPublicForumDto);
+                try
+                {
+                    await command.CreatePublicForumAsync(createPublicForumDto);
+                    return Results.Created();
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).WithTags(tag);
 
             app.MapPost("/forum/class", async (CreateClassForumDto createClassForumDto, IForumCommand command) =>
             {
-                await command.CreateClassForumAsync(createClassForumDto);
+                try
+                {
+                    await command.CreateClassForumAsync(createClassForumDto);
+                    return Results.Created();
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).WithTags(tag);
 
             app.MapPost("/forum/subject", async (CreateSubjectForumDto createSubjectForumDto, IForumCommand command) =>
             {
-                await command.CreateSubjectForumAsync(createSubjectForumDto);
+                try
+                {
+                    await command.CreateSubjectForumAsync(createSubjectForumDto);
+                    return Results.Created();
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).WithTags(tag);
 
             app.MapDelete("/forum/{forumId}", async (int forumId, [FromBody]DeleteForumDto deleteForumDto, IForumCommand command) =>
             {
-                await command.DeleteForumAsync(deleteForumDto, forumId);
+                try
+                {
+                    await command.DeleteForumAsync(deleteForumDto, forumId);
+                    return Results.Ok();
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).WithTags(tag);
 
             app.MapGet("/forum", async (IForumQuery query, ClaimsPrincipal user) =>
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
-
-                return await query.GetForumsAsync(appUserId, role);
+                try
+                {
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var role = user.FindFirst("usertype")?.Value;
+                    var result = await query.GetForumsAsync(appUserId, role);
+                    return Results.Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).WithTags(tag);
 
             app.MapGet("/forum/{forumId}", async (int forumId, IForumQuery query) => // <- Skal slettes?
             {
-                return await query.GetForumAsync(forumId);
+                try
+                {
+                    var result = await query.GetForumAsync(forumId);
+                    return Results.Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).RequireAuthorization("student").WithTags(tag);
 
             // hent forum for en teacher med posts med votes over 2
             app.MapGet("/forum/{forumId}/posts/teacher", async (int forumId, ClaimsPrincipal user, IForumQuery query) => 
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
-
-                var result = await query.GetForumWithPostsForTeacherAsync(forumId, appUserId, role, 2);
-                return Results.Ok(result);
+                try
+                {
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    var role = user.FindFirst("usertype")?.Value;
+                    var result = await query.GetForumWithPostsForTeacherAsync(forumId, appUserId, role, 2);
+                    return Results.Ok(result);
+                }
+                catch (Exception)
+                {
+                    return Results.BadRequest();
+                }
             }).RequireAuthorization("teacher").WithTags(tag); //check igennem
 
             app.MapGet("/forum/{forumId}/posts",
@@ -67,7 +120,7 @@ namespace FMSEvaluering.Api.Endpoints
                     }
                     catch (Exception)
                     {
-                        return Results.Problem("Couldn't get posts");
+                        return Results.BadRequest("Couldn't get posts");
                     }
                 }).RequireAuthorization("student").WithTags(tag);
 

@@ -49,7 +49,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId, string appUserId, string role)
+        async Task IExitSlipCommand.CreateResponseAsync(CreateResponseDto responseDto, int exitSlipId, int questionId, string appUserId, string role)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace FMSExitSlip.Application.Commands
                 await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
-                exitSlip.CreateResponse(responseDto.Text, appUserId, responseDto.QuestionId);
+                exitSlip.CreateResponse(responseDto.Text, appUserId, questionId);
 
                 // Save
                 await _unitOfWork.Commit();
@@ -74,7 +74,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId, string appUserId, string role)
+        async Task IExitSlipCommand.UpdateResponseAsync(UpdateResponseDto responseDto, int exitSlipId, int responseId, int questionId, string appUserId, string role)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace FMSExitSlip.Application.Commands
                 await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
-                var response = exitSlip.UpdateResponse(responseDto.ResponseId, responseDto.Text, appUserId, responseDto.QuestionId);
+                var response = exitSlip.UpdateResponse(responseId, responseDto.Text, appUserId, questionId);
                 _exitSlipRepository.UpdateResponse(response, responseDto.RowVersion);
 
                 // Save
@@ -100,7 +100,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.DeleteResponseAsync(DeleteResponseDto responseDto, int exitSlipId, string appUserId, string role)
+        async Task IExitSlipCommand.DeleteResponseAsync(DeleteResponseDto responseDto, int exitSlipId, int responseId, int questionId, string appUserId, string role)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace FMSExitSlip.Application.Commands
                 await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
-                var response = exitSlip.DeleteResponse(responseDto.ResponseId, appUserId, responseDto.QuestionId);
+                var response = exitSlip.DeleteResponse(responseId, appUserId, questionId);
                 _exitSlipRepository.DeleteResponse(response, responseDto.RowVersion);
 
                 // Save
@@ -126,7 +126,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId, string appUserId, string role)
+        async Task IExitSlipCommand.DeleteQuestionAsync(DeleteQuestionDto questionDto, int exitSlipId, int questionId, string appUserId, string role)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace FMSExitSlip.Application.Commands
                 await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
-                var question = exitSlip.DeleteQuestion(questionDto.Id, appUserId);
+                var question = exitSlip.DeleteQuestion(questionId, appUserId);
                 _exitSlipRepository.DeleteQuestion(question, questionDto.RowVersion);
 
                 // Save
@@ -202,7 +202,7 @@ namespace FMSExitSlip.Application.Commands
             }
         }
 
-        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId, string appUserId, string role)
+        async Task IExitSlipCommand.UpdateQuestionAsync(UpdateQuestionDto questionDto, int exitSlipId, int questionId, string appUserId, string role)
         {
             try
             {
@@ -215,7 +215,7 @@ namespace FMSExitSlip.Application.Commands
                 await _exitSlipAccessHandler.ValidateExitslipAccess(appUserId, role, exitSlip);
 
                 // Do
-                var response = exitSlip.UpdateQuestion(questionDto.Id, questionDto.Text, appUserId);
+                var response = exitSlip.UpdateQuestion(questionId, questionDto.Text, appUserId);
                 _exitSlipRepository.UpdateQuestion(response, questionDto.RowVersion);
 
                 // Save

@@ -1,3 +1,3 @@
 ﻿namespace FMSExitSlip.Application.Commands.CommandDto.ResponseDto;
 
-public record CreateResponseDto (string Text, int QuestionId);
+public record CreateResponseDto (string Text);

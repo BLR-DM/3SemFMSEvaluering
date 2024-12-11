@@ -1,3 +1,3 @@
 ﻿namespace FMSExitSlip.Application.Commands.CommandDto.ResponseDto;
 
-public record DeleteResponseDto (int ResponseId, byte[] RowVersion, int QuestionId);
+public record DeleteResponseDto (byte[] RowVersion);

@@ -26,8 +26,7 @@ namespace FMSEvaluering.Api.Endpoints
                 }
                 catch (Exception)
                 {
-
-                    return Results.Problem("Couldn't create comment");
+                    return Results.BadRequest("Couldn't create comment");
                 }
             }).RequireAuthorization("student").WithTags(tag);
                 
@@ -41,12 +40,11 @@ namespace FMSEvaluering.Api.Endpoints
                     var role = user.FindFirst("usertype")?.Value;
 
                     await command.UpdateCommentAsync(dto, appUserId, role, forumId, postId, commentId);
-                    return Results.Created("testURI", dto);
+                    return Results.Ok(dto);
                 }
                 catch (Exception)
                 {
-
-                    return Results.Problem("Couldn't update comment");
+                    return Results.BadRequest("Couldn't update comment");
                 }
             }).RequireAuthorization("student").WithTags(tag);
         }
