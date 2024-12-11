@@ -70,6 +70,7 @@ public class ForumMapper : IForumMapper
                 }).ToList(),
                 Comments = p.Comments.Select(c => new CommentDto
                 {
+                    Id = c.Id,
                     Text = c.Text,
                     RowVersion = c.RowVersion
                 }).ToList()
@@ -109,6 +110,7 @@ public class ForumMapper : IForumMapper
                 }).ToList(),
                 Comments = p.Comments.Select(c => new CommentDto
                 {
+                    Id = c.Id,
                     Text = c.Text,
                     RowVersion = c.RowVersion
                 }).ToList()

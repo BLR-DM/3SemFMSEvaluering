@@ -1,6 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Xml;
 using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 
@@ -17,13 +16,13 @@ namespace FMSEvaluering.Api.Endpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     var role = user.FindFirst("usertype")?.Value;
-                    var firstName = user.FindFirst(JwtRegisteredClaimNames.GivenName)?.Value;
-                    var lastName = user.FindFirst(JwtRegisteredClaimNames.FamilyName)?.Value;
+                    var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+                    var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
 
                     await command.CreateCommentAsync(dto, firstName, lastName, postId, appUserId, role, forumId);
-                    return Results.Created("testURI", dto); // Test return value
+                    return Results.Created("testURI", dto);
                 }
                 catch (Exception)
                 {
@@ -33,14 +32,15 @@ namespace FMSEvaluering.Api.Endpoints
             }).RequireAuthorization("student").WithTags(tag);
                 
 
-            app.MapPut("/forum/{forumId}/post/{postId}/comment", async (UpdateCommentDto dto, int forumId, int postId, ClaimsPrincipal user, IPostCommand command) =>
+            app.MapPut("/forum/{forumId}/post/{postId}/comment/{commentId}", async (UpdateCommentDto dto, int forumId, int postId,
+                int commentId, ClaimsPrincipal user, IPostCommand command) =>
             {
                 try
                 {
-                    var appUserId = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     var role = user.FindFirst("usertype")?.Value;
 
-                    await command.UpdateCommentAsync(dto, appUserId, role, forumId);
+                    await command.UpdateCommentAsync(dto, appUserId, role, forumId, postId, commentId);
                     return Results.Created("testURI", dto);
                 }
                 catch (Exception)

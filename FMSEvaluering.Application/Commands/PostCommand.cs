@@ -1,9 +1,7 @@
-﻿using System.Net.Mail;
-using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
+﻿using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.CommandDto.VoteDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 using FMSEvaluering.Application.Helpers;
-using FMSEvaluering.Application.MailService;
 using FMSEvaluering.Application.Repositories;
 using FMSEvaluering.Application.Services;
 using FMSEvaluering.Domain.Entities.PostEntities;
@@ -26,7 +24,8 @@ public class PostCommand : IPostCommand
         _notificationService = notificationService;
     }
 
-    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto, string firstName, string lastName, int postId, string appUserId, string role, int forumId) // int postId?
+    async Task IPostCommand.CreateCommentAsync(CreateCommentDto commentDto, string firstName, string lastName, int postId, 
+        string appUserId, string role, int forumId)
     {
         try
         {
@@ -42,7 +41,7 @@ public class PostCommand : IPostCommand
             var post = forum.GetPostById(postId);
 
             // Do
-            post.CreateComment(firstName, lastName, commentDto.Text, appUserId); // string appUserId? + Navn?
+            post.CreateComment(firstName, lastName, commentDto.Text, appUserId);
 
             // Save 
             await _unitOfWork.Commit();
@@ -54,23 +53,24 @@ public class PostCommand : IPostCommand
         }
     }
 
-    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto, string appUserId, string role, int forumId)
+    async Task IPostCommand.UpdateCommentAsync(UpdateCommentDto commentDto, string appUserId, string role, int forumId, 
+        int postId, int commentId)
     {
         try
         {
             await _unitOfWork.BeginTransaction();
 
             // Load
-            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, commentDto.PostId);
+            var forum = await _forumRepository.GetForumWithSinglePostAsync(forumId, postId);
 
             // Validate Access
             await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
 
             // Load
-            var post = forum.GetPostById(commentDto.PostId);
+            var post = forum.GetPostById(postId);
 
             // Do
-            var comment = post.UpdateComment(commentDto.CommentId, commentDto.Text, appUserId);
+            var comment = post.UpdateComment(commentId, commentDto.Text, appUserId);
 
             // Save
             _forumRepository.UpdateComment(comment, commentDto.RowVersion);

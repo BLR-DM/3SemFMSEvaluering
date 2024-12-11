@@ -22,7 +22,7 @@ public record ClassResultDto
 {
     public string Id { get; set; }
     public string Name { get; set; }
-    public List<TeacherSubjectResultDto> TeacherSubjectResults { get; set; }
+    public List<TeacherSubjectResultDto> TeacherSubjects { get; set; }
 }
 
 public record TeacherResultDto
