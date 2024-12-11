@@ -1,5 +1,6 @@
 ﻿using FMSEvaluering.Application.Commands;
 using FMSEvaluering.Application.Commands.Interfaces;
+using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ public static class DependencyInjection
         services.AddScoped<IStudentApplicationService, StudentApplicationService>();
         services.AddScoped<ITeacherApplicationService, TeacherApplicationService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddScoped<IGenerateCsvHandler, GenerateCsvHandler>();
 
         return services;
     }

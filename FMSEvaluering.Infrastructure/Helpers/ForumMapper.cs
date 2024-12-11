@@ -111,6 +111,8 @@ public class ForumMapper : IForumMapper
                 Comments = p.Comments.Select(c => new CommentDto
                 {
                     Id = c.Id,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
                     Text = c.Text,
                     RowVersion = c.RowVersion
                 }).ToList()

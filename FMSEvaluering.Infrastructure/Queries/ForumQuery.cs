@@ -104,4 +104,28 @@ public class ForumQuery : IForumQuery
         return forumDto;
 
     }
+
+    async Task<ForumDto> IForumQuery.GetForumWithPostsByDateRange(int forumId, string appUserId, string role, DateOnly fromDate, DateOnly toDate, int reqVotes)
+    {
+        var forum = await _db.Forums.AsNoTracking()
+            .Where(f => f.Id == forumId)
+            .Include(f => f.Posts.Where(p => DateOnly.FromDateTime(p.CreatedDate) >= fromDate && DateOnly.FromDateTime(p.CreatedDate) <= toDate))
+            .ThenInclude(p => p.Votes)
+            .Include(f => f.Posts.Where(p => DateOnly.FromDateTime(p.CreatedDate) >= fromDate && DateOnly.FromDateTime(p.CreatedDate) <= toDate))
+            .ThenInclude(p => p.Comments)
+            .Include(f => f.Posts.Where(p => DateOnly.FromDateTime(p.CreatedDate) >= fromDate && DateOnly.FromDateTime(p.CreatedDate) <= toDate))
+            .ThenInclude(p => p.History)
+            .SingleOrDefaultAsync();
+
+        if (forum == null)
+            throw new ArgumentException("Forum not found");
+
+        // Validate Acccess
+        await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
+
+
+        var forumDto = _forumMapper.MapToDtoWithAllTeacher(forum, 2);
+
+        return forumDto;
+    }
 }

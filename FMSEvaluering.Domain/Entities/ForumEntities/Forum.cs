@@ -64,5 +64,9 @@ public abstract class Forum : DomainEntity
         if (post is null) throw new ArgumentException("Post not found");
         return post;
     }
-    
+
+    public void ToReportData()
+    {
+        
+    }
 }

@@ -27,6 +27,7 @@ public static class DependencyInjection
         services.AddScoped<IForumAccessHandler, ForumAccessHandler>();
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IMail, Mail>();
+        services.AddScoped<ICsvGenerator, CsvGenerator>();
 
         // External services
         services.AddHttpClient<IFmsDataProxy, FmsDataProxy>(client =>
