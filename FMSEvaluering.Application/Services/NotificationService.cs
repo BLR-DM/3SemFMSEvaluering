@@ -27,7 +27,7 @@ namespace FMSEvaluering.Application.Services
             {
                 var teacher = await _teacherApplicationService.GetTeacherForSubjectAsync(subjectForum.SubjectId.ToString());
 
-                generateAndSendEmail(teacher, upvotes, forum);
+                GenerateAndSendEmail(teacher, upvotes, forum);
             }
 
             if (forum is ClassForum classForum)
@@ -35,7 +35,7 @@ namespace FMSEvaluering.Application.Services
                 var teachers = await _teacherApplicationService.GetTeachersForClassAsync(classForum.ClassId.ToString());
                 foreach(var teacher in teachers)
                 {
-                    generateAndSendEmail(teacher, upvotes, forum);
+                    GenerateAndSendEmail(teacher, upvotes, forum);
                 }
             }
 
@@ -44,12 +44,12 @@ namespace FMSEvaluering.Application.Services
                 var teachers = await _teacherApplicationService.GetTeachersAsync();
                 foreach (var teacher in teachers)
                 {
-                    generateAndSendEmail(teacher, upvotes, forum);
+                    GenerateAndSendEmail(teacher, upvotes, forum);
                 }
             }
         }
 
-        void generateAndSendEmail(TeacherValue teacher, int upvotes, Forum forum)
+        void GenerateAndSendEmail(TeacherValue teacher, int upvotes, Forum forum)
         {
             var message = _mail.GetMessagePostOverDesiredLikes(teacher.FirstName, upvotes, forum.Name);
             _emailSender.SendEmail(teacher.Email, message);
