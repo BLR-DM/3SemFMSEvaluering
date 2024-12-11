@@ -1,25 +1,20 @@
 using FMSEvaluering.Application.Helpers;
 using FMSEvaluering.Application.Queries.Interfaces;
 using FMSEvaluering.Application.Queries.QueryDto;
-using FMSEvaluering.Domain.Entities.ForumEntities;
 using FMSEvaluering.Infrastructure.Helpers.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FMSEvaluering.Infrastructure.Queries;
 
 public class ForumQuery : IForumQuery
 {
     private readonly EvaluationContext _db;
-    private readonly IServiceProvider _serviceProvider;
     private readonly IForumMapper _forumMapper;
     private readonly IForumAccessHandler _forumAccessHandler;
 
-    public ForumQuery(EvaluationContext db, IServiceProvider serviceProvider, IForumMapper forumMapper, IForumAccessHandler forumAccessHandler)
+    public ForumQuery(EvaluationContext db, IForumMapper forumMapper, IForumAccessHandler forumAccessHandler)
     {
         _db = db;
-        _serviceProvider = serviceProvider;
         _forumMapper = forumMapper;
         _forumAccessHandler = forumAccessHandler;
     }

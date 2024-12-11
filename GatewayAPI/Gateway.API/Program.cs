@@ -56,7 +56,6 @@ app.Use(async (context, next) =>
     }
 });
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
