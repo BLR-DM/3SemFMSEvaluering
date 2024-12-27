@@ -14,7 +14,7 @@ public class ForumRepository : IForumRepository
         _db = db;
     }
 
-    async Task IForumRepository.AddForum(Forum forum)
+    async Task IForumRepository.AddForumAsync(Forum forum)
     {
         await _db.Forums.AddAsync(forum);
     }

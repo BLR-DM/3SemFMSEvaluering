@@ -6,7 +6,7 @@ namespace FMSEvaluering.Application.Repositories;
 
 public interface IForumRepository
 {
-    Task AddForum(Forum forum);
+    Task AddForumAsync(Forum forum);
     Task<Forum> GetForumAsync(int id);
     Task<Forum> GetForumWithSinglePostAsync(int forumId, int postId);
     void DeleteForum(Forum forum, byte[] rowVersion);

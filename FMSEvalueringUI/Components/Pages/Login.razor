@@ -27,7 +27,7 @@
         if (LoginDto is not null)
         {
             var tokenResponse = await _dataServerProxy.CheckCredentials(LoginDto);
-            Token = tokenResponse?.Value?.Token ?? "Invalid response.";
+            Token = tokenResponse?.Token ?? "Invalid response.";
         }
         else
         {

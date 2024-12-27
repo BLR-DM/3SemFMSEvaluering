@@ -19,8 +19,8 @@ public static class PostEndpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     await command.CreatePostAsync(post, appUserId, role, forumId);
                     return Results.Created("testURI", post); // Test return value
                 }
@@ -35,8 +35,8 @@ public static class PostEndpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     await command.UpdatePostAsync(post, appUserId, role, postId, forumId);
                     return Results.Ok(post);
                 }
@@ -52,8 +52,8 @@ public static class PostEndpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     await command.DeletePostAsync(post, appUserId, role, postId, forumId);
                     return Results.Ok("Post deleted");
                 }
@@ -68,8 +68,8 @@ public static class PostEndpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     var post = await query.GetForumWithSinglePostAsync(forumId, appUserId, role, postId);
                     return Results.Ok(post);
                 }
@@ -82,8 +82,8 @@ public static class PostEndpoints
         app.MapGet("/forum/{forumId}/posts/{fromDate}/{toDate}/print", async
             (int forumId, string fromDate, string toDate, ClaimsPrincipal user, IGenerateCsvHandler csvHandler) =>
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
+                var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var role = user.FindFirstValue("usertype")!;
 
                 if (!DateOnly.TryParse(fromDate, out var fromDateParsed) || !DateOnly.TryParse(toDate, out var toDateParsed))
                 {
@@ -106,8 +106,8 @@ public static class PostEndpoints
         app.MapGet("/forum/{forumId}/posts/{fromDate}/{toDate}", async
             (int forumId, string fromDate, string toDate, ClaimsPrincipal user, IForumQuery query) =>
         {
-            var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var role = user.FindFirst("usertype")?.Value;
+            var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var role = user.FindFirstValue("usertype")!;
 
             if (!DateOnly.TryParse(fromDate, out var fromDateParsed) || !DateOnly.TryParse(toDate, out var toDateParsed))
             {

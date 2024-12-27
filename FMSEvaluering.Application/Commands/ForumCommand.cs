@@ -33,7 +33,7 @@ public class ForumCommand : IForumCommand
             await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
             
             // Do
-            await forum.AddPostAsync(postDto.Description, postDto.Solution, appUserId);
+            forum.AddPost(postDto.Description, postDto.Solution, appUserId);
 
             //Save
             await _unitOfWork.Commit();
@@ -58,7 +58,7 @@ public class ForumCommand : IForumCommand
             await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
 
             // Do
-            var post = await forum.UpdatePostAsync(postId, postDto.Description, postDto.Solution,
+            var post = forum.UpdatePost(postId, postDto.Description, postDto.Solution,
                 appUserId);
             _forumRepository.UpdatePost(post, postDto.RowVersion);
 
@@ -85,7 +85,7 @@ public class ForumCommand : IForumCommand
             await _forumAccessHandler.ValidateAccessSingleForumAsync(appUserId, role, forum);
 
             // Do
-            var post = await forum.DeletePostAsync(postId, appUserId);
+            var post = forum.DeletePost(postId, appUserId);
             _forumRepository.DeletePost(post, postDto.RowVersion);
 
             //Save
@@ -106,7 +106,7 @@ public class ForumCommand : IForumCommand
 
             // Do
             var forum = Forum.CreatePublicForum(forumDto.Name);
-            await _forumRepository.AddForum(forum);
+            await _forumRepository.AddForumAsync(forum);
 
             // Save
             await _unitOfWork.Commit();
@@ -126,7 +126,7 @@ public class ForumCommand : IForumCommand
 
             // do
             var forum = Forum.CreateClassForum(forumDto.Name, forumDto.ClassId);
-            await _forumRepository.AddForum(forum);
+            await _forumRepository.AddForumAsync(forum);
 
             // Save
             await _unitOfWork.Commit();
@@ -146,7 +146,7 @@ public class ForumCommand : IForumCommand
 
             // Do
             var forum = Forum.CreateSubjectForum(forumDto.Name, forumDto.SubjectId);
-            await _forumRepository.AddForum(forum);
+            await _forumRepository.AddForumAsync(forum);
 
             // Save
             await _unitOfWork.Commit();

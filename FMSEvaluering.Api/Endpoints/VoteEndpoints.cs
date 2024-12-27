@@ -16,8 +16,8 @@ namespace FMSEvaluering.Api.Endpoints
                 async (int forumId, int postId, HandleVoteDto voteDto, ClaimsPrincipal user, IPostCommand command) =>
                 {
                     // var id = ClaimsPrincipal.Current.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
 
                     try
                     {

@@ -68,8 +68,8 @@ namespace FMSEvaluering.Api.Endpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     var result = await query.GetForumsAsync(appUserId, role);
                     return Results.Ok(result);
                 }
@@ -97,8 +97,8 @@ namespace FMSEvaluering.Api.Endpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     var result = await query.GetForumWithPostsForTeacherAsync(forumId, appUserId, role, 2);
                     return Results.Ok(result);
                 }
@@ -113,8 +113,8 @@ namespace FMSEvaluering.Api.Endpoints
                 {
                     try
                     {
-                        var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                        var role = user.FindFirst("usertype")?.Value;
+                        var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                        var role = user.FindFirstValue("usertype")!;
                         var posts = await query.GetForumWithPostsAsync(forumId, appUserId, role);
                         return Results.Ok(posts);
                     }

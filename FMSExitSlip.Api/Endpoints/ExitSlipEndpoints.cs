@@ -31,9 +31,9 @@ public static class ExitSlipEndpoints
         {
             try
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
-                await command.PublishExitSlip(id, appUserId!, publishExitSlipDto, role!);
+                var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var role = user.FindFirstValue("usertype")!;
+                await command.PublishExitSlip(id, appUserId!, publishExitSlipDto, role);
                 return Results.Ok("ExitSlip published");
             }
             catch (Exception)
@@ -46,8 +46,8 @@ public static class ExitSlipEndpoints
         {
             try
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
+                var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var role = user.FindFirstValue("usertype")!;
                 var result = await query.GetExitSlipAsync(id, appUserId, role);
                 return Results.Ok(result);
             }
