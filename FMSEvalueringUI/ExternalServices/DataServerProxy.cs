@@ -24,7 +24,7 @@ namespace FMSEvalueringUI.ExternalServices
                 {
                     //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
                 }
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(); // To test debug the content
                 var tokenResponse = await response.Content.ReadFromJsonAsync<JwtTokenDto>(); // Adjust type as needed
                 return tokenResponse;
             }

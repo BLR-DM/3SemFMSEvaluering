@@ -1,7 +1,8 @@
-using FMSEvalueringUI;
+using FMSEvalueringUI.Authentication;
 using FMSEvalueringUI.Components;
 using FMSEvalueringUI.ExternalServices;
 using FMSEvalueringUI.ExternalServices.Interfaces;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddHttpClient<IEvalueringProxy, EvalueringProxy>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["FmsEvalueringProxy:BaseAddress"]);
 });
+
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthenticationStateProvider>();
 
 var app = builder.Build();
 
