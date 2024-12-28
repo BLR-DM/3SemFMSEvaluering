@@ -1,21 +1,22 @@
 ﻿using System.Security.Claims;
+using FMSEvalueringUI.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FMSEvalueringUI.Authentication;
 
-public abstract class SimpleAuthenticationStateProvider : AuthenticationStateProvider
+public class CustomAuthProvider : AuthenticationStateProvider
 {
-    private readonly IAuthManager _authManager;
+    private readonly IAuthService _authService;
 
-    protected SimpleAuthenticationStateProvider(IAuthManager authManager)
+    public CustomAuthProvider(IAuthService authService)
     {
-        _authManager = authManager;
-        authManager.OnAuthStateChanged += AuthStateChanged;
+        _authService = authService;
+        authService.OnAuthStateChanged += AuthStateChanged;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var principal = await _authManager.GetClaimsAsync();
+        var principal = await _authService.GetClaimsAsync();
         return new AuthenticationState(principal);
     }
 

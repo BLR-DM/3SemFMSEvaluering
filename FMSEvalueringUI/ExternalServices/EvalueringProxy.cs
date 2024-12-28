@@ -13,7 +13,11 @@ namespace FMSEvalueringUI.ExternalServices
         }
         async Task<List<ForumDto>> IEvalueringProxy.GetForumsAsync()
         {
-            var forums = await _httpClient.GetFromJsonAsync<List<ForumDto>>("/forum");
+            var requestUri = "/forum";
+
+
+
+            var forums = await _httpClient.GetFromJsonAsync<List<ForumDto>>("/evaluation/forum");
             return forums;
         }
 

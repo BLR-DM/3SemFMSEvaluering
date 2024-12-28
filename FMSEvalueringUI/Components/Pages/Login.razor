@@ -1,6 +1,6 @@
 ﻿@page "/login"
-@using FMSEvalueringUI.ExternalServices.Interfaces
-@inject IDataServerProxy _dataServerProxy
+@using FMSEvalueringUI.Services
+@inject IAuthService _authService
 
 <h3>Login</h3>
 
@@ -25,12 +25,22 @@
     {
         if (LoginDto is not null)
         {
-            var tokenResponse = await _dataServerProxy.CheckCredentials(LoginDto);
-            Token = tokenResponse?.Token ?? "Invalid response.";
+            try
+            {
+                await _authService.LoginAsync(LoginDto);
+                var test = await _authService.GetJwtTokenAsync();
+                Token = test;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            //Token = tokenResponse?.Token ?? "Invalid response.";
         }
         else
         {
-            Token = "Form data is null.";
+            //Token = "Form data is null.";
         }
     }
 
