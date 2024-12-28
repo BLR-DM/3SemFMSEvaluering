@@ -22,22 +22,6 @@ builder.Services.AddHttpClient<IEvalueringProxy, EvalueringProxy>(client =>
     client.BaseAddress = new Uri(builder.Configuration["FmsEvalueringProxy:BaseAddress"]);
 });
 
-builder.Services.AddScoped(async sp =>
-{
-    var httpClient = new HttpClient
-    {
-        BaseAddress = new Uri(builder.Configuration["FmsEvalueringProxy:BaseAddress"])
-    };
-
-    var token = await sp.GetRequiredService<IAuthService>().GetJwtTokenAsync(); // Get token from storage
-    if (!string.IsNullOrWhiteSpace(token))
-    {
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-    }
-
-    return httpClient;
-});
-
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
 builder.Services.AddScoped<IAuthService, JwtAuthService>();
 
@@ -51,7 +35,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
