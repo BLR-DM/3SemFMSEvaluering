@@ -1,4 +1,4 @@
-﻿namespace FMSEvalueringUI.ModelDto;
+﻿namespace FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto;
 
 public record PostDto()
 {
@@ -18,9 +18,3 @@ public record PostDto()
     // IEnumerable Comments
     // StudentId
 }
-
-public record PostHistoryDto();
-
-public record VoteDto();
-
-public record CommentDto();

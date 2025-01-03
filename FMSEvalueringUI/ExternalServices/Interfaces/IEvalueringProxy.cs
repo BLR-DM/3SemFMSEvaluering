@@ -1,4 +1,4 @@
-﻿using FMSEvalueringUI.ModelDto;
+﻿using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto;
 
 namespace FMSEvalueringUI.ExternalServices.Interfaces
 {
@@ -6,5 +6,6 @@ namespace FMSEvalueringUI.ExternalServices.Interfaces
     {
         Task<List<ForumDto>> GetForumsAsync();
         Task<ForumDto> GetPostsAsync(string forumId);
+        Task<ForumDto> GetPostAsync(string forumId, string postId);
     }
 }

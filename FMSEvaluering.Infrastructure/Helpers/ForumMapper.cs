@@ -72,6 +72,9 @@ public class ForumMapper : IForumMapper
                 {
                     Id = c.Id,
                     Text = c.Text,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    CreatedDate = c.CreatedDate.ToLongDateString(),
                     RowVersion = c.RowVersion
                 }).ToList()
             }).ToList()
@@ -114,6 +117,7 @@ public class ForumMapper : IForumMapper
                     FirstName = c.FirstName,
                     LastName = c.LastName,
                     Text = c.Text,
+                    CreatedDate = c.CreatedDate.ToLongDateString(),
                     RowVersion = c.RowVersion
                 }).ToList()
             }).ToList()

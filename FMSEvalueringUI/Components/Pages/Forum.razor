@@ -1,5 +1,6 @@
 ﻿@page "/forum/{id}/posts"
 @using FMSEvalueringUI.ExternalServices.Interfaces
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @inject IEvalueringProxy _evalueringProxy
 
 <PageTitle>Forum</PageTitle>
@@ -17,14 +18,16 @@ else
     {
         <li class="posts">
             @post.CreatedDate
-            <NavLink class="nav-link" href="testUrl">
+            <NavLink class="nav-link" href="@($"/forum/{Id}/post/{post.Id}")">
                 @post.Description
             </NavLink>
-            @post.Solution
+            <p>@post.Solution</p>
+            <p>UpVotes: @post.UpVotes</p>
+            <p>DownVotes: @post.DownVotes</p>
+            <p>Comments: @post.Comments.Count()</p>
         </li>
     }
 }
-
 
 
 @code {
@@ -50,12 +53,7 @@ else
         await Task.Delay(500);
 
         ForumDto = await GetPosts(Id);
-        posts = ForumDto.Posts.Select(p => new PostDto // Tilpas data
-            {
-                Description = p.Description,
-                Solution = p.Solution,
-                CreatedDate = p.CreatedDate
-            }).ToArray();
+        posts = ForumDto.Posts.ToArray();
     }
 
     public async Task<ForumDto> GetPosts(string forumId)
