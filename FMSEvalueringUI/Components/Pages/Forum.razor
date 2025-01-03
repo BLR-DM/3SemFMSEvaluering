@@ -1,0 +1,66 @@
+﻿@page "/forum/{id}/posts"
+@using FMSEvalueringUI.ExternalServices.Interfaces
+@inject IEvalueringProxy _evalueringProxy
+
+<PageTitle>Forum</PageTitle>
+
+<h1>Forum Id: @Id</h1>
+
+@if (posts == null)
+{
+    <p><em>Loading ...</em></p>
+}
+else
+{
+    <h3>@ForumDto.Name</h3>
+    @foreach (var post in posts)
+    {
+        <li class="posts">
+            @post.CreatedDate
+            <NavLink class="nav-link" href="testUrl">
+                @post.Description
+            </NavLink>
+            @post.Solution
+        </li>
+    }
+}
+
+
+
+@code {
+    [Parameter]
+    public string? Id { get; set; } // Must match 'id' in the route
+
+    public ForumDto? ForumDto { get; set; } = new();
+
+    private PostDto[]? posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadForumDataAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadForumDataAsync();
+    }
+
+    private async Task LoadForumDataAsync()
+    {
+        await Task.Delay(500);
+
+        ForumDto = await GetPosts(Id);
+        posts = ForumDto.Posts.Select(p => new PostDto // Tilpas data
+            {
+                Description = p.Description,
+                Solution = p.Solution,
+                CreatedDate = p.CreatedDate
+            }).ToArray();
+    }
+
+    public async Task<ForumDto> GetPosts(string forumId)
+    {
+        var result = await _evalueringProxy.GetPostsAsync(forumId);
+        return result;
+    }
+}

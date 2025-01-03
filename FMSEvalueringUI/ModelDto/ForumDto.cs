@@ -8,6 +8,4 @@
         public byte[] RowVersion { get; set; }
         public IEnumerable<PostDto> Posts { get; set; } = null!;
     }
-
-    public record PostDto() {}
 }

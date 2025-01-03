@@ -23,5 +23,14 @@ namespace FMSEvalueringUI.ExternalServices
             var forums = await _httpClient.GetFromJsonAsync<List<ForumDto>>("/evaluation/forum");
             return forums;
         }
+
+        async Task<ForumDto> IEvalueringProxy.GetPostsAsync(string forumId)
+        {
+            var token = await _serviceProvider.GetRequiredService<IAuthService>().GetJwtTokenAsync();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var forum = await _httpClient.GetFromJsonAsync<ForumDto>($"evaluation/forum/{int.Parse(forumId)}/posts");
+            return forum;
+        }
     }
 }
