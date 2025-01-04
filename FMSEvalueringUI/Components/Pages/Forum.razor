@@ -12,9 +12,12 @@
 
 <h1>Forum Id: @Id</h1>
 
-<NavLink class="btn btn-primary" href="@($"/forum/{Id}/post")">
-    Create Post
-</NavLink>
+@if (ShowStudentButtons)
+{
+    <NavLink class="btn btn-primary" href="@($"/forum/{Id}/post")">
+        Create Post
+    </NavLink>
+}
 
 @if (posts == null)
 {
@@ -32,10 +35,16 @@ else
             </NavLink>
             <p>@post.Solution</p>
             <span>UpVotes: @post.UpVotes</span>
-            <button @onclick="@(() => HandleVote(@post.Id,true))">UpVote</button>
+            @if (ShowStudentButtons)
+            {
+                <button @onclick="@(() => HandleVote(@post.Id, true))">UpVote</button>
+            }
 
             <span>DownVotes: @post.DownVotes</span>
-            <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
+            @if (ShowStudentButtons)
+            {
+                <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
+            }
 
             <p>Comments: @post.Comments.Count()</p>
         </li>
@@ -51,8 +60,12 @@ else
 
     private PostDto[]? posts;
 
+    private bool ShowStudentButtons { get; set; } = false;
+
     protected override async Task OnInitializedAsync()
     {
+        var claims = await _authService.GetClaimsAsync();
+        ShowStudentButtons = claims.FindFirstValue("usertype") == "student";
         await LoadForumDataAsync();
     }
 
