@@ -6,6 +6,7 @@
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @using FMSEvalueringUI.Services
+@using System.Security.Claims
 @inject IEvalueringProxy _evalueringProxy
 @inject IAuthService _authService
 
@@ -56,7 +57,7 @@ else
         <EditForm Model="UpdatePostDto" OnSubmit="UpdatePost" id="UpdatePostForm" FormName="UpdatePostForm">
             <InputText @bind-Value="UpdatePostDto.Description" type="description" placeholder="@post.Description"></InputText>
             <InputText @bind-Value="UpdatePostDto.Solution" type="solution" placeholder="@post.Solution"></InputText>
-            <button type="submit">Update Post</button>
+            <button type="submit">Save</button>
         </EditForm>
     }
 
@@ -66,9 +67,26 @@ else
         <li class="comments">
             @comment.CreatedDate
             <p>@comment.FirstName @comment.LastName</p>
-            <p>@comment.Text</p>
+            @if(UpdateCommentId != comment.Id)
+            {
+                <p>@comment.Text</p>
+            }
         </li>
 
+        @if (IsUserSameAsCreaterComment(comment))
+        {
+            
+            @if (UpdateCommentId == comment.Id)
+            {
+                <EditForm Model="UpdateCommentDto" OnSubmit="@(() => UpdateComment(comment.Id))" id="UpdateCommentDto" FormName="UpdateCommentDto">
+                    <InputText @bind-Value="UpdateCommentDto.Text" type="comment" placeholder="@comment.Text"></InputText>
+                    <button type="submit">Save</button>
+                </EditForm>
+            }
+
+            <button @onclick="@(() => EnableUpdateComment(comment))">Update Comment</button>
+
+        }
     }
 
     <EditForm Model="CreateCommentDto" OnSubmit="CreateAComment" id="CreateCommentForm" FormName="CreateCommentForm">
@@ -89,10 +107,15 @@ else
     private PostDto? post;
 
     private CreateCommentDto CreateCommentDto { get; set; } = new CreateCommentDto();
+    private UpdateCommentDto UpdateCommentDto { get; set; } 
     private UpdatePostDto UpdatePostDto { get; set; }
 
     private bool UpdateEnabled { get; set; } = false;
     private bool IsUserSameAsCreator { get; set; } = false;
+    private bool UpdateCommentEnabled { get; set; } = false;
+    private bool IsUserSameAsCreatorComment { get; set; } = false;
+    private ClaimsPrincipal claimsPrincipal { get; set; }
+    private int? UpdateCommentId { get; set; }
     private bool ShowEdits { get; set; } = false;
     private bool ShowStudentButtons { get; set; } = false;
 
@@ -102,6 +125,7 @@ else
         ShowStudentButtons = claims.FindFirstValue("usertype") == "student";
         await LoadPostDataAsync();
         await IsUserSameAsCreater();
+        claimsPrincipal = await _authService.GetClaimsAsync();
     }
 
     private async Task LoadPostDataAsync()
@@ -129,6 +153,18 @@ else
         }
     }
 
+    private bool IsUserSameAsCreaterComment(CommentDto comment)
+    {
+        var userId = claimsPrincipal.FindFirst("sub").Value;
+        var commentCreatorId = comment.AppUserId;
+        if (userId == commentCreatorId)
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
     private async Task CreateAComment()
     {
         await _evalueringProxy.CreateComment(forumId, postId, CreateCommentDto);
@@ -154,6 +190,30 @@ else
         }
     }
 
+    private void EnableUpdateComment(CommentDto comment)
+    {
+        if (!IsUserSameAsCreaterComment(comment))
+        {
+            return;
+        }
+
+        if (UpdateCommentId == comment.Id)
+        {
+            UpdateCommentId = null;
+        }
+        else
+        {
+            UpdateCommentId = comment.Id;
+
+            UpdateCommentDto = new UpdateCommentDto
+                {
+                    Text = comment.Text,
+                    RowVersion = comment.RowVersion
+                };
+        }
+    }
+
+
     private async Task UpdatePost()
     {
         await _evalueringProxy.UpdatePost(forumId, postId, UpdatePostDto);
@@ -161,6 +221,12 @@ else
         await LoadPostDataAsync();
     }
 
+
+    private async Task UpdateComment(int id)
+    {
+        await _evalueringProxy.UpdateComment(forumId, postId, id.ToString(), UpdateCommentDto);
+        UpdateCommentId = null;
+    }            
     private void Edits()
     {
         ShowEdits = !ShowEdits;
@@ -182,6 +248,7 @@ else
         {
             await _evalueringProxy.HandleVote(forum.Id.ToString(), postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
         }
+
         await LoadPostDataAsync();
     }
 }

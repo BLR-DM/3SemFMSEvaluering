@@ -77,7 +77,8 @@ public class ForumMapper : IForumMapper
                     FirstName = c.FirstName,
                     LastName = c.LastName,
                     CreatedDate = c.CreatedDate.ToLongDateString(),
-                    RowVersion = c.RowVersion
+                    RowVersion = c.RowVersion,
+                    AppUserId = c.AppUserId
                 }).ToList()
             }).ToList()
         };

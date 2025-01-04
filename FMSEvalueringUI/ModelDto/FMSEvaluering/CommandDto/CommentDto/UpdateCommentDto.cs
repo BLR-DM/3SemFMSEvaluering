@@ -1,4 +1,8 @@
 ﻿namespace FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto
 {
-    public record UpdateCommentDto(string Text, byte[] RowVersion);
+    public record UpdateCommentDto()
+    {
+        public string Text { get; set; }
+        public byte[] RowVersion { get; set; }
+    };
 }

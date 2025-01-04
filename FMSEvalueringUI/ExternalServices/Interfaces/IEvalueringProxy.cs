@@ -14,5 +14,6 @@ namespace FMSEvalueringUI.ExternalServices.Interfaces
         Task CreatePost(string forumId, CreatePostDto post);
         Task CreateComment(string forumId, string postId, CreateCommentDto comment);
         Task UpdatePost(string forumId, string postId, UpdatePostDto post);
+        Task UpdateComment(string forumId, string postId, string commentId, UpdateCommentDto comment);
     }
 }
