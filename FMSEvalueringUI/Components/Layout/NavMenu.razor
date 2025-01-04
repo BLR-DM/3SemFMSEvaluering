@@ -42,7 +42,7 @@
                         @foreach (var forum in forums)
                         {
                             <li class="dropdown-item">
-                                <NavLink class="nav-link" href="@($"/forum/{forum.Id}/posts")">@forum.Name</NavLink>
+                                <NavLink class="nav-link" style="color: black;" href="@($"/forum/{forum.Id}/posts")">@forum.Name</NavLink>
                             </li>
                         }
                     }

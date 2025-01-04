@@ -22,15 +22,25 @@ else
     }
 
     <div class="container d-flex justify-content-center">
-        <div class="card mb-4" style="width: 600px;">
+        <div class="card mb-4" style="width: 700px;">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <small class="text-muted">@post.CreatedDate</small>
                 </div>
                 @if(!UpdateEnabled)
                 {
-                    <h5 class="card-title">@post.Description</h5>
-                    <p class="card-text text-secondary">@post.Solution</p>
+                    <small class="text-muted">Feedback:</small>
+                    <div class="card mb-4 justify-content-center" style="width: 625px;">
+                        <h5 class="card-title" style="padding-left: 10px; padding-right: 10px; padding-top: 10px;">
+                            @post.Description
+                        </h5>
+                    </div>
+                    <small class="text-muted">Solution:</small>
+                    <div class="card mb-4 justify-content-center" style="width: 625px;">
+                        <h5 class="card-title" style="padding-left: 10px; padding-right: 10px; padding-top: 10px;">
+                            @post.Solution
+                        </h5>
+                    </div>
                     @if (ShowStudentButtons)
                     {
                         <div class="d-flex gap-2 mb-2">
@@ -61,18 +71,17 @@ else
                         }
                     </p>
                 }
+                @if (UpdateEnabled)
+                {
+                    <EditForm Model="UpdatePostDto" OnSubmit="UpdatePost" id="UpdatePostForm" FormName="UpdatePostForm">
+                        <InputText @bind-Value="UpdatePostDto.Description" type="description" placeholder="@post.Description"></InputText>
+                        <InputText @bind-Value="UpdatePostDto.Solution" type="solution" placeholder="@post.Solution"></InputText>
+                        <button type="submit">Save</button>
+                    </EditForm>
+                }
             </div>
         </div>
     </div>
-
-    @if (UpdateEnabled)
-    {
-        <EditForm Model="UpdatePostDto" OnSubmit="UpdatePost" id="UpdatePostForm" FormName="UpdatePostForm">
-            <InputText @bind-Value="UpdatePostDto.Description" type="description" placeholder="@post.Description"></InputText>
-            <InputText @bind-Value="UpdatePostDto.Solution" type="solution" placeholder="@post.Solution"></InputText>
-            <button type="submit">Save</button>
-        </EditForm>
-    }
 
     <h3>Comments:</h3>
     @foreach (var comment in post.Comments)

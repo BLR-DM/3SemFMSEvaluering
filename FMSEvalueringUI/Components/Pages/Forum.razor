@@ -25,14 +25,24 @@ else
     @foreach (var post in posts)
     {
         <div class="container d-flex justify-content-center">
-            <div class="card mb-4" style="width: 600px;">
+            <div class="card mb-4" style="width: 700px;">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <small class="text-muted">@post.CreatedDate</small>
                     </div>
-                    <NavLink class="nav-link text-primary fw-bold" href="@($"/forum/{Id}/post/{post.Id}")">
-                        <h5 class="card-title">@post.Description</h5>
-                        <p class="card-text text-secondary">@post.Solution</p>
+                    <NavLink class="nav-link text-body" href="@($"/forum/{Id}/post/{post.Id}")">
+                        <small class="text-muted">Feedback:</small>
+                        <div class="card mb-4 justify-content-center" style="width: 625px;">
+                            <h5 class="card-title" style="padding-left: 10px; padding-right: 10px; padding-top: 10px;">
+                                @post.Description
+                            </h5>
+                        </div>
+                        <small class="text-muted">Solution:</small>
+                        <div class="card mb-4 justify-content-center" style="width: 625px;">
+                            <h5 class="card-title" style="padding-left: 10px; padding-right: 10px; padding-top: 10px;">
+                                @post.Solution
+                            </h5>
+                        </div>
                     </NavLink>
                     @if (ShowStudentButtons)
                     {
