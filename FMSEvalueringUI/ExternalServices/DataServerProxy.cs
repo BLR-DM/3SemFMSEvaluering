@@ -19,7 +19,7 @@ namespace FMSEvalueringUI.ExternalServices
             try
             {
                 var requestUri = "/fmsdataserver/login";
-                var response = await _httpClient.PostAsJsonAsync(requestUri, new { loginDto.Email, loginDto.Password });
+                var response = await _httpClient.PostAsJsonAsync(requestUri, loginDto);
                 if (!response.IsSuccessStatusCode)
                 {
                     //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);

@@ -1,7 +1,12 @@
 ﻿@page "/forum/{id}/posts"
+@using System.Security.Claims
 @using FMSEvalueringUI.ExternalServices.Interfaces
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
+@using FMSEvalueringUI.Services
+@using Microsoft.IdentityModel.Tokens
 @inject IEvalueringProxy _evalueringProxy
+@inject IAuthService _authService
 
 <PageTitle>Forum</PageTitle>
 
@@ -22,8 +27,12 @@ else
                 @post.Description
             </NavLink>
             <p>@post.Solution</p>
-            <p>UpVotes: @post.UpVotes</p>
-            <p>DownVotes: @post.DownVotes</p>
+            <span>UpVotes: @post.UpVotes</span>
+            <button @onclick="@(() => HandleVote(@post.Id,true))">UpVote</button>
+
+            <span>DownVotes: @post.DownVotes</span>
+            <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
+
             <p>Comments: @post.Comments.Count()</p>
         </li>
     }
@@ -60,5 +69,24 @@ else
     {
         var result = await _evalueringProxy.GetPostsAsync(forumId);
         return result;
+    }
+
+    public async Task HandleVote(string postId, bool voteType)
+    {
+        var claims = await _authService.GetClaimsAsync();
+
+        var appUserId = claims.FindFirstValue("sub");
+
+        var vote = posts.Single(p => p.Id == postId)
+            .Votes.SingleOrDefault(v => v.AppUserId == appUserId);
+
+        if (vote == null)
+        {
+            _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType });
+        }
+        else
+        {
+            _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
+        }
     }
 }

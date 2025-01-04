@@ -62,8 +62,8 @@ public class JwtAuthService : IAuthService
     {
         var currentUser = await _jsRuntime.InvokeAsync<string>("sessionStorage.getItem", "currentUser");
         
-        //if (string.IsNullOrEmpty(currentUser))
-        //    throw new ArgumentException("No user found!");
+        if (string.IsNullOrEmpty(currentUser))
+            throw new ArgumentException("No user found!");
 
         return ParseClaimsFromJwt(currentUser);
     }

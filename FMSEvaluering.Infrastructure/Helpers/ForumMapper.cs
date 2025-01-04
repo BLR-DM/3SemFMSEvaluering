@@ -66,6 +66,7 @@ public class ForumMapper : IForumMapper
                 Votes = p.Votes.Select(v => new VoteDto
                 {
                     VoteType = v.VoteType,
+                    AppUserId = v.AppUserId,
                     RowVersion = v.RowVersion
                 }).ToList(),
                 Comments = p.Comments.Select(c => new CommentDto

@@ -10,5 +10,6 @@ namespace FMSEvaluering.Application.Queries.QueryDto
     {
         public bool VoteType { get; set; }
         public byte[] RowVersion { get; set; }
+        public string AppUserId { get; set; }
     }
 }
