@@ -27,7 +27,7 @@
     public async Task CreateAPost()
     {
         await _evalueringProxy.CreatePost(Id, CreatePostDto);
-        Navigation.NavigateTo($"/forum/{Id}/posts");
+        Navigation.NavigateTo($"/forum/{Id}/posts"); //evt navigate direkte til postens page
     }
 
 }
