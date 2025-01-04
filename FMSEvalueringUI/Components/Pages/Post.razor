@@ -1,7 +1,9 @@
 ﻿@page "/forum/{forumId}/post/{postId}"
+@using System.Security.Claims
 @using FMSEvalueringUI.ExternalServices.Interfaces
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @using FMSEvalueringUI.Services
 @inject IEvalueringProxy _evalueringProxy
@@ -24,6 +26,17 @@ else
     {
         <p>@post.Description</p>
         <p>@post.Solution</p>
+        <span>UpVotes: @post.UpVotes</span>
+        @if (ShowStudentButtons)
+        {
+            <button @onclick="@(() => HandleVote(@post.Id, true))">UpVote</button>
+        }
+        <span>DownVotes: @post.DownVotes</span>
+        @if (ShowStudentButtons)
+        {
+            <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
+        }
+        <br/>
         <button @onclick="Edits">Edits</button>
         @if (ShowEdits)
         {
@@ -81,9 +94,12 @@ else
     private bool UpdateEnabled { get; set; } = false;
     private bool IsUserSameAsCreator { get; set; } = false;
     private bool ShowEdits { get; set; } = false;
+    private bool ShowStudentButtons { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        var claims = await _authService.GetClaimsAsync();
+        ShowStudentButtons = claims.FindFirstValue("usertype") == "student";
         await LoadPostDataAsync();
         await IsUserSameAsCreater();
     }
@@ -130,11 +146,11 @@ else
             UpdateEnabled = true;
 
             UpdatePostDto = new UpdatePostDto
-                {
-                    Description = post.Description,
-                    Solution = post.Solution,
-                    RowVersion = post.RowVersion
-                };
+            {
+                Description = post.Description,
+                Solution = post.Solution,
+                RowVersion = post.RowVersion
+            };
         }
     }
 
@@ -148,5 +164,24 @@ else
     private void Edits()
     {
         ShowEdits = !ShowEdits;
+    }
+
+    private async Task HandleVote(string postId, bool voteType)
+    {
+        var claims = await _authService.GetClaimsAsync();
+
+        var appUserId = claims.FindFirstValue("sub");
+
+        var vote = post.Votes.SingleOrDefault(v => v.AppUserId == appUserId);
+
+        if (vote == null)
+        {
+            await _evalueringProxy.HandleVote(forum.Id.ToString(), postId, new HandleVoteDto { VoteType = voteType });
+        }
+        else
+        {
+            await _evalueringProxy.HandleVote(forum.Id.ToString(), postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
+        }
+        await LoadPostDataAsync();
     }
 }
