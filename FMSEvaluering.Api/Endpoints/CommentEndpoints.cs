@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using FMSEvaluering.Application.Commands.CommandDto.CommentDto;
 using FMSEvaluering.Application.Commands.Interfaces;
 

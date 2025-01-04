@@ -1,7 +1,9 @@
 ﻿@page "/forum/{forumId}/post/{postId}"
+@using System.Security.Claims
 @using FMSEvalueringUI.ExternalServices.Interfaces
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @using FMSEvalueringUI.Services
 @using System.Security.Claims
@@ -25,7 +27,31 @@ else
     {
         <p>@post.Description</p>
         <p>@post.Solution</p>
+        <span>UpVotes: @post.UpVotes</span>
+        @if (ShowStudentButtons)
+        {
+            <button @onclick="@(() => HandleVote(@post.Id, true))">UpVote</button>
+        }
+        <span>DownVotes: @post.DownVotes</span>
+        @if (ShowStudentButtons)
+        {
+            <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
+        }
+        <br/>
+        <button @onclick="Edits">Edits</button>
+        @if (ShowEdits)
+        {
+            foreach (var postHistory in post.History)
+            {
+                <li class="edits">
+                    @postHistory.EditedDate
+                    <p>@postHistory.Description</p>
+                    <p>@postHistory.Solution</p>
+                </li>
+            }
+        }
     }
+
     @if (UpdateEnabled)
     {
         <EditForm Model="UpdatePostDto" OnSubmit="UpdatePost" id="UpdatePostForm" FormName="UpdatePostForm">
@@ -39,7 +65,7 @@ else
     @foreach (var comment in post.Comments)
     {
         <li class="comments">
-            <p>@comment.CreatedDate</p>
+            @comment.CreatedDate
             <p>@comment.FirstName @comment.LastName</p>
             @if(UpdateCommentId != comment.Id)
             {
@@ -90,10 +116,13 @@ else
     private bool IsUserSameAsCreatorComment { get; set; } = false;
     private ClaimsPrincipal claimsPrincipal { get; set; }
     private int? UpdateCommentId { get; set; }
-
+    private bool ShowEdits { get; set; } = false;
+    private bool ShowStudentButtons { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
+        var claims = await _authService.GetClaimsAsync();
+        ShowStudentButtons = claims.FindFirstValue("usertype") == "student";
         await LoadPostDataAsync();
         await IsUserSameAsCreater();
         claimsPrincipal = await _authService.GetClaimsAsync();
@@ -144,7 +173,7 @@ else
 
     private void EnableUpdate()
     {
-        if (UpdateEnabled is true)
+        if (UpdateEnabled)
         {
             UpdateEnabled = false;
         }
@@ -153,11 +182,11 @@ else
             UpdateEnabled = true;
 
             UpdatePostDto = new UpdatePostDto
-                {
-                    Description = post.Description,
-                    Solution = post.Solution,
-                    RowVersion = post.RowVersion
-                };
+            {
+                Description = post.Description,
+                Solution = post.Solution,
+                RowVersion = post.RowVersion
+            };
         }
     }
 
@@ -192,10 +221,34 @@ else
         await LoadPostDataAsync();
     }
 
+
     private async Task UpdateComment(int id)
     {
         await _evalueringProxy.UpdateComment(forumId, postId, id.ToString(), UpdateCommentDto);
         UpdateCommentId = null;
+    }            
+    private void Edits()
+    {
+        ShowEdits = !ShowEdits;
+    }
+
+    private async Task HandleVote(string postId, bool voteType)
+    {
+        var claims = await _authService.GetClaimsAsync();
+
+        var appUserId = claims.FindFirstValue("sub");
+
+        var vote = post.Votes.SingleOrDefault(v => v.AppUserId == appUserId);
+
+        if (vote == null)
+        {
+            await _evalueringProxy.HandleVote(forum.Id.ToString(), postId, new HandleVoteDto { VoteType = voteType });
+        }
+        else
+        {
+            await _evalueringProxy.HandleVote(forum.Id.ToString(), postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
+        }
+
         await LoadPostDataAsync();
     }
 }
