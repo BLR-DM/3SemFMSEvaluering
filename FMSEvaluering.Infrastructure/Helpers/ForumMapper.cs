@@ -54,7 +54,7 @@ public class ForumMapper : IForumMapper
                 AppUserId = p.AppUserId,
                 Description = p.Description,
                 Solution = p.Solution,
-                CreatedDate = p.CreatedDate.ToShortDateString(),
+                CreatedDate = p.CreatedDate.ToLongDateString(),
                 UpVotes = p.Votes.Count(v => v.VoteType),
                 DownVotes = p.Votes.Count(v => !v.VoteType),
                 RowVersion = p.RowVersion,
@@ -62,7 +62,7 @@ public class ForumMapper : IForumMapper
                 {
                     Description = ph.Description,
                     Solution = ph.Solution,
-                    EditedDate = ph.EditedDate.ToShortDateString()
+                    EditedDate = ph.EditedDate.ToLongDateString()
                 }).ToList(),
                 Votes = p.Votes.Select(v => new VoteDto
                 {
@@ -98,7 +98,7 @@ public class ForumMapper : IForumMapper
                 Id = p.Id.ToString(),
                 Description = p.Description,
                 Solution = p.Solution,
-                CreatedDate = p.CreatedDate.ToShortDateString(),
+                CreatedDate = p.CreatedDate.ToLongDateString(),
                 UpVotes = p.Votes.Count(v => v.VoteType),
                 DownVotes = p.Votes.Count(v => !v.VoteType),
                 RowVersion = p.RowVersion,
@@ -106,7 +106,7 @@ public class ForumMapper : IForumMapper
                 {
                     Description = ph.Description,
                     Solution = ph.Solution,
-                    EditedDate = ph.EditedDate.ToShortDateString()
+                    EditedDate = ph.EditedDate.ToLongDateString()
                 }).ToList(),
                 Votes = p.Votes.Select(v => new VoteDto
                 {

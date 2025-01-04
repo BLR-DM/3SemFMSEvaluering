@@ -24,7 +24,20 @@ else
     {
         <p>@post.Description</p>
         <p>@post.Solution</p>
+        <button @onclick="Edits">Edits</button>
+        @if (ShowEdits)
+        {
+            foreach (var postHistory in post.History)
+            {
+                <li class="edits">
+                    @postHistory.EditedDate
+                    <p>@postHistory.Description</p>
+                    <p>@postHistory.Solution</p>
+                </li>
+            }
+        }
     }
+
     @if (UpdateEnabled)
     {
         <EditForm Model="UpdatePostDto" OnSubmit="UpdatePost" id="UpdatePostForm" FormName="UpdatePostForm">
@@ -38,7 +51,7 @@ else
     @foreach (var comment in post.Comments)
     {
         <li class="comments">
-            <p>@comment.CreatedDate</p>
+            @comment.CreatedDate
             <p>@comment.FirstName @comment.LastName</p>
             <p>@comment.Text</p>
         </li>
@@ -67,6 +80,7 @@ else
 
     private bool UpdateEnabled { get; set; } = false;
     private bool IsUserSameAsCreator { get; set; } = false;
+    private bool ShowEdits { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,7 +121,7 @@ else
 
     private void EnableUpdate()
     {
-        if (UpdateEnabled is true)
+        if (UpdateEnabled)
         {
             UpdateEnabled = false;
         }
@@ -129,5 +143,10 @@ else
         await _evalueringProxy.UpdatePost(forumId, postId, UpdatePostDto);
         UpdateEnabled = false;
         await LoadPostDataAsync();
+    }
+
+    private void Edits()
+    {
+        ShowEdits = !ShowEdits;
     }
 }
