@@ -4,8 +4,7 @@
 @inject IEvalueringProxy _evalueringProxy
 @inject NavigationManager Navigation
 
-
-<h3>CreatePost</h3>
+<h3>Create Post</h3>
 
 <h1>Forum ID: @Id</h1>
 
@@ -22,7 +21,7 @@
 
     private CreatePostDto CreatePostDto { get; set; } = new();
 
-    public async Task CreateAPost()
+    private async Task CreateAPost()
     {
         await _evalueringProxy.CreatePost(Id, CreatePostDto);
         Navigation.NavigateTo($"/forum/{Id}/posts"); //evt navigate direkte til postens page
