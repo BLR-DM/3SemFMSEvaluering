@@ -21,35 +21,49 @@ else
         <button @onclick="EnableUpdate">Update Post</button>
     }
 
-    <p>@post.CreatedDate</p>
-    @if(!UpdateEnabled)
-    {
-        <p>@post.Description</p>
-        <p>@post.Solution</p>
-        <span>UpVotes: @post.UpVotes</span>
-        @if (ShowStudentButtons)
-        {
-            <button @onclick="@(() => HandleVote(@post.Id, true))">UpVote</button>
-        }
-        <span>DownVotes: @post.DownVotes</span>
-        @if (ShowStudentButtons)
-        {
-            <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
-        }
-        <br/>
-        <button @onclick="Edits">Edits</button>
-        @if (ShowEdits)
-        {
-            foreach (var postHistory in post.History)
-            {
-                <li class="edits">
-                    @postHistory.EditedDate
-                    <p>@postHistory.Description</p>
-                    <p>@postHistory.Solution</p>
-                </li>
-            }
-        }
-    }
+    <div class="container d-flex justify-content-center">
+        <div class="card mb-4" style="width: 600px;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">@post.CreatedDate</small>
+                </div>
+                @if(!UpdateEnabled)
+                {
+                    <h5 class="card-title">@post.Description</h5>
+                    <p class="card-text text-secondary">@post.Solution</p>
+                    @if (ShowStudentButtons)
+                    {
+                        <div class="d-flex gap-2 mb-2">
+                            <button class="btn btn-outline-success btn-sm" @onclick="@(() => HandleVote(@post.Id, true))">
+                                UpVote
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" @onclick="@(() => HandleVote(@post.Id, false))">
+                                DownVote
+                            </button>
+                        </div>
+                    }
+                    <p class="card-text">
+                        <span>Up: @post.UpVotes | Down: @post.DownVotes</span>
+                        <br/>
+                        <small class="text-muted">Comments: @post.Comments.Count()</small>
+                        <br/>
+                        <button @onclick="Edits">Edits</button>
+                        @if (ShowEdits)
+                        {
+                            foreach (var postHistory in post.History)
+                            {
+                                <li class="edits">
+                                    @postHistory.EditedDate
+                                    <p>@postHistory.Description</p>
+                                    <p>@postHistory.Solution</p>
+                                </li>
+                            }
+                        }
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
 
     @if (UpdateEnabled)
     {

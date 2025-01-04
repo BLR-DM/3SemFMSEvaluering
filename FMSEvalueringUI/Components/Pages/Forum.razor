@@ -24,26 +24,35 @@ else
     }
     @foreach (var post in posts)
     {
-        <li class="posts">
-            @post.CreatedDate
-            <NavLink class="nav-link" href="@($"/forum/{Id}/post/{post.Id}")">
-                @post.Description
-            </NavLink>
-            <p>@post.Solution</p>
-            <span>UpVotes: @post.UpVotes</span>
-            @if (ShowStudentButtons)
-            {
-                <button @onclick="@(() => HandleVote(@post.Id, true))">UpVote</button>
-            }
-
-            <span>DownVotes: @post.DownVotes</span>
-            @if (ShowStudentButtons)
-            {
-                <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
-            }
-
-            <p>Comments: @post.Comments.Count()</p>
-        </li>
+        <div class="container d-flex justify-content-center">
+            <div class="card mb-4" style="width: 600px;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">@post.CreatedDate</small>
+                    </div>
+                    <NavLink class="nav-link text-primary fw-bold" href="@($"/forum/{Id}/post/{post.Id}")">
+                        <h5 class="card-title">@post.Description</h5>
+                        <p class="card-text text-secondary">@post.Solution</p>
+                    </NavLink>
+                    @if (ShowStudentButtons)
+                    {
+                        <div class="d-flex gap-2 mb-2">
+                            <button class="btn btn-outline-success btn-sm" @onclick="@(() => HandleVote(@post.Id, true))">
+                                UpVote
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" @onclick="@(() => HandleVote(@post.Id, false))">
+                                DownVote
+                            </button>
+                        </div>
+                    }
+                    <p class="card-text">
+                        <span>Up: @post.UpVotes | Down: @post.DownVotes</span>
+                        <br/>
+                        <small class="text-muted">Comments: @post.Comments.Count()</small>
+                    </p>
+                </div>
+            </div>
+        </div>
     }
 }
 
