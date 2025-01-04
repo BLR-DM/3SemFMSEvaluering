@@ -6,7 +6,6 @@
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @using FMSEvalueringUI.Services
-@using System.Security.Claims
 @inject IEvalueringProxy _evalueringProxy
 @inject IAuthService _authService
 
@@ -75,7 +74,6 @@ else
 
         @if (IsUserSameAsCreaterComment(comment))
         {
-            
             @if (UpdateCommentId == comment.Id)
             {
                 <EditForm Model="UpdateCommentDto" OnSubmit="@(() => UpdateComment(comment.Id))" id="UpdateCommentDto" FormName="UpdateCommentDto">
@@ -83,9 +81,7 @@ else
                     <button type="submit">Save</button>
                 </EditForm>
             }
-
             <button @onclick="@(() => EnableUpdateComment(comment))">Update Comment</button>
-
         }
     }
 
@@ -106,18 +102,16 @@ else
 
     private PostDto? post;
 
-    private CreateCommentDto CreateCommentDto { get; set; } = new CreateCommentDto();
+    private CreateCommentDto CreateCommentDto { get; set; } = new();
     private UpdateCommentDto UpdateCommentDto { get; set; } 
     private UpdatePostDto UpdatePostDto { get; set; }
 
-    private bool UpdateEnabled { get; set; } = false;
-    private bool IsUserSameAsCreator { get; set; } = false;
-    private bool UpdateCommentEnabled { get; set; } = false;
-    private bool IsUserSameAsCreatorComment { get; set; } = false;
+    private bool UpdateEnabled { get; set; }
+    private bool IsUserSameAsCreator { get; set; }
     private ClaimsPrincipal claimsPrincipal { get; set; }
     private int? UpdateCommentId { get; set; }
-    private bool ShowEdits { get; set; } = false;
-    private bool ShowStudentButtons { get; set; } = false;
+    private bool ShowEdits { get; set; }
+    private bool ShowStudentButtons { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -147,22 +141,16 @@ else
         var claims = await _authService.GetClaimsAsync();
         var userId = claims.FindFirst("sub").Value;
         var postCreatorId = post.AppUserId;
-        if (userId == postCreatorId)
-        {
-            IsUserSameAsCreator = true;
-        }
+
+        IsUserSameAsCreator = userId == postCreatorId;
     }
 
     private bool IsUserSameAsCreaterComment(CommentDto comment)
     {
         var userId = claimsPrincipal.FindFirst("sub").Value;
         var commentCreatorId = comment.AppUserId;
-        if (userId == commentCreatorId)
-        {
-            return true;
-        }
-        else
-            return false;
+        
+        return userId == commentCreatorId;
     }
 
     private async Task CreateAComment()
@@ -206,10 +194,10 @@ else
             UpdateCommentId = comment.Id;
 
             UpdateCommentDto = new UpdateCommentDto
-                {
-                    Text = comment.Text,
-                    RowVersion = comment.RowVersion
-                };
+            {
+                Text = comment.Text,
+                RowVersion = comment.RowVersion
+            };
         }
     }
 
@@ -220,13 +208,14 @@ else
         UpdateEnabled = false;
         await LoadPostDataAsync();
     }
-
-
-    private async Task UpdateComment(int id)
+    
+    private async Task UpdateComment(int commentId)
     {
-        await _evalueringProxy.UpdateComment(forumId, postId, id.ToString(), UpdateCommentDto);
+        await _evalueringProxy.UpdateComment(forumId, postId, commentId.ToString(), UpdateCommentDto);
         UpdateCommentId = null;
+        await LoadPostDataAsync();
     }            
+
     private void Edits()
     {
         ShowEdits = !ShowEdits;

@@ -11,20 +11,19 @@
 
 <h1>Forum Id: @Id</h1>
 
-@if (ShowStudentButtons)
-{
-    <NavLink class="btn btn-primary" href="@($"/forum/{Id}/post")">
-        Create Post
-    </NavLink>
-}
-
 @if (posts == null)
 {
     <p><em>Loading ...</em></p>
 }
 else
 {
-    <h3>@ForumDto.Name</h3>
+    <h3>@forumDto.Name</h3>
+    @if (ShowStudentButtons)
+    {
+        <NavLink class="btn btn-primary" href="@($"/forum/{Id}/post")">
+            Create Post
+        </NavLink>
+    }
     @foreach (var post in posts)
     {
         <li class="posts">
@@ -53,13 +52,13 @@ else
 
 @code {
     [Parameter]
-    public string? Id { get; set; } // Must match 'id' in the route
+    public string? Id { get; set; }
 
-    private ForumDto? ForumDto { get; set; } = new();
+    private ForumDto? forumDto { get; set; } = new();
 
     private PostDto[]? posts;
 
-    private bool ShowStudentButtons { get; set; } = false;
+    private bool ShowStudentButtons { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,8 +76,8 @@ else
     {
         await Task.Delay(500);
 
-        if (Id != null) ForumDto = await GetPosts(Id);
-        posts = ForumDto?.Posts.ToArray();
+        if (Id != null) forumDto = await GetPosts(Id);
+        posts = forumDto?.Posts.ToArray();
     }
 
     private async Task<ForumDto> GetPosts(string forumId)

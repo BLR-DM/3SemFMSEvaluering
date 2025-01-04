@@ -1,10 +1,8 @@
 ﻿@page "/forum/{id}/post"
 @using FMSEvalueringUI.ExternalServices.Interfaces
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
-@using FMSEvalueringUI.Services
 @inject IEvalueringProxy _evalueringProxy
 @inject NavigationManager Navigation
-@inject IAuthService _authService
 
 
 <h3>CreatePost</h3>
@@ -20,14 +18,13 @@
 
 @code {
     [Parameter]
-    public string? Id { get; set; } // Must match 'id' in the route
+    public string? Id { get; set; }
 
-    private CreatePostDto CreatePostDto { get; set; } = new CreatePostDto();
+    private CreatePostDto CreatePostDto { get; set; } = new();
 
     public async Task CreateAPost()
     {
         await _evalueringProxy.CreatePost(Id, CreatePostDto);
         Navigation.NavigateTo($"/forum/{Id}/posts"); //evt navigate direkte til postens page
     }
-
 }
