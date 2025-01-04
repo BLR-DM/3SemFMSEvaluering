@@ -1,10 +1,10 @@
 ﻿@page "/forum/{id}/posts"
+@attribute [StreamRendering]
 @using System.Security.Claims
 @using FMSEvalueringUI.ExternalServices.Interfaces
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @using FMSEvalueringUI.Services
-@using Microsoft.IdentityModel.Tokens
 @inject IEvalueringProxy _evalueringProxy
 @inject IAuthService _authService
 
@@ -43,7 +43,7 @@ else
     [Parameter]
     public string? Id { get; set; } // Must match 'id' in the route
 
-    public ForumDto? ForumDto { get; set; } = new();
+    private ForumDto? ForumDto { get; set; } = new();
 
     private PostDto[]? posts;
 
@@ -61,32 +61,36 @@ else
     {
         await Task.Delay(500);
 
-        ForumDto = await GetPosts(Id);
-        posts = ForumDto.Posts.ToArray();
+        if (Id != null) ForumDto = await GetPosts(Id);
+        posts = ForumDto?.Posts.ToArray();
     }
 
-    public async Task<ForumDto> GetPosts(string forumId)
+    private async Task<ForumDto> GetPosts(string forumId)
     {
         var result = await _evalueringProxy.GetPostsAsync(forumId);
         return result;
     }
 
-    public async Task HandleVote(string postId, bool voteType)
+    private async Task HandleVote(string postId, bool voteType)
     {
         var claims = await _authService.GetClaimsAsync();
 
         var appUserId = claims.FindFirstValue("sub");
 
-        var vote = posts.Single(p => p.Id == postId)
-            .Votes.SingleOrDefault(v => v.AppUserId == appUserId);
+        if (posts != null)
+        {
+            var vote = posts.Single(p => p.Id == postId)
+                .Votes.SingleOrDefault(v => v.AppUserId == appUserId);
 
-        if (vote == null)
-        {
-            _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType });
-        }
-        else
-        {
-            _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
+            if (vote == null)
+            {
+                await _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType });
+            }
+            else
+            {
+                await _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
+            }
+            await LoadForumDataAsync();
         }
     }
 }
