@@ -5,7 +5,7 @@ public record PostDto()
     public string Id { get; set; }
     public string Description { get; set; }
     public string Solution { get; set; }
-    //public string AppUserId { get; set; } // Kommenteret ud pga annonymitet
+    public string AppUserId { get; set; } // Kommenteret ud pga annonymitet
     public string CreatedDate { get; set; }
     public int UpVotes { get; set; }
     public int DownVotes { get; set; }

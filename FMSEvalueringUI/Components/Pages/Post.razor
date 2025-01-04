@@ -3,7 +3,9 @@
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
+@using FMSEvalueringUI.Services
 @inject IEvalueringProxy _evalueringProxy
+@inject IAuthService _authService
 
 @if (post == null)
 {
@@ -12,10 +14,25 @@
 else
 {
     <h1>@forum.Name</h1>
+    @if (IsUserSameAsCreator)
+    {
+        <button @onclick="EnableUpdate">Update Post</button>
+    }
 
     <p>@post.CreatedDate</p>
-    <p>@post.Description</p>
-    <p>@post.Solution</p>
+    @if(!UpdateEnabled)
+    {
+        <p>@post.Description</p>
+        <p>@post.Solution</p>
+    }
+    @if (UpdateEnabled)
+    {
+        <EditForm Model="UpdatePostDto" OnSubmit="UpdatePost" id="UpdatePostForm" FormName="UpdatePostForm">
+            <InputText @bind-Value="UpdatePostDto.Description" type="description" placeholder="@post.Description"></InputText>
+            <InputText @bind-Value="UpdatePostDto.Solution" type="solution" placeholder="@post.Solution"></InputText>
+            <button type="submit">Update Post</button>
+        </EditForm>
+    }
 
     <h3>Comments:</h3>
     @foreach (var comment in post.Comments)
@@ -25,6 +42,7 @@ else
             <p>@comment.FirstName @comment.LastName</p>
             <p>@comment.Text</p>
         </li>
+
     }
 
     <EditForm Model="CreateCommentDto" OnSubmit="CreateAComment" id="CreateCommentForm" FormName="CreateCommentForm">
@@ -45,10 +63,15 @@ else
     private PostDto? post;
 
     private CreateCommentDto CreateCommentDto { get; set; } = new CreateCommentDto();
+    private UpdatePostDto UpdatePostDto { get; set; }
+
+    private bool UpdateEnabled { get; set; } = false;
+    private bool IsUserSameAsCreator { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadPostDataAsync();
+        await IsUserSameAsCreater();
     }
 
     private async Task LoadPostDataAsync()
@@ -65,9 +88,46 @@ else
         return result;
     }
 
+    private async Task IsUserSameAsCreater()
+    {
+        var claims = await _authService.GetClaimsAsync();
+        var userId = claims.FindFirst("sub").Value;
+        var postCreatorId = post.AppUserId;
+        if (userId == postCreatorId)
+        {
+            IsUserSameAsCreator = true;
+        }
+    }
+
     private async Task CreateAComment()
     {
         await _evalueringProxy.CreateComment(forumId, postId, CreateCommentDto);
+        await LoadPostDataAsync();
+    }
+
+    private void EnableUpdate()
+    {
+        if (UpdateEnabled is true)
+        {
+            UpdateEnabled = false;
+        }
+        else
+        {
+            UpdateEnabled = true;
+
+            UpdatePostDto = new UpdatePostDto
+                {
+                    Description = post.Description,
+                    Solution = post.Solution,
+                    RowVersion = post.RowVersion
+                };
+        }
+    }
+
+    private async Task UpdatePost()
+    {
+        await _evalueringProxy.UpdatePost(forumId, postId, UpdatePostDto);
+        UpdateEnabled = false;
         await LoadPostDataAsync();
     }
 }
