@@ -129,5 +129,23 @@ namespace FMSEvalueringUI.ExternalServices
                 //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
             }
         }
+
+        async Task IEvalueringProxy.UpdateComment(string forumId, string postId, string commentId, UpdateCommentDto comment)
+        {
+            var token = await _serviceProvider.GetRequiredService<IAuthService>().GetJwtTokenAsync();
+
+            if (token == null)
+                throw new UnauthorizedAccessException("Unauthorized request");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var requestUri = $"evaluation/forum/{forumId}/post/{postId}/comment/{commentId}";
+
+            var response = await _httpClient.PutAsJsonAsync(requestUri, comment);
+            if (!response.IsSuccessStatusCode)
+            {
+                //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
+            }
+        }
     }
 }

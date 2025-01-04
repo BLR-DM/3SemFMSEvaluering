@@ -15,5 +15,6 @@ namespace FMSEvaluering.Application.Queries.QueryDto
         public string Text { get; set; }
         public string CreatedDate { get; set; }
         public byte[] RowVersion { get; set; }
+        public string AppUserId { get; set; }
     }
 }
