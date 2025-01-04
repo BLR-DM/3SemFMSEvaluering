@@ -66,12 +66,16 @@ public class ForumMapper : IForumMapper
                 Votes = p.Votes.Select(v => new VoteDto
                 {
                     VoteType = v.VoteType,
+                    AppUserId = v.AppUserId,
                     RowVersion = v.RowVersion
                 }).ToList(),
                 Comments = p.Comments.Select(c => new CommentDto
                 {
                     Id = c.Id,
                     Text = c.Text,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    CreatedDate = c.CreatedDate.ToLongDateString(),
                     RowVersion = c.RowVersion
                 }).ToList()
             }).ToList()
@@ -114,6 +118,7 @@ public class ForumMapper : IForumMapper
                     FirstName = c.FirstName,
                     LastName = c.LastName,
                     Text = c.Text,
+                    CreatedDate = c.CreatedDate.ToLongDateString(),
                     RowVersion = c.RowVersion
                 }).ToList()
             }).ToList()

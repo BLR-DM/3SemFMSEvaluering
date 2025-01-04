@@ -1,0 +1,58 @@
+﻿@page "/forum/{forumId}/post/{postId}"
+@using FMSEvalueringUI.ExternalServices.Interfaces
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
+@inject IEvalueringProxy _evalueringProxy
+
+@if (post == null)
+{
+    <p><em>Loading ...</em></p>
+}
+else
+{
+    <h1>@forum.Name</h1>
+
+    <p>@post.CreatedDate</p>
+    <p>@post.Description</p>
+    <p>@post.Solution</p>
+
+    <h3>Comments:</h3>
+    @foreach (var comment in post.Comments)
+    {
+        <li class="comments">
+            <p>@comment.CreatedDate</p>
+            <p>@comment.FirstName @comment.LastName</p>
+            <p>@comment.Text</p>
+        </li>
+    }
+
+}
+
+@code {
+    [Parameter]
+    public string? forumId { get; set; }
+    [Parameter]
+    public string? postId { get; set; }
+
+    private ForumDto? forum { get; set; } = new();
+
+    private PostDto? post;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPostDataAsync();
+    }
+
+    private async Task LoadPostDataAsync()
+    {
+        await Task.Delay(500);
+
+        forum = await GetPost(forumId, postId);
+        post = forum.Posts.First();
+    }
+
+    public async Task<ForumDto> GetPost(string forumId, string postId)
+    {
+        var result = await _evalueringProxy.GetPostAsync(forumId, postId);
+        return result;
+    }
+}

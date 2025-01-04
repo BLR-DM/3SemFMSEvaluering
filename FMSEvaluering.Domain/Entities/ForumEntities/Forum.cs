@@ -14,30 +14,24 @@ public abstract class Forum : DomainEntity
     public string Name { get; protected set; }
     public IReadOnlyCollection<Post> Posts => _posts;
 
-    public virtual bool ValidateStudentAccessAsync(StudentValue student)
-    {
-        return false;
-    }
+    public virtual bool ValidateStudentAccessAsync(StudentValue student) => false;
 
-    public virtual bool ValidateTeacherAccessAsync(TeacherValue teacher)
-    {
-        return false;
-    }
+    public virtual bool ValidateTeacherAccessAsync(TeacherValue teacher) => false;
 
-    public async Task AddPostAsync(string description, string solution, string appUserId)
+    public void AddPost(string description, string solution, string appUserId)
     {
         var post = Post.Create(description, solution, appUserId);
         _posts.Add(post); 
     }
 
-    public async Task<Post> UpdatePostAsync(int postId, string description, string solution, string appUserId)
+    public Post UpdatePost(int postId, string description, string solution, string appUserId)
     {
         var post = GetPostById(postId);
         post.Update(description, solution, appUserId);
         return post;
     }
 
-    public async Task<Post> DeletePostAsync(int postId, string appUserId) //maaske slet? //admin ??
+    public Post DeletePost(int postId, string appUserId) //maaske slet? //admin ??
     {
         var post = GetPostById(postId);
         _posts.Remove(post);

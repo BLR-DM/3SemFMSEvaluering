@@ -16,10 +16,10 @@ namespace FMSEvaluering.Api.Endpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
-                    var firstName = user.FindFirst(ClaimTypes.GivenName)?.Value;
-                    var lastName = user.FindFirst(ClaimTypes.Surname)?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
+                    var firstName = user.FindFirstValue(ClaimTypes.GivenName)!;
+                    var lastName = user.FindFirstValue(ClaimTypes.Surname)!;
 
                     await command.CreateCommentAsync(dto, firstName, lastName, postId, appUserId, role, forumId);
                     return Results.Created("testURI", dto);
@@ -36,8 +36,8 @@ namespace FMSEvaluering.Api.Endpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
 
                     await command.UpdateCommentAsync(dto, appUserId, role, forumId, postId, commentId);
                     return Results.Ok(dto);

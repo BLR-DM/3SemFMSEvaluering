@@ -18,12 +18,13 @@ namespace FMSEvalueringUI.ExternalServices
         {
             try
             {
-                var requestUri = "/login";
-                var response = await _httpClient.PostAsJsonAsync(requestUri, new { loginDto.Email, loginDto.Password });
+                var requestUri = "/fmsdataserver/login";
+                var response = await _httpClient.PostAsJsonAsync(requestUri, loginDto);
                 if (!response.IsSuccessStatusCode)
                 {
                     //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
                 }
+                var content = await response.Content.ReadAsStringAsync(); // To test debug the content
                 var tokenResponse = await response.Content.ReadFromJsonAsync<JwtTokenDto>(); // Adjust type as needed
                 return tokenResponse;
             }
@@ -37,8 +38,8 @@ namespace FMSEvalueringUI.ExternalServices
 
     public class JwtTokenDto
     {
-        public ValueDto Value { get; set; }
-        public int StatusCode { get; set; }
+        public string Token { get; set; }
+        //public int StatusCode { get; set; }
     }
 
     public class ValueDto

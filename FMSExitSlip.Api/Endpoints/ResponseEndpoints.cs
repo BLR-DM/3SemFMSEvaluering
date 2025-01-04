@@ -16,8 +16,8 @@ public static class ResponseEndpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     await command.CreateResponseAsync(responseDto, exitSlipId, questionId, appUserId, role);
                     return Results.Created();
                 }
@@ -33,8 +33,8 @@ public static class ResponseEndpoints
             {
                 try
                 {
-                    var appUserId = user.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    var role = user.FindFirst("usertype")?.Value;
+                    var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                    var role = user.FindFirstValue("usertype")!;
                     await command.UpdateResponseAsync(responseDto, exitSlipId, responseId, questionId, appUserId, role);
                     return Results.Ok();
                 }

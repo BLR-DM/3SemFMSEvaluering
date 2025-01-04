@@ -1,0 +1,92 @@
+﻿@page "/forum/{id}/posts"
+@using System.Security.Claims
+@using FMSEvalueringUI.ExternalServices.Interfaces
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
+@using FMSEvalueringUI.Services
+@using Microsoft.IdentityModel.Tokens
+@inject IEvalueringProxy _evalueringProxy
+@inject IAuthService _authService
+
+<PageTitle>Forum</PageTitle>
+
+<h1>Forum Id: @Id</h1>
+
+@if (posts == null)
+{
+    <p><em>Loading ...</em></p>
+}
+else
+{
+    <h3>@ForumDto.Name</h3>
+    @foreach (var post in posts)
+    {
+        <li class="posts">
+            @post.CreatedDate
+            <NavLink class="nav-link" href="@($"/forum/{Id}/post/{post.Id}")">
+                @post.Description
+            </NavLink>
+            <p>@post.Solution</p>
+            <span>UpVotes: @post.UpVotes</span>
+            <button @onclick="@(() => HandleVote(@post.Id,true))">UpVote</button>
+
+            <span>DownVotes: @post.DownVotes</span>
+            <button @onclick="@(() => HandleVote(@post.Id,false))">DownVote</button>
+
+            <p>Comments: @post.Comments.Count()</p>
+        </li>
+    }
+}
+
+
+@code {
+    [Parameter]
+    public string? Id { get; set; } // Must match 'id' in the route
+
+    public ForumDto? ForumDto { get; set; } = new();
+
+    private PostDto[]? posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadForumDataAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadForumDataAsync();
+    }
+
+    private async Task LoadForumDataAsync()
+    {
+        await Task.Delay(500);
+
+        ForumDto = await GetPosts(Id);
+        posts = ForumDto.Posts.ToArray();
+    }
+
+    public async Task<ForumDto> GetPosts(string forumId)
+    {
+        var result = await _evalueringProxy.GetPostsAsync(forumId);
+        return result;
+    }
+
+    public async Task HandleVote(string postId, bool voteType)
+    {
+        var claims = await _authService.GetClaimsAsync();
+
+        var appUserId = claims.FindFirstValue("sub");
+
+        var vote = posts.Single(p => p.Id == postId)
+            .Votes.SingleOrDefault(v => v.AppUserId == appUserId);
+
+        if (vote == null)
+        {
+            _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType });
+        }
+        else
+        {
+            _evalueringProxy.HandleVote(Id, postId, new HandleVoteDto { VoteType = voteType, RowVersion = vote.RowVersion });
+        }
+    }
+}

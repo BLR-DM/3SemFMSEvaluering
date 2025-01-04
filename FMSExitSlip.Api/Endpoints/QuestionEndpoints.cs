@@ -13,8 +13,8 @@ public static class QuestionEndpoints
         app.MapPost("/exitslip/{exitSlipId}/question",
             async (int exitSlipId, CreateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = user.FindFirst("usertype")?.Value;
+                var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var role = user.FindFirstValue("usertype")!;
                 try
                 {
                     await command.AddQuestionAsync(questionDto, exitSlipId, appUserId, role);
@@ -29,12 +29,12 @@ public static class QuestionEndpoints
         app.MapPut("/exitslip/{exitSlipId}/question/{questionId}",
             async (int exitSlipId, int questionId, UpdateQuestionDto questionDto, ClaimsPrincipal user, IExitSlipCommand command) =>
             {
-                var appUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var appUserId = user.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
                 if (appUserId == null)
                     return Results.Unauthorized();
 
-                var role = user.FindFirst("usertype")?.Value;
+                var role = user.FindFirstValue("usertype")!;
 
                 try
                 {

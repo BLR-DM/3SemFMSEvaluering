@@ -1,7 +1,11 @@
-using FMSEvalueringUI;
+using System.Net.Http.Headers;
+using FMSEvalueringUI.Authentication;
 using FMSEvalueringUI.Components;
 using FMSEvalueringUI.ExternalServices;
 using FMSEvalueringUI.ExternalServices.Interfaces;
+using FMSEvalueringUI.Services;
+using FMSEvalueringUI.Services.Impl;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +22,9 @@ builder.Services.AddHttpClient<IEvalueringProxy, EvalueringProxy>(client =>
     client.BaseAddress = new Uri(builder.Configuration["FmsEvalueringProxy:BaseAddress"]);
 });
 
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthProvider>();
+builder.Services.AddScoped<IAuthService, JwtAuthService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,7 +35,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
