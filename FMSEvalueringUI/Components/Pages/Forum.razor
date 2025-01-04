@@ -12,6 +12,10 @@
 
 <h1>Forum Id: @Id</h1>
 
+<NavLink class="btn btn-primary" href="@($"/forum/{Id}/post")">
+    Create Post
+</NavLink>
+
 @if (posts == null)
 {
     <p><em>Loading ...</em></p>

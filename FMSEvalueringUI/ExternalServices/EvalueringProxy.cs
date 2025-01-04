@@ -1,5 +1,7 @@
 ﻿using FMSEvalueringUI.ExternalServices.Interfaces;
 using System.Net.Http.Headers;
+using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto;
+using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto;
 using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto;
 using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto;
 using FMSEvalueringUI.Services;
@@ -68,6 +70,42 @@ namespace FMSEvalueringUI.ExternalServices
             var requestUri = $"evaluation/forum/{forumId}/post/{postId}/vote";
 
             var response = await _httpClient.PostAsJsonAsync(requestUri, vote);
+            if (!response.IsSuccessStatusCode)
+            {
+                //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
+            }
+        }
+
+        async Task IEvalueringProxy.CreatePost(string forumId, CreatePostDto post)
+        {
+            var token = await _serviceProvider.GetRequiredService<IAuthService>().GetJwtTokenAsync();
+
+            if (token == null)
+                throw new UnauthorizedAccessException("Unauthorized request");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var requestUri = $"evaluation/forum/{forumId}/post";
+
+            var response = await _httpClient.PostAsJsonAsync(requestUri, post);
+            if (!response.IsSuccessStatusCode)
+            {
+                //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);
+            }
+        }
+
+        async Task IEvalueringProxy.CreateComment(string forumId, string postId, CreateCommentDto comment)
+        {
+            var token = await _serviceProvider.GetRequiredService<IAuthService>().GetJwtTokenAsync();
+
+            if (token == null)
+                throw new UnauthorizedAccessException("Unauthorized request");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var requestUri = $"evaluation/forum/{forumId}/post/{postId}/comment";
+
+            var response = await _httpClient.PostAsJsonAsync(requestUri, comment);
             if (!response.IsSuccessStatusCode)
             {
                 //return Results.Problem("Failed to authenticate user.", statusCode: (int)response.StatusCode);

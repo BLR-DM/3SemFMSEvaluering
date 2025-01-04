@@ -1,5 +1,7 @@
 ﻿@page "/forum/{forumId}/post/{postId}"
 @using FMSEvalueringUI.ExternalServices.Interfaces
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto
 @inject IEvalueringProxy _evalueringProxy
 
@@ -25,6 +27,11 @@ else
         </li>
     }
 
+    <EditForm Model="CreateCommentDto" OnSubmit="CreateAComment" id="CreateCommentForm" FormName="CreateCommentForm">
+        <InputText @bind-Value="CreateCommentDto.Text" type="comment" placeholder="Comment"></InputText>
+        <button type="submit">Add Comment</button>
+    </EditForm>
+
 }
 
 @code {
@@ -36,6 +43,8 @@ else
     private ForumDto? forum { get; set; } = new();
 
     private PostDto? post;
+
+    private CreateCommentDto CreateCommentDto { get; set; } = new CreateCommentDto();
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,5 +63,10 @@ else
     {
         var result = await _evalueringProxy.GetPostAsync(forumId, postId);
         return result;
+    }
+
+    private async Task CreateAComment()
+    {
+        await _evalueringProxy.CreateComment(forumId, postId, CreateCommentDto);
     }
 }

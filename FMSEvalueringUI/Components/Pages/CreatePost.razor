@@ -1,0 +1,31 @@
+﻿@page "/forum/{id}/post"
+@using FMSEvalueringUI.ExternalServices.Interfaces
+@using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
+@using FMSEvalueringUI.Services
+@inject IEvalueringProxy _evalueringProxy
+@inject IAuthService _authService
+
+
+<h3>CreatePost</h3>
+
+<h1>Forum ID: @Id</h1>
+
+<EditForm Model="CreatePostDto" OnSubmit="CreateAPost" id="CreatePostForm" FormName="CreatePostForm">
+    <InputText @bind-Value="CreatePostDto.Description" type="description" placeholder="Description"></InputText>
+    <InputText @bind-Value="CreatePostDto.Solution" type="solution" placeholder="Solution"></InputText>
+    <button type="submit">Create Post</button>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public string? Id { get; set; } // Must match 'id' in the route
+
+    private CreatePostDto CreatePostDto { get; set; } = new CreatePostDto();
+
+    public async Task CreateAPost()
+    {
+        await _evalueringProxy.CreatePost(Id, CreatePostDto);
+    }
+
+}
