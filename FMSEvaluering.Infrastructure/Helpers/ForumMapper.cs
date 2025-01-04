@@ -51,6 +51,7 @@ public class ForumMapper : IForumMapper
             Posts = forum.Posts.Select(p => new PostDto
             {
                 Id = p.Id.ToString(),
+                AppUserId = p.AppUserId,
                 Description = p.Description,
                 Solution = p.Solution,
                 CreatedDate = p.CreatedDate.ToShortDateString(),

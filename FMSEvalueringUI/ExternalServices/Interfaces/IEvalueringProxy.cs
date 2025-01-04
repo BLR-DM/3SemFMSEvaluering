@@ -13,5 +13,6 @@ namespace FMSEvalueringUI.ExternalServices.Interfaces
         Task HandleVote(string forumId, string postId, HandleVoteDto vote);
         Task CreatePost(string forumId, CreatePostDto post);
         Task CreateComment(string forumId, string postId, CreateCommentDto comment);
+        Task UpdatePost(string forumId, string postId, UpdatePostDto post);
     }
 }
