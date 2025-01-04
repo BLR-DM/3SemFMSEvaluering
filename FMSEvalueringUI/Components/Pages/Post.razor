@@ -68,5 +68,6 @@ else
     private async Task CreateAComment()
     {
         await _evalueringProxy.CreateComment(forumId, postId, CreateCommentDto);
+        await LoadPostDataAsync();
     }
 }

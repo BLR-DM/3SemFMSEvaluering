@@ -3,6 +3,7 @@
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto
 @using FMSEvalueringUI.Services
 @inject IEvalueringProxy _evalueringProxy
+@inject NavigationManager Navigation
 @inject IAuthService _authService
 
 
@@ -26,6 +27,7 @@
     public async Task CreateAPost()
     {
         await _evalueringProxy.CreatePost(Id, CreatePostDto);
+        Navigation.NavigateTo($"/forum/{Id}/posts");
     }
 
 }
