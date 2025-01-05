@@ -27,7 +27,7 @@ public static class ResponseEndpoints
                 }
             }).RequireAuthorization("student").WithTags(tag);
 
-        app.MapPut("/exitslip/{exitSlipId}/question/{questionId}/response{responseId}",
+        app.MapPut("/exitslip/{exitSlipId}/question/{questionId}/response/{responseId}",
             async (int exitSlipId, int responseId, int questionId, UpdateResponseDto responseDto, ClaimsPrincipal user,
                 IExitSlipCommand command) =>
             {
