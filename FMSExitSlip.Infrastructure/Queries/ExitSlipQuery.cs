@@ -60,13 +60,24 @@ public class ExitSlipQuery : IExitSlipQuery
                 RowVersion = q.RowVersion,
                 Text = q.Text,
                 AppUserId = q.AppUserId,
-                Responses = q.Responses.Select(r => new ResponseDto
-                {
-                    Id = r.Id,
-                    RowVersion = r.RowVersion,
-                    Text = r.Text,
-                    AppUserId = r.AppUserId
-                })
+                Responses = role == "teacher"
+                    ? q.Responses
+                    .Select(r => new ResponseDto
+                    {
+                        Id = r.Id,
+                        RowVersion = r.RowVersion,
+                        Text = r.Text,
+                        AppUserId = r.AppUserId
+                    })
+                    : q.Responses
+                    .Where(r => r.AppUserId == appUserId)
+                    .Select(r => new ResponseDto
+                    {
+                        Id = r.Id,
+                        RowVersion = r.RowVersion,
+                        Text = r.Text,
+                        AppUserId = r.AppUserId
+                    })
             })
         };
 
