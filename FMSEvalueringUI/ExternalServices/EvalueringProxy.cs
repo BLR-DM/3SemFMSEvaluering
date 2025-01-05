@@ -40,7 +40,20 @@ namespace FMSEvalueringUI.ExternalServices
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var forum = await _httpClient.GetFromJsonAsync<ForumDto>($"evaluation/forum/{int.Parse(forumId)}/posts");
+            var forum = await _httpClient.GetFromJsonAsync<ForumDto>($"evaluation/forum/{forumId}/posts");
+            return forum;
+        }
+
+        async Task<ForumDto> IEvalueringProxy.GetPostsTeacherAsync(string forumId)
+        {
+            var token = await _serviceProvider.GetRequiredService<IAuthService>().GetJwtTokenAsync();
+
+            if (token == null)
+                throw new UnauthorizedAccessException("Unauthorized request");
+
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var forum = await _httpClient.GetFromJsonAsync<ForumDto>($"evaluation/forum/{forumId}/posts/teacher");
             return forum;
         }
 
@@ -54,7 +67,7 @@ namespace FMSEvalueringUI.ExternalServices
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var forum = await _httpClient.GetFromJsonAsync<ForumDto>
-                ($"evaluation/forum/{int.Parse(forumId)}/post/{int.Parse(postId)}");
+                ($"evaluation/forum/{int.Parse(forumId)}/post/{postId}");
             return forum;
         }
 

@@ -81,6 +81,7 @@ else
     {
         var claims = await _authService.GetClaimsAsync();
         ShowStudentButtons = claims.FindFirstValue("usertype") == "student";
+
         await LoadForumDataAsync();
     }
 
@@ -91,7 +92,7 @@ else
 
     private async Task LoadForumDataAsync()
     {
-        await Task.Delay(500);
+        await Task.Delay(500); // loading text
 
         if (Id != null) forumDto = await GetPosts(Id);
         posts = forumDto?.Posts.ToArray();
@@ -99,8 +100,15 @@ else
 
     private async Task<ForumDto> GetPosts(string forumId)
     {
-        var result = await _evalueringProxy.GetPostsAsync(forumId);
-        return result;
+        if (ShowStudentButtons)
+        {
+            return await _evalueringProxy.GetPostsAsync(forumId);
+        }
+        else
+        {
+            return await _evalueringProxy.GetPostsTeacherAsync(forumId);
+        }
+        
     }
 
     private async Task HandleVote(string postId, bool voteType)

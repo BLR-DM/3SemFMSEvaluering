@@ -108,11 +108,13 @@ else
         }
     }
 
-    <EditForm Model="CreateCommentDto" OnSubmit="CreateAComment" id="CreateCommentForm" FormName="CreateCommentForm">
-        <InputText @bind-Value="CreateCommentDto.Text" type="comment" placeholder="Comment"></InputText>
-        <button type="submit">Add Comment</button>
-    </EditForm>
-
+    if (ShowStudentButtons)
+    {
+        <EditForm Model="CreateCommentDto" OnSubmit="CreateAComment" id="CreateCommentForm" FormName="CreateCommentForm">
+            <InputText @bind-Value="CreateCommentDto.Text" type="comment" placeholder="Comment"></InputText>
+            <button type="submit">Add Comment</button>
+        </EditForm>
+    }
 }
 
 @code {
