@@ -60,8 +60,9 @@ public class ExitSlipQuery : IExitSlipQuery
                 RowVersion = q.RowVersion,
                 Text = q.Text,
                 AppUserId = q.AppUserId,
-                Responses = role == "teacher"
+                Responses = role == "student"
                     ? q.Responses
+                    .Where(r => r.AppUserId == appUserId)
                     .Select(r => new ResponseDto
                     {
                         Id = r.Id,
@@ -70,7 +71,6 @@ public class ExitSlipQuery : IExitSlipQuery
                         AppUserId = r.AppUserId
                     })
                     : q.Responses
-                    .Where(r => r.AppUserId == appUserId)
                     .Select(r => new ResponseDto
                     {
                         Id = r.Id,
