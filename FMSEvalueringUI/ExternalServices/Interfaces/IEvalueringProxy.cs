@@ -1,4 +1,5 @@
-﻿using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto;
+﻿using System.Runtime.CompilerServices;
+using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.CommentDto;
 using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.PostDto;
 using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto;
 using FMSEvalueringUI.ModelDto.FMSEvaluering.QueryDto;
@@ -16,5 +17,6 @@ namespace FMSEvalueringUI.ExternalServices.Interfaces
         Task UpdatePost(string forumId, string postId, UpdatePostDto post);
         Task UpdateComment(string forumId, string postId, string commentId, UpdateCommentDto comment);
         Task<ForumDto> GetPostsTeacherAsync(string forumId);
+        Task<byte[]> PrintPosts(string forumId, string fromDate, string toDate);
     }
 }

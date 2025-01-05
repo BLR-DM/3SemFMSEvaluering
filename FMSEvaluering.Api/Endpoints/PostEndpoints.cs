@@ -101,7 +101,7 @@ public static class PostEndpoints
                 {
                     return Results.BadRequest($"Something went wrong {e}");
                 }
-            });
+            }).RequireAuthorization("teacher").WithTags(tag);
 
         app.MapGet("/forum/{forumId}/posts/{fromDate}/{toDate}", async
             (int forumId, string fromDate, string toDate, ClaimsPrincipal user, IForumQuery query) =>

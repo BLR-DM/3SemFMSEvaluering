@@ -1,4 +1,5 @@
 ﻿@page "/forum/{id}/posts"
+@using System.Reflection.Metadata
 @using System.Security.Claims
 @using FMSEvalueringUI.ExternalServices.Interfaces
 @using FMSEvalueringUI.ModelDto.FMSEvaluering.CommandDto.VoteDto
@@ -6,6 +7,7 @@
 @using FMSEvalueringUI.Services
 @inject IEvalueringProxy _evalueringProxy
 @inject IAuthService _authService
+@inject IJSRuntime _JSRuntime
 
 <PageTitle>Forum</PageTitle>
 
@@ -64,12 +66,35 @@ else
             </div>
         </div>
     }
+    @if (!ShowStudentButtons)
+    {
+        <button @onclick="ToggleDatePickers">Print posts</button>
+
+        @if (showDatePickers)
+        {
+            <div>
+                <label for="fromDate">From Date:</label>
+                <input type="date" @bind="fromDate" id="fromDate" />
+
+                <label for="toDate">To Date:</label>
+                <input type="date" @bind="toDate" id="toDate" />
+
+                <button @onclick="Print">Generate CSV</button>
+            </div>
+        }
+    }
+
 }
 
 
 @code {
     [Parameter]
     public string? Id { get; set; }
+
+    private bool showDatePickers { get; set; } = false;
+
+    private DateTime? fromDate { get; set; }
+    private DateTime? toDate { get; set; }
 
     private ForumDto? forumDto { get; set; } = new();
 
@@ -108,7 +133,34 @@ else
         {
             return await _evalueringProxy.GetPostsTeacherAsync(forumId);
         }
-        
+
+    }
+
+    private void ToggleDatePickers()
+    {
+        showDatePickers = !showDatePickers;
+    }
+
+    private async Task Print()
+    {
+        if (fromDate.HasValue && toDate.HasValue)
+        {
+            var fromDateString = fromDate.Value.ToString("yyyy-MM-dd");
+            var toDateString = toDate.Value.ToString("yyyy-MM-dd");
+
+            var fileContent = await _evalueringProxy.PrintPosts(Id, fromDateString, toDateString);
+
+            if (fileContent != null)
+            {
+                // Trigger file download
+                await _JSRuntime.InvokeVoidAsync("triggerFileDownload", fileContent, "PostReport.csv");
+            }
+        }
+        else
+        {
+            // Håndter fejl, hvis datoerne ikke er valgt
+            Console.WriteLine("Please select both From Date and To Date.");
+        }
     }
 
     private async Task HandleVote(string postId, bool voteType)

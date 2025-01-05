@@ -15,6 +15,21 @@
 <body>
     <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)"/>
     <script src="_framework/blazor.web.js"></script>
-</body>
+    
+    <script>
+        function triggerFileDownload(fileStream, fileName) {
+            var blob = new Blob([fileStream], { type: 'application/octet-stream' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+    </body>
+
 
 </html>
