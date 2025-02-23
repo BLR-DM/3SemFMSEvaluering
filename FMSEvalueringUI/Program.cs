@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using FMSEvalueringUI.Authentication;
 using FMSEvalueringUI.Components;
 using FMSEvalueringUI.ExternalServices;
