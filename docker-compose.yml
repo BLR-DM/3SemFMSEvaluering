@@ -7,45 +7,45 @@ services:
     build:
       context: .
       dockerfile: FMSEvalueringUI/Dockerfile
-      platforms:
-        - linux/amd64
-        - linux/arm64
+      #platforms:
+      #  - linux/amd64
+      #  - linux/arm64
 
   fmsevaluering.api:
     image: ${DOCKER_REGISTRY-}fmsevalueringapi
     build:
       context: .
       dockerfile: FMSEvaluering.Api/Dockerfile
-      platforms:
-        - linux/amd64
-        - linux/arm64
+      #platforms:
+      #  - linux/amd64
+      #  - linux/arm64
 
   gateway.api:
     image: ${DOCKER_REGISTRY-}gatewayapi
     build:
       context: .
       dockerfile: GatewayAPI/Gateway.API/Dockerfile
-      platforms:
-        - linux/amd64
-        - linux/arm64
+      #platforms:
+      #  - linux/amd64
+      #  - linux/arm64
 
   fmsdataserver.api:
     image: ${DOCKER_REGISTRY-}fmsdataserverapi
     build:
       context: .
       dockerfile: FMSDataServer.Api/Dockerfile
-      platforms:
-        - linux/amd64
-        - linux/arm64
+      #platforms:
+      #  - linux/amd64
+      #  - linux/arm64
 
   fmsexitslip.api:
     image: ${DOCKER_REGISTRY-}fmsexitslipapi
     build:
       context: .
       dockerfile: FMSExitSlip.Api/Dockerfile
-      platforms:
-        - linux/amd64
-        - linux/arm64
+      #platforms:
+      #  - linux/amd64
+      #  - linux/arm64
 
   fakemailservice:
     image: "haravich/fake-smtp-server"
